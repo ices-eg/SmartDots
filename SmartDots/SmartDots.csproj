@@ -291,12 +291,20 @@
     <Resource Include="Resources\ContextButtton.png" />
     <Resource Include="Resources\New.png" />
     <Content Include="External\AForge.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="External\AForge.Imaging.dll" />
-    <Content Include="External\AForge.Math.dll" />
-    <Content Include="External\Newtonsoft.Json.dll" />
-    <Content Include="External\Tesseract.dll" />
+    <Content Include="External\AForge.Imaging.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="External\AForge.Math.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="External\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="External\Tesseract.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="tessdata\eng.cube.bigrams">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

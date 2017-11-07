@@ -60,7 +60,6 @@ namespace SmartDots.ViewModel
             get { return selectedFile; }
             set
             {
-                if(SelectedFile != null && SelectedFile.ID == value.ID) return;
                 ChangingFile = true;
                 selectedFile = value;
                 RaisePropertyChanged("SelectedFile");
