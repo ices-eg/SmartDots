@@ -1,0 +1,59 @@
+﻿<dxwui:WinUIDialogWindow x:Class="SmartDots.View.SelectAnalysisDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:local="clr-namespace:SmartDots.View"
+             xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dialog="clr-namespace:SmartDots.ViewModel"
+             dx:ThemeManager.ThemeName="HybridApp"
+             xmlns:viewModel="clr-namespace:SmartDots.ViewModel"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             mc:Ignorable="d" 
+             WindowStyle="None" AllowsTransparency="True"
+             d:DesignHeight="150" d:DesignWidth="320"
+                         
+                         VerticalContentAlignment="Top">
+    <dxwui:WinUIDialogWindow.DataContext>
+        <viewModel:SelectAnalysisDialogViewModel/>
+    </dxwui:WinUIDialogWindow.DataContext>
+
+    <StackPanel Width="320"  Orientation="Vertical" Height="140" Margin="0,-60,0,0" >
+        <dxlc:LayoutItem Label="SELECT ANALYSIS" FontSize="18" Margin="0,0,0,15" Width="300"/>
+        <dxlc:LayoutItem Label="Number" Margin="0,0,0,15" Width="300">
+            <dxe:ButtonEdit x:Name="NumberAnalysis" EditValue="{Binding Number, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, Mode=TwoWay}" Mask="d" MaskType="Numeric" >
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="EditValueChanged">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="AnalysisChanged"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="KeyDown">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="KeyDown"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </dxe:ButtonEdit >
+        </dxlc:LayoutItem>
+        <dxlc:LayoutItem Height="40" Margin="0,0,0,15" Width="300">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="btnSelect" IsTabStop="False" Content="Select" Margin="0,0,10,0" Width="60" IsEnabled="{Binding IsValid}" >
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="Select"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <Button x:Name="btnCancel" IsTabStop="False" Content="Cancel" Width="60" >
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="Cancel"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+            </StackPanel>
+        </dxlc:LayoutItem>
+    </StackPanel>
+</dxwui:WinUIDialogWindow>

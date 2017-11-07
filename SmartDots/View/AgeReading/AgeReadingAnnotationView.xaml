@@ -1,0 +1,224 @@
+﻿<UserControl x:Class="SmartDots.View.AgeReadingAnnotationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:viewModel="clr-namespace:SmartDots.ViewModel"
+             xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+             xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:helpers="clr-namespace:SmartDots.Helpers"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             mc:Ignorable="d" 
+             dx:ThemeManager.ThemeName="Office2016White"
+             d:DesignHeight="300" d:DesignWidth="400">
+    <UserControl.DataContext>
+        <viewModel:AgeReadingAnnotationViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <!--<Style TargetType="{x:Type dxg:RowControl}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsSelected}" Value="True">
+                    <Setter Property="Background" Value="{ Binding }" />
+                </DataTrigger>
+                <Trigger Property="dxg:DataControlBase.SelectedItem" Value="True">
+                    <Setter Property="Background" Value="{x:Null}"/>
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="MinHeight" Value="12"></Setter>
+            <Setter Property="MaxHeight" Value="12"></Setter>
+            <Setter Property="Height" Value="12"></Setter>
+        </Style>-->
+    </UserControl.Resources>
+        
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <dxg:GridControl Grid.Row="0" x:Name="AnnotationGrid" ItemsSource="{Binding Outcomes, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectionMode="Row" SelectedItems="{Binding SelectedAnnotations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="None" FontSize="11" AllowLiveDataShaping="True" >
+            <dxg:GridControl.View>
+                <dxg:TableView FormatConditionsSource="{Binding ConditionalRowStyles}" AllowConditionalFormattingMenu="True" ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" x:Name="AnnotationList" EditorShowMode="MouseDown" ShowCheckBoxSelectorColumn="True" CheckBoxSelectorColumnWidth="30"  RowMinHeight="22" CellStyle="{x:Null}" EnableImmediatePosting="True" >
+                    <dxmvvm:Interaction.Behaviors>
+                        <helpers:DisableSelectorColumnBehavior />
+                    </dxmvvm:Interaction.Behaviors>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="CellValueChanging">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="AnnotationList_CellValueChanging"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="CellValueChanged">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="AnnotationList_CellValueChanged"/>
+                        </i:EventTrigger>
+                        <!--<i:EventTrigger EventName="CellValueChanged">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="AnnotationList_CellValueChanged"/>
+                        </i:EventTrigger>-->
+                        <!--<i:EventTrigger EventName="ShowingEditor">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="AnnotationList_ShowingEditor"/>
+                        </i:EventTrigger>-->
+                        <i:EventTrigger EventName="KeyDown">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="AnnotationList_KeyDown"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </dxg:TableView>
+                
+            </dxg:GridControl.View>
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn FieldName="ParameterID" Width="60*" Header="Parameter" ToolTip="Parameter" VisibleIndex="1">
+                    <dxg:GridColumn.EditSettings>
+                        <dxg:LookUpEditSettings Name="Parameter" DisplayMember="Code" ValueMember="ID" ItemsSource="{Binding Parameters}" PopupMinWidth="100" PopupMinHeight="180" AutoPopulateColumns="False">
+                            <dxg:LookUpEditSettings.PopupContentTemplate>
+                                <ControlTemplate>
+                                    <dxg:GridControl Name="PART_GridControl" >
+                                        <dxg:GridControl.Columns>
+                                            <dxg:GridColumn FieldName="Code"/>
+                                        </dxg:GridControl.Columns>
+                                        <dxg:GridControl.View>
+                                            <dxg:TableView AutoWidth="True"/>
+                                        </dxg:GridControl.View>
+                                    </dxg:GridControl>
+                                </ControlTemplate>
+                            </dxg:LookUpEditSettings.PopupContentTemplate>
+                        </dxg:LookUpEditSettings>
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn FieldName="LabTechnician" Header="Lab technician" ToolTip="Lab technician" Width="150*" AllowEditing="False" VisibleIndex="2"/>
+                <dxg:GridColumn FieldName="DateCreation" Header="Created" ToolTip="Date created" AllowEditing="False" Width="90*" VisibleIndex="3" >
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:DateEditSettings DisplayFormat="dd-MM-yy"/>
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn FieldName="Result" Header="Age" ToolTip="Age" AllowEditing="False" Width="30*" VisibleIndex="4">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:TextEditSettings MaskUseAsDisplayFormat="True" MaskType="Numeric" Mask="d"/>
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn FieldName="QualityID" Width="60*" Header="AQ" ToolTip="Annotation quality" VisibleIndex="5">
+                    <dxg:GridColumn.EditSettings>
+                        <dxg:LookUpEditSettings Name="Quality" DisplayMember="Code" ValueMember="ID" ItemsSource="{Binding Qualities}" PopupMinWidth="100" PopupMinHeight="180" AutoPopulateColumns="False">
+                            <dxg:LookUpEditSettings.PopupContentTemplate>
+                                <ControlTemplate>
+                                    <dxg:GridControl Name="PART_GridControl" >
+                                        <dxg:GridControl.Columns>
+                                            <dxg:GridColumn FieldName="Code"/>
+                                        </dxg:GridControl.Columns>
+                                        <dxg:GridControl.View>
+                                            <dxg:TableView AutoWidth="True"/>
+                                        </dxg:GridControl.View>
+                                    </dxg:GridControl>
+                                </ControlTemplate>
+                            </dxg:LookUpEditSettings.PopupContentTemplate>
+                        </dxg:LookUpEditSettings>
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+
+                <!--<dxg:SelectAllColumn/>-->
+                <dxg:GridColumn Header="Approved" Width="30*" FieldName="IsApproved" ToolTip="Approved Annotation" AllowEditing="False" Visible="{Binding CanApproveAnnotation}" VisibleIndex="6">
+                    <dxg:GridColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                <Image Source="{Binding Path=Data.ApprovedPicture}" HorizontalAlignment="Center" Margin="0,0,0,0"  Stretch="Uniform" Width="17" Height="17" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </dxg:GridColumn.CellTemplate>
+                </dxg:GridColumn>
+                <dxg:GridColumn FieldName="IsFixed" Header="Fixed reading line" ToolTip="Fixed reading line" Width="30*" AllowEditing="False" VisibleIndex="7">
+                    <dxg:GridColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image Source="{Binding Path=Data.PinPicture}" HorizontalAlignment="Center" Margin="0,0,0,0"  Stretch="Uniform" Width="17" Height="17" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </dxg:GridColumn.CellTemplate>
+                </dxg:GridColumn>
+                <dxg:GridColumn FieldName="Comment" Header="Comment" ToolTip="Comment" Width="60*" AllowEditing="False" VisibleIndex="8"/>
+
+
+
+
+
+
+
+
+            </dxg:GridControl.Columns>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="GridControl_OnSelectionChanged"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </dxg:GridControl>
+        <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Background="#ccc" Height="33">
+            <StackPanel x:Name="FilesOperations" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Background="#ccc" Margin="1">
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnNewAnnotation" Height="27" Width="28" Padding="2" Margin="2" ToolTip="New Annotation" HorizontalAlignment="Center" IsEnabled="{Binding CanCreate}">
+                    <Image Source="../../Resources/New.png" Width="22" Height="22"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="NewAnnotation"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnEditAnnotation" Height="27" Width="28" Padding="2" Margin="2" ToolTip="Edit Annotation" HorizontalAlignment="Center" IsEnabled="{Binding CanEdit}">
+                    <Image Source="../../Resources/Edit.png" Width="22" Height="22"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="ShowEditAnnotation"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnDeleteAnnotations" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Delete Annotations" IsEnabled="{Binding CanDelete}">
+                    <Image Source="../../Resources/delete-32.png" Width="22" Height="22"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="DeleteAnnotation" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <StackPanel Width="28" Height="33" Margin="0"  ></StackPanel>
+
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnPinAnnotation" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Toggle fixed reading line" IsEnabled="{Binding CanTogglePin}">
+                    <Image Source="../../Resources/pin-32.png" Width="22" Height="22"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="TogglePinAnnotation" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <!--<Button Style="{StaticResource SDButton}" x:Name="btnUnpinAnnotation" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Unpin Annotation" IsEnabled="{Binding CanUnpin}">
+                    <Image Source="../../Resources/unpin-32.png" Width="22" Height="22"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="UnpinAnnotation" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>-->
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnApproveAnnotation" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Toggle Approve Annotation" IsEnabled="{Binding CanToggleApprove}">
+                    <Image Source="../../Resources/ok-32.png" Width="22" Height="22"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="ToggleApprove" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <!--<Button Style="{StaticResource SDButton}" x:Name="btnDisApproveAnnotation" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Disapprove Annotation" IsEnabled="{Binding CanDisApprove}" Visibility="{Binding DisApproveVisibility}">
+                    <Image Source="../../Resources/cancel-32.png" Width="22" Height="22"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="DisApprove" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>-->
+            </StackPanel>
+        </StackPanel>
+        
+
+        <!--<dxb:ToolBarControl VerticalAlignment="Bottom" Height="39" ShowDragWidget="False" AllowCollapse="False" AllowCustomizationMenu="False" AllowHide="False" AllowQuickCustomization="False">
+            <dxb:BarButtonItem x:Name="btnNewAnnotation" Content="" LargeGlyph="{dx:DXImage Image=AddItem_32x32.png}" Glyph="{dx:DXImage Image=AddItem_16x16.png}" Command="{Binding NewAnnotationCommand}"/>
+            <dxb:BarButtonItem x:Name="btnDeleteAnnotations" Content=""  Glyph="{dx:DXImage Image=Delete_32x32.png}" LargeGlyph="{dx:DXImage Image=Delete_32x32.png}" />
+        </dxb:ToolBarControl>-->
+    </Grid>
+</UserControl>

@@ -1,0 +1,125 @@
+﻿<UserControl x:Class="SmartDots.View.AgeReadingFileView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModel="clr-namespace:SmartDots.ViewModel"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             mc:Ignorable="d" 
+             dx:ThemeManager.ThemeName="Office2016White"
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="StatusColumn">
+            <Rectangle Margin="5" StrokeThickness="1" ToolTip="{Binding Data.Status.Tooltip}" Stroke="{Binding Data.Status.BorderColor}">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{Binding Data.Status.Color}"/>
+                </Rectangle.Fill>
+            </Rectangle>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    <UserControl.DataContext>
+        <viewModel:AgeReadingFileViewModel/>
+    </UserControl.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <dxg:GridControl Grid.Row="0" ItemsSource="{Binding Files}" VerticalAlignment="Stretch" FontSize="11" x:Name="FileGrid">
+            <dxg:GridControl.View>
+                <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="FileList" RowMinHeight="22" IsColumnChooserVisible="False">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="BeforeLayoutRefresh">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="FileList_BeforeLayoutRefresh"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="FocusedRowChanged">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="FileList_FocusedRowChanged"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn FieldName="Status" Header="@" ToolTip="Sample status" Width="16" CellTemplate="{StaticResource StatusColumn}" AllowEditing="False" AllowSorting="True" SortMode="Custom" Visible="{Binding UseSampleStatus}" VisibleIndex="0" />
+                <dxg:GridColumn FieldName="Filename" Header="File" ToolTip="Filename" AllowEditing="False" />
+                <dxg:GridColumn FieldName="SampleNumber" Header="Sample number" ToolTip="Sample number" AllowEditing="False" Width="60"  />
+                <dxg:GridColumn FieldName="AnnotationCount" Header="#Annotations" ToolTip="Number of annotations" AllowEditing="False"  Width="60" />
+                <dxg:GridColumn FieldName="Scale" AllowEditing="False" Header="Scale (px/mm)" Width="80" >
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:TextEditSettings MaskType="Numeric" Mask="n3"/>
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <!--<dxg:GridColumn FieldName="Otolith2Condition" SortIndex="0" AllowEditing="True">
+                    <dxg:GridColumn.EditSettings>
+                        <dxg:LookUpEditSettings Name="SampleState" DisplayMember="Code" ValueMember="ID" ItemsSource="{Binding States, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PopupMinWidth="300" AutoPopulateColumns="False">
+                            <dxg:LookUpEditSettings.PopupContentTemplate>
+                                <ControlTemplate>
+                                    <dxg:GridControl Name="PART_GridControl">
+                                        <dxg:GridControl.Columns>
+                                            <dxg:GridColumn FieldName="Code"/>
+                                            <dxg:GridColumn FieldName="Description"/>
+                                        </dxg:GridControl.Columns>
+                                        <dxg:GridControl.View>
+                                            <dxg:TableView AutoWidth="True"/>
+                                        </dxg:GridControl.View>
+                                    </dxg:GridControl>
+                                </ControlTemplate>
+                            </dxg:LookUpEditSettings.PopupContentTemplate>
+                        </dxg:LookUpEditSettings>
+                    </dxg:GridColumn.EditSettings>
+                    -->
+                <!--<dxe:LookUpEditSettingsBase Name="SampleState" 
+                                DisplayMember="Code"
+                                IsTextEditable="False"
+                                ItemsSource="{Binding States}"
+                                PopupMinWidth="300"
+                                />
+                    </dxg:GridColumn.EditSettings>-->
+                <!--
+                </dxg:GridColumn>-->
+            </dxg:GridControl.Columns>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="CustomColumnSort">
+                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnCustomColumnSort"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </dxg:GridControl>
+        <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Background="#ccc" Height="33" Visibility="{Binding ToolbarVisibility}">
+            <StackPanel x:Name="AnnotationsOperations" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Background="#ccc" Margin="1">
+                <!--<Button Style="{StaticResource SDButtonBase}" x:Name="btnFolder" Height="27" Width="28" Padding="2" Margin="2" ToolTip="Browse" HorizontalAlignment="Center" Visibility="{Binding CanBrowseFolderVisibility}">
+                    <Image Source="../../Resources/folder-3-32.png" Width="22" Height="22"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnFolder_Click"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>-->
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnAttach" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Attach Sample" IsEnabled="{Binding NeedsSampleLink}" Visibility="{Binding CanAttachVisibility}">
+                    <Image Source="../../Resources/Connect.png" Width="22" Height="22"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="Attach"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnDetach" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Detach Sample" IsEnabled="{Binding CanDetach}"  Visibility="{Binding CanDetachVisibility}">
+                    <Image Source="../../Resources/Disconnect.png" Width="22" Height="22"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnDetach_Click"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+        
+        
+</UserControl>

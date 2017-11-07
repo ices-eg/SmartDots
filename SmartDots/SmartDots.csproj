@@ -1,0 +1,632 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7DC47E47-F29D-4BAE-86C0-152877EC5011}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SmartDots</RootNamespace>
+    <AssemblyName>SmartDots</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>\\clo.be\dfs\data\data_d1\software\smartdots\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Unc</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>true</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ProductName>SmartDots</ProductName>
+    <PublisherName>ILVO</PublisherName>
+    <MinimumRequiredVersion>1.3.0.0</MinimumRequiredVersion>
+    <WebPage>publish.htm</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <TrustUrlParameters>true</TrustUrlParameters>
+    <ApplicationRevision>15</ApplicationRevision>
+    <ApplicationVersion>1.3.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>691950898E1A9FA1C2BEE0327AEAA135DFE311E6</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>OtlManager2_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>smartdots icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
+      <HintPath>..\packages\AForge.2.2.5\lib\AForge.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AForge.Imaging, Version=2.2.5.0, Culture=neutral, PublicKeyToken=ba8ddea9676ca48b, processorArchitecture=MSIL">
+      <HintPath>..\packages\AForge.Imaging.2.2.5\lib\AForge.Imaging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AForge.Math, Version=2.2.5.0, Culture=neutral, PublicKeyToken=abba2e25397ee8c9, processorArchitecture=MSIL">
+      <HintPath>..\packages\AForge.Math.2.2.5\lib\AForge.Math.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.CodeParser.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="DevExpress.Data.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Mvvm.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.RichEdit.v17.1.Export, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Printing.v17.1.Core, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Controls.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Core.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Docking.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Layout.v17.1.Core, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Printing.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v17.1.Core, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.LayoutControl.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Themes.HybridApp.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Themes.Office2016Colorful.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Themes.Office2016White.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Themes.Seven.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Drawing">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Tesseract, Version=3.0.2.0, Culture=neutral, PublicKeyToken=ebeb3d86bef60cbe, processorArchitecture=MSIL">
+      <HintPath>..\packages\Tesseract.3.0.2.0\lib\net451\Tesseract.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WindowsFormsIntegration">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DXSplashScreen\WaitSplashScreen.xaml.cs">
+      <DependentUpon>WaitSplashScreen.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DXSplashScreen\SmartdotsSplashScreen.xaml.cs">
+      <DependentUpon>SmartdotsSplashScreen.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\AsyncServerSocket.cs" />
+    <Compile Include="Helpers\BroadCasterCallback.cs" />
+    <Compile Include="Helpers\BroadCasterClient.cs" />
+    <Compile Include="Helpers\Cross.cs" />
+    <Compile Include="Helpers\DisableSelectorColumnBehavior.cs" />
+    <Compile Include="Helpers\FolderHelper.cs" />
+    <Compile Include="Helpers\LinkFinder.cs" />
+    <Compile Include="Helpers\ThreadTuple.cs" />
+    <Compile Include="Helpers\UndoRedo.cs" />
+    <Compile Include="Helpers\WebAPI.cs" />
+    <Compile Include="Helpers\WebApiEventArgs.cs" />
+    <Compile Include="Helpers\WebApiResult.cs" />
+    <Compile Include="Helpers\VisibilityAnimation.cs" />
+    <Compile Include="Model\Events\AnalysisEventArgs.cs" />
+    <Compile Include="Model\Events\ConnectionEventArgs.cs" />
+    <Compile Include="Model\Extension\Analysis.cs" />
+    <Compile Include="Model\Extension\AnalysisRowObject.cs" />
+    <Compile Include="Model\Extension\ConnectionInfo.cs" />
+    <Compile Include="Model\Extension\Folder.cs" />
+    <Compile Include="Model\Extension\AnalysisParameter.cs" />
+    <Compile Include="Model\Extension\Quality.cs" />
+    <Compile Include="Model\Extension\Sample.cs" />
+    <Compile Include="Model\Security\DtoUserAuthentication.cs" />
+    <Compile Include="Model\Security\User.cs" />
+    <Compile Include="Model\Extension\DtoSmartdotsSettings.cs" />
+    <Compile Include="Model\Security\LoginToken.cs" />
+    <Compile Include="Model\Smartdots\Analysis.cs" />
+    <Compile Include="Model\Smartdots\AnalysisSample.cs" />
+    <Compile Include="Model\Smartdots\Dot.cs" />
+    <Compile Include="Model\Smartdots\File.cs" />
+    <Compile Include="Model\Smartdots\Folder.cs" />
+    <Compile Include="Model\Smartdots\Line.cs" />
+    <Compile Include="Model\Smartdots\Annotation.cs" />
+    <Compile Include="Model\Smartdots\Parameter.cs" />
+    <Compile Include="Model\Smartdots\Quality.cs" />
+    <Compile Include="Model\Smartdots\Sample.cs" />
+    <Compile Include="Model\Smartdots\User.cs" />
+    <Compile Include="Service References\ServiceReferenceBroadCast\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="ViewModel\AgeReading\AgeReadingSampleViewModel.cs" />
+    <Compile Include="ViewModel\AgeReading\SelectAnalysisDialogViewModel.cs" />
+    <Compile Include="ViewModel\AgeReading\EditAnnotationDialogViewModel.cs" />
+    <Compile Include="ViewModel\AgeReading\AttachSampleDialogViewModel.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="View\AgeReading\AgeReadingSampleView.xaml.cs">
+      <DependentUpon>AgeReadingSampleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\AttachSampleDialog.xaml.cs">
+      <DependentUpon>AttachSampleDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\EditAnnotationDialog.xaml.cs">
+      <DependentUpon>EditAnnotationDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\SelectAnalysisDialog.xaml.cs">
+      <DependentUpon>SelectAnalysisDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ServerSelectionView.xaml.cs">
+      <DependentUpon>ServerSelectionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControls\CleanableComboBox.cs" />
+    <Compile Include="View\UserControls\SDButton.xaml.cs">
+      <DependentUpon>SDButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControls\WindowsButton.xaml.cs">
+      <DependentUpon>WindowsButton.xaml</DependentUpon>
+    </Compile>
+    <Resource Include="Resources\scalelength32.png" />
+    <Resource Include="Resources\ContextButtton.png" />
+    <Resource Include="Resources\New.png" />
+    <Content Include="tessdata\eng.cube.bigrams">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tessdata\eng.cube.fold">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tessdata\eng.cube.lm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tessdata\eng.cube.nn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tessdata\eng.cube.params">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tessdata\eng.cube.size">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tessdata\eng.cube.word-freq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tessdata\eng.tesseract_cube.nn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tessdata\eng.traineddata">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <ApplicationDefinition Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+    <Page Include="DXSplashScreen\WaitSplashScreen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DXSplashScreen\SmartdotsSplashScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Controls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AgeReading\AgeReadingSampleView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\AgeReading\AgeReadingEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AgeReading\AgeReadingFileView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AgeReading\AgeReadingAnnotationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AgeReading\AgeReadingStatusbarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AgeReading\AgeReadingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="Helpers\BitmapConverter.cs" />
+    <Compile Include="Helpers\BitmapSourceHelper.cs" />
+    <Compile Include="Helpers\Command.cs" />
+    <Compile Include="Helpers\FolderSelectDialog.cs" />
+    <Compile Include="Helpers\Reflector.cs" />
+    <Compile Include="Helpers\StatusIcon.cs" />
+    <Compile Include="Model\Extension\CombinedLine.cs" />
+    <Compile Include="Model\Extension\Annotation.cs" />
+    <Compile Include="Model\Extension\Dot.cs" />
+    <Compile Include="Model\Extension\Line.cs" />
+    <Compile Include="Model\Extension\File.cs" />
+    <Compile Include="ViewModel\AgeReadingBaseViewModel.cs" />
+    <Compile Include="ViewModel\AgeReading\AgeReadingEditorViewModel.cs" />
+    <Compile Include="ViewModel\AgeReading\AgeReadingFileViewModel.cs" />
+    <Compile Include="ViewModel\AgeReading\AgeReadingAnnotationViewModel.cs" />
+    <Compile Include="ViewModel\AgeReading\AgeReadingStatusbarViewModel.cs" />
+    <Compile Include="ViewModel\AgeReading\AgeReadingViewModel.cs" />
+    <Compile Include="Helpers\Converter.cs" />
+    <Compile Include="Helpers\Enum.cs" />
+    <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="ViewModel\BaseViewModel.cs" />
+    <Compile Include="View\AgeReading\AgeReadingEditorView.xaml.cs">
+      <DependentUpon>AgeReadingEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\AgeReadingFileView.xaml.cs">
+      <DependentUpon>AgeReadingFileView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\AgeReadingAnnotationView.xaml.cs">
+      <DependentUpon>AgeReadingAnnotationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\AgeReadingStatusbarView.xaml.cs">
+      <DependentUpon>AgeReadingStatusbarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\AgeReadingView.xaml.cs">
+      <DependentUpon>AgeReadingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\curvePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\curvePanel.Designer.cs">
+      <DependentUpon>curvePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\Graph.cs" />
+    <Compile Include="View\AgeReading\Graph\GraphBounds.cs" />
+    <Compile Include="View\AgeReading\Graph\GraphViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\GraphViewer.Designer.cs">
+      <DependentUpon>GraphViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\InteractiveGraphViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\InteractiveGraphViewer.designer.cs">
+      <DependentUpon>InteractiveGraphViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\LegendControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\LegendControl.Designer.cs">
+      <DependentUpon>LegendControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\LegendLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\LegendLabel.Designer.cs">
+      <DependentUpon>LegendLabel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\ScaledViewerBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\AgeReading\Graph\ScaledViewerBase.Designer.cs">
+      <DependentUpon>ScaledViewerBase.cs</DependentUpon>
+    </Compile>
+    <Page Include="View\AgeReading\AttachSampleDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\AgeReading\EditAnnotationDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\AgeReading\SelectAnalysisDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\ServerSelectionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UserControls\SDButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserControls\WindowsButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="View\Base\BaseView.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\AgeReading\Graph\curvePanel.resx">
+      <DependentUpon>curvePanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+    <None Include="Service References\ServiceReferenceBroadCast\BroadCastService.wsdl" />
+    <None Include="Service References\ServiceReferenceBroadCast\Service.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReferenceBroadCast\Service1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReferenceBroadCast\Service2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReferenceBroadCast\Service3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReferenceBroadCast\SmartDots.ServiceReferenceBroadCast.EventDataType.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Delete.png" />
+    <Resource Include="Resources\Details.png" />
+    <Resource Include="Resources\Filter.png" />
+    <Resource Include="Resources\Padlock.png" />
+    <Resource Include="Resources\Cancel.png" />
+    <Resource Include="Resources\Save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\smartdots icon.ico" />
+    <Resource Include="smartdots icon.ico" />
+    <Resource Include="Resources\Edit.png" />
+    <Resource Include="Resources\Dot.png" />
+    <Resource Include="Resources\graphs.png" />
+    <Resource Include="Resources\sloping15x35.png" />
+    <Resource Include="Resources\SmartDots-header ui.png" />
+    <Resource Include="Resources\eye-3-32.png" />
+    <Resource Include="Resources\trash-2-24.png" />
+    <Resource Include="Resources\Connect.png" />
+    <Resource Include="Resources\delete-32.png" />
+    <Resource Include="Resources\edit-6-32.png" />
+    <Resource Include="Resources\folder-3-32.png" />
+    <Resource Include="Resources\Redo.png" />
+    <Resource Include="Resources\Undo.png" />
+    <Resource Include="Resources\export.png" />
+    <Resource Include="Resources\window-layout-32.png" />
+    <Resource Include="Resources\tool-box-32.png" />
+    <Resource Include="Resources\tracker.png" />
+    <Resource Include="Resources\size.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\cancel-32.png" />
+    <Resource Include="Resources\ok-32.png" />
+    <Content Include="x64\liblept172.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x64\libtesseract304.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\liblept172.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\libtesseract304.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Service References\ServiceReferenceBroadCast\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\ServiceReferenceBroadCast\configuration.svcinfo" />
+    <None Include="Service References\ServiceReferenceBroadCast\configuration91.svcinfo" />
+    <None Include="Service References\ServiceReferenceBroadCast\Service.disco" />
+    <Resource Include="Resources\Disconnect.png" />
+    <Resource Include="Resources\arrow-94-32.png" />
+    <Resource Include="Resources\SmartDotsBW.png" />
+    <Resource Include="Resources\refresh-2-32.png" />
+    <Resource Include="Resources\SmartLabIcon2-bw.png" />
+    <Resource Include="Resources\pin-32.png" />
+    <Resource Include="Resources\unpin-32.png" />
+    <Resource Include="Resources\pin-16.png" />
+    <Resource Include="Resources\eye.png" />
+    <Resource Include="Resources\ruler-32.png" />
+    <Resource Include="Resources\cancel-16.png" />
+    <Resource Include="Resources\ok-16.png" />
+    <Content Include="DefaultLayout.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Resource Include="Resources\Close.png" />
+    <Resource Include="Resources\Minimize.png" />
+    <Resource Include="Resources\Restore.png" />
+    <Resource Include="Resources\Maximize.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="DefaultLayout.xml">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ServiceReferenceBroadCast\" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

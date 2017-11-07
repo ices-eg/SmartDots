@@ -1,0 +1,243 @@
+﻿<UserControl x:Class="SmartDots.View.AgeReadingEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SmartDots.View"
+             xmlns:viewModel="clr-namespace:SmartDots.ViewModel"
+             xmlns:helpers="clr-namespace:SmartDots.Helpers"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+             xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
+             xmlns:dxdove="http://schemas.devexpress.com/winfx/2008/xaml/docking/visualelements"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:userControls="clr-namespace:SmartDots.View.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="600"
+        dx:ThemeManager.ThemeName="Office2016White">
+    <UserControl.DataContext>
+        <viewModel:AgeReadingEditorViewModel x:Name="evm"></viewModel:AgeReadingEditorViewModel>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter"></helpers:EnumToBooleanConverter>
+        
+    </UserControl.Resources>
+    <DockPanel>
+        <dxdo:DockLayoutManager EnableWin32Compatibility="True" FloatingMode="Desktop">
+            <dxdo:DockLayoutManager.FloatGroups>
+                <dxdo:FloatGroup FloatSize="200,180" FloatLocation="100,100" AllowDock="False" AllowDrop="False" AllowClose="False" AllowContextMenu="False" AllowDockToCurrentItem="False" AllowExpand="False" AllowHide="False" AllowSizing="False" AllowMaximize="False" AllowMinimize="False" >
+                    <dxdo:LayoutPanel x:Name="MeasureScalePanel" Caption="Measure Scale" AllowClose="False" AllowMaximize="False" AllowMinimize="False" Visibility="Collapsed" >
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="44" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Draw a line on the scale..." Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="0" Margin="0,3,0,3"></TextBlock>
+                            <Image x:Name="ScaleNotDrawn" Source="../../Resources/cancel-16.png" Grid.Row="0" Grid.Column="5" HorizontalAlignment="Right" Margin="0,-1,0,3" Stretch="None"></Image>
+                            <Image x:Name="ScaleDrawn" Source="../../Resources/ok-16.png" Grid.Row="0" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,-1,0,3" Stretch="None" Visibility="Collapsed"></Image>
+                            <TextBlock Text="Scale (mm)" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Margin="0,3,0,3"></TextBlock>
+                            <dxe:SpinEdit x:Name="ScaleMilimeters" EditValue="1" IsFloatValue="True" Increment="0.5" MinValue="0" Grid.Column="3" Grid.ColumnSpan="3" Grid.Row="1" Margin="0,3,0,3"></dxe:SpinEdit>
+                            <TextBlock Text="Scale (pixels)" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Margin="0,3,0,3"></TextBlock>
+                            <TextBlock x:Name="ScalePixels" Text="0" Grid.Column="3" Grid.ColumnSpan="3" HorizontalAlignment="Right" Grid.Row="2" Margin="0,3,0,3"></TextBlock>
+                            <Button IsEnabled="{Binding IsScaleDrawn}" Content="Clear Line"  Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,7,3,3" Height="30" Padding="0">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="ClearScaleLine"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                            <Button IsEnabled="{Binding IsScaleDrawn}" Content="Accept"  Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="3,7,0,3" Height="30" Padding="0">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="AcceptScale"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                            <Button Content="Cancel"  Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="2" Margin="3,7,0,3" Height="30" Padding="0">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="CancelScale"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                        </Grid>
+
+                    </dxdo:LayoutPanel>
+                </dxdo:FloatGroup>
+            </dxdo:DockLayoutManager.FloatGroups>
+        </dxdo:DockLayoutManager>
+
+        <StackPanel x:Name="EditorStackPanel"  DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+                    Orientation="Horizontal" Background="{StaticResource BrushSmartFishFairBlue2}">
+            <userControls:SDButton x:Name="LineButton" Glyph="../../Resources/edit-6-32.png" ButtonToolTip="Draw line" 
+                                   IsToggleButton="True" IsEnabled="{Binding CanDrawLine}" IsPressed="True"/>
+            <dxb:PopupMenu x:Name="LineMenu">
+                <dxb:PopupMenu.Items>
+                    <dxb:BarItemMenuHeader Content="Line Settings"/>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Color" EditValue="{Binding LineColor, Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:PopupColorEditSettings ChipSize="Large" />
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Width" EditValue="{Binding LineWidth, Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:SpinEditSettings MaxValue="6" MinValue="1" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                </dxb:PopupMenu.Items>
+            </dxb:PopupMenu>
+
+            <userControls:SDButton x:Name="DotButton" Glyph="../../Resources/dot.png" ButtonToolTip="Draw dot" IsToggleButton="True" IsEnabled="{Binding CanDrawDot}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="DrawDotBtn_Checked"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </userControls:SDButton>
+            <dxb:PopupMenu x:Name="DotMenu">
+                <dxb:PopupMenu.Items>
+                    <dxb:BarItemMenuHeader Content="Dot Settings"/>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" x:Name="DotColor" Content="Color" EditValue="{Binding DotColor,Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:PopupColorEditSettings ChipSize="Large" />
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Width" Name="DotWidth" EditValue="{Binding DotWidth,Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:SpinEditSettings MaxValue="25" MinValue="2" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Shape" Name="DotShape" EditValue="{Binding DotShape, Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:ComboBoxEditSettings IsTextEditable="False">
+                                <dxe:ComboBoxEditSettings.Items>
+                                    <dxe:ComboBoxEditItem Content="Dot" />
+                                    <dxe:ComboBoxEditItem Content="Cross" />
+                                </dxe:ComboBoxEditSettings.Items>
+                            </dxe:ComboBoxEditSettings>
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="  Type" Name="DotType" EditValue="{Binding DotType, Mode=TwoWay}">
+                        <!-- TODO: find proper way to give all labels the same width; is now charlength-based... -->
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:ComboBoxEditSettings IsTextEditable="False">
+                                <dxe:ComboBoxEditSettings.Items>
+                                    <dxe:ComboBoxEditItem Content="Seawater" />
+                                    <dxe:ComboBoxEditItem Content="Freshwater" />
+                                </dxe:ComboBoxEditSettings.Items>
+                            </dxe:ComboBoxEditSettings>
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                </dxb:PopupMenu.Items>
+            </dxb:PopupMenu>
+
+            <RadioButton x:Name="DeleteBtn" Style="{StaticResource {x:Type ToggleButton}}" IsEnabled="{Binding CanDelete}" ToolTip="Delete" >
+                <Image Source="../../Resources/delete-32.png" Width="22" Height="22"/>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="DeleteBtn_Checked"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </RadioButton>
+
+            <StackPanel Width="28" Height="33" Margin="0" dxdove:DockPane.HitTestType="Header"/>
+
+            <Button x:Name="btnUndo" Style="{StaticResource SDButtonBase}" IsEnabled="{Binding CanUndo}" ToolTip="Undo" >
+                <Image Source="../../Resources/Undo.png" Width="22" Height="22"/>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnUndo_Click"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+
+            <Button x:Name="btnRedo" Style="{StaticResource SDButtonBase}" IsEnabled="{Binding CanRedo}" ToolTip="Redo" >
+                <Image Source="../../Resources/Redo.png" Width="22" Height="22"/>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnRedo_Click"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+
+            <StackPanel Width="28" Height="33" Margin="0" dxdove:DockPane.HitTestType="Header"/>
+            <userControls:SDButton Glyph="../../Resources/scalelength32.png" x:Name="ScaleButton" ButtonToolTip="Auto scale measure" IsEnabled="{Binding CanMeasure}"/>
+            <dxb:PopupMenu x:Name="ScaleContextMenu">
+                <dxb:PopupMenu.Items>
+                    <dxb:BarItemMenuHeader Content="Measure Scale"/>
+                    <dxb:BarButtonItem x:Name="ContextMeasureAutomatic" Content="Automatic"/>
+                    <dxb:BarButtonItem x:Name="ContextMeasureManual" Content="Manual"/>
+                    <dxb:BarItemSeparator/>
+                    <dxb:BarButtonItem x:Name="ContextMeasureDelete" Content="Delete"/>
+                </dxb:PopupMenu.Items>
+            </dxb:PopupMenu>
+
+            <StackPanel Width="2000" Margin="0" Height="33" Background="{StaticResource BrushSmartFishFairBlue2}" dxdove:DockPane.HitTestType="Header"></StackPanel>
+        </StackPanel>
+
+        <dxdo:DockLayoutManager x:Name="DockLayoutManager" FloatingMode="Window">
+            <dxdo:LayoutGroup AllowSplitters="False" BorderThickness="0" Padding="0" Margin="0">
+                <dxdo:LayoutPanel ShowCaption="False" AllowClose="False" DockPanel.Dock="Bottom" Margin="0">
+                    <ScrollViewer Name="ScrollViewer" DockPanel.Dock="Right" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="Black">
+                        <Viewbox  x:Name="Viewbox" Stretch="None" Width="{Binding Width}" Height="{Binding Height}" >
+                            <Canvas Width="{Binding Width}" Height="{Binding Height}" Name="ParentCanvas" >
+                                <Image Source="{Binding OtolithImage}" Stretch="Uniform" Width="{Binding Width}" Height="{Binding Height}" />
+                                <ItemsControl ItemsSource="{Binding LineShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="LineShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas x:Name="LineCanvas">
+                                            </Canvas>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding DotShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="DotShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas x:Name="DotCanvas">
+                                            </Canvas>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding ScaleShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="ScaleShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas x:Name="ScaleCanvas">
+                                            </Canvas>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <Image Source="../../Resources/tracker.png" Width="31" Height="31" Stretch="None" Visibility="Hidden" Name="Tracker"  />
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseMove">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="ParentCanvas_MouseMove"/>
+                                    </i:EventTrigger>
+                                    <i:EventTrigger EventName="MouseDown">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="ParentCanvas_MouseDown"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Canvas>
+                        </Viewbox>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SizeChanged">
+                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="ScrollViewer_SizeChanged"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ScrollViewer>
+                </dxdo:LayoutPanel>
+            </dxdo:LayoutGroup>
+        </dxdo:DockLayoutManager>
+    </DockPanel>
+</UserControl>

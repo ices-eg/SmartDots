@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="SmartDots.View.AgeReadingSampleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:ageReading="clr-namespace:SmartDots.ViewModel.AgeReading"
+             mc:Ignorable="d" dx:ThemeManager.ThemeName="Office2016White"
+             d:DesignHeight="300" d:DesignWidth="400">
+    
+    <UserControl.DataContext>
+        <ageReading:AgeReadingSampleViewModel/>
+    </UserControl.DataContext>
+
+
+<ScrollViewer VerticalScrollBarVisibility="Auto" >
+        <Grid Name="Grid" Margin="10,5,10,5" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <!--<RowDefinition Height="20" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="20" />-->
+            </Grid.RowDefinitions>
+            <!--<Label FontWeight="Bold" Grid.Column="0" Grid.Row="0" Padding="0">Number</Label>
+            <Label FontWeight="Bold" Grid.Column="0" Grid.Row="1" Padding="0">Number External</Label>
+            <Label FontWeight="Bold" Grid.Column="0" Grid.Row="2" Padding="0">Sample type</Label>
+            <Label FontWeight="Bold" Grid.Column="0" Grid.Row="3" Padding="0">Sample state</Label>
+            <Label Grid.Column="1" Grid.Row="0" Content="{Binding Sample.Number}"></Label>
+            <Label Grid.Column="1" Grid.Row="1" Content="{Binding Sample.NumberExternal}"></Label>
+            <Label Grid.Column="1" Grid.Row="2" Content="{Binding Sample.SampleType.Code}"></Label>
+            <Label Grid.Column="1" Grid.Row="3" Content="{Binding Sample.SampleState.Code}"></Label>-->
+        </Grid>
+    </ScrollViewer>
+</UserControl>
