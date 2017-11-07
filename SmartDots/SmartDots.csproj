@@ -110,10 +110,6 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
-      <HintPath>..\packages\AForge.2.2.5\lib\AForge.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="AForge.Imaging, Version=2.2.5.0, Culture=neutral, PublicKeyToken=ba8ddea9676ca48b, processorArchitecture=MSIL">
       <HintPath>..\packages\AForge.Imaging.2.2.5\lib\AForge.Imaging.dll</HintPath>
       <Private>True</Private>
@@ -294,6 +290,13 @@
     <Resource Include="Resources\scalelength32.png" />
     <Resource Include="Resources\ContextButtton.png" />
     <Resource Include="Resources\New.png" />
+    <Content Include="External\AForge.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="External\AForge.Imaging.dll" />
+    <Content Include="External\AForge.Math.dll" />
+    <Content Include="External\Newtonsoft.Json.dll" />
+    <Content Include="External\Tesseract.dll" />
     <Content Include="tessdata\eng.cube.bigrams">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
