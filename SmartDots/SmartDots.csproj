@@ -299,9 +299,11 @@
     <Content Include="External\AForge.Math.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="External\Microsoft.Expression.Interactions.dll" />
     <Content Include="External\Newtonsoft.Json.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="External\System.Windows.Interactivity.dll" />
     <Content Include="External\Tesseract.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
