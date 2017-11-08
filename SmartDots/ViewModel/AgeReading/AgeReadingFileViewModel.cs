@@ -30,7 +30,6 @@ namespace SmartDots.ViewModel
         private string nextFileLocation;
         private string nextLocalFileLocation;
         private bool loadingNextPicture;
-        private bool splashscreenshown;
         private bool useSampleStatus;
         private bool loadingfolder;
         private Visibility canAttachDetachSampleVisibility;
@@ -413,7 +412,6 @@ namespace SmartDots.ViewModel
             try
             {
                 AgeReadingViewModel.ShowWaitSplashScreen();
-                splashscreenshown = true;
             }
             catch (Exception ex)
             {
@@ -442,10 +440,7 @@ namespace SmartDots.ViewModel
 
             try
             {
-                if (DXSplashScreen.IsActive && splashscreenshown)
-                {
-                    DXSplashScreen.Close();
-                }
+                AgeReadingViewModel.CloseSplashScreen();
             }
             catch (Exception ex)
             {
