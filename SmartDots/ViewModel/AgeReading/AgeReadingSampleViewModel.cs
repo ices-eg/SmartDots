@@ -79,7 +79,7 @@ namespace SmartDots.ViewModel.AgeReading
                             AgeReadingViewModel.AgeReadingSampleView.Grid.Children.Add(value);
                             startpos++;
                         }
-                        AgeReadingViewModel.AgeReadingAnnotationView.AnnotationList.AllowEditing = !Sample.StatusCode.Equals("Completed");
+                        //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationList.AllowEditing = !Sample.StatusCode.Equals("Completed");
                     });
             }
         }

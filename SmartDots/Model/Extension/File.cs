@@ -82,14 +82,18 @@ namespace SmartDots.Model
 
         public void FetchProps()
         {
-            if (SampleID != null)
+            if (WebAPI.Settings.UseSampleStatus)
             {
-                Status = new StatusIcon((Color)ColorConverter.ConvertFromString(Sample?.StatusColor),Sample?.StatusCode, (int)Sample?.StatusRank);
+                if (SampleID != null)
+                {
+                    Status = new StatusIcon((Color)ColorConverter.ConvertFromString(Sample?.StatusColor), Sample?.StatusCode, (int)Sample?.StatusRank);
+                }
+                else
+                {
+                    Status = new StatusIcon(Color.FromRgb(200, 200, 200), "No Sample Linked", 0);
+                }
             }
-            else
-            {
-                Status = new StatusIcon(Color.FromRgb(200, 200, 200), "No Sample Linked", 0);
-            }
+            
 
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)

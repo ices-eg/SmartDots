@@ -294,7 +294,7 @@ namespace AgeReading.Graph
                 //    graphViewer.CreateOrCloseFullscreenClone();
                 //}
 
-                if (control.AgeReadingViewModel.AgeReadingSampleViewModel.Sample == null || control.AgeReadingViewModel.AgeReadingSampleViewModel.Sample.StatusCode.Equals("Completed") ) return;
+                if (control.AgeReadingViewModel.AgeReadingSampleViewModel.Sample == null || control.AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly ) return;
                 if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.None && control.AgeReadingViewModel.AgeReadingEditorViewModel.Mode == EditorModeEnum.DrawDot)
                 {
                     if (control.AgeReadingViewModel.AgeReadingEditorViewModel.CanDrawDot)
