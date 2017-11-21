@@ -33,7 +33,7 @@ namespace SmartDots.View
 
             ScaleButton.PrimaryButtonClick += (sender, args) => ageReadingEditorViewModel.AutoMeasureScale();
             ScaleButton.ContextButtonClick += (sender, args) => ScaleContextMenu.ShowPopup(ScaleButton);
-            ContextMeasureAutomatic.ItemClick += (sender, args) => ageReadingEditorViewModel.AutoMeasureScale();
+            ContextMeasureAutomatic.ItemClick += (sender, args) => ageReadingEditorViewModel.AutoMeasureScale(true);
             ContextMeasureManual.ItemClick += (sender, args) => ageReadingEditorViewModel.ManualMeasureScale();
             ContextMeasureDelete.ItemClick += (sender, args) => ageReadingEditorViewModel.DeleteMeasureScale();
         }

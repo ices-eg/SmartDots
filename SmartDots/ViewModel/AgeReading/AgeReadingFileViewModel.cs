@@ -45,8 +45,11 @@ namespace SmartDots.ViewModel
                 if (files.Any())
                 {
                     loadingfolder = true;
-                    SelectedFile = files[0];
-                    LoadNewFile();
+                    if (SelectedFile?.ID != files[0]?.ID)
+                    {
+                        SelectedFile = files[0];
+                        LoadNewFile();
+                    }
                     
                     loadingfolder = false;
                 }
@@ -233,6 +236,12 @@ namespace SmartDots.ViewModel
                 useSampleStatus = value;
                 RaisePropertyChanged("UseSampleStatus");
             }
+        }
+
+        public string NextFileLocation
+        {
+            get { return nextFileLocation; }
+            set { nextFileLocation = value; }
         }
 
         public void LoadImage(string imagepath)

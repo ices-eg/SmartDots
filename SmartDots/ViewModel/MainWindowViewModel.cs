@@ -182,6 +182,7 @@ namespace SmartDots.ViewModel
             try
             {
                 //args = "analysis;http://srvsqld1:81/api/smartdots/,1fd67e04-eadf-43bf-b7ee-e397da490972,e0774b18-03ea-4e95-a3c8-b82b6f94524b";
+                //args = "analysis;http://localhost:63216/api/smartdots/,7C74D726-3F5F-4283-82E9-760E56D818BF,0F4E57BD-6832-40EC-9B14-E2CC0507EFD1";
                 if (args == null && App.Args == null)
                 {
                     SmartDotsControl.AgeReadingViewModel.FirstLoad = false;

@@ -388,7 +388,7 @@ namespace SmartDots.ViewModel
                 originalImage.Freeze();
                 if (WebAPI.Settings.AutoMeasureScale && AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale == null)
                 {
-                    if(!IsMeasuring) AutoMeasureScale();
+                    AutoMeasureScale();
                 }
             }
         }
@@ -502,6 +502,7 @@ namespace SmartDots.ViewModel
 
         public System.Drawing.Rectangle ScaleRectangle { get; private set; }
         public bool IsMeasuring { get; private set; }
+        public List<Guid> MeasuredFileIDs { get; set; } = new List<Guid>();
 
         public AgeReadingEditorViewModel()
         {
@@ -1646,9 +1647,17 @@ namespace SmartDots.ViewModel
             UpdateButtons();
         }
 
-        public void AutoMeasureScale()
+        public void AutoMeasureScale(bool buttonPressed = false)
         {
-            IsMeasuring = true;
+            if (!buttonPressed)
+            {
+                if(MeasuredFileIDs.Contains(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID)) return;
+                else
+                {
+                    MeasuredFileIDs.Add(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID);
+                }
+            }
+
             if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFileLocation != null)
             {
                 try
@@ -1663,7 +1672,6 @@ namespace SmartDots.ViewModel
                     Helper.ShowWinUIMessageBox("Could not determine the scale automatically. Please measure the scale manually", "Info", MessageBoxButton.OK, MessageBoxImage.Information, e);
                 }
             }
-            IsMeasuring = false;
         }
 
         public void ManualMeasureScale()
