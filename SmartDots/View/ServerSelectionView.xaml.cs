@@ -102,9 +102,8 @@ namespace SmartDots.View
         private void LoadChoices()
         {
             FieldAuth.ItemsSource = new HashSet<string> {AuthWindows, AuthUser, AuthToken};
-            FieldAuth.SelectedItem = AuthUser;
             var lastAuth = Properties.Settings.Default.LastAuthType;
-            FieldAuth.SelectedItem = string.IsNullOrWhiteSpace(lastAuth) ? AuthUser : lastAuth;
+            FieldAuth.SelectedItem = string.IsNullOrWhiteSpace(lastAuth) ? AuthToken : lastAuth;
 
             if (Properties.Settings.Default.AllApis != null)
             {
