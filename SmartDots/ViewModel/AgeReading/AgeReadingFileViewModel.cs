@@ -44,14 +44,12 @@ namespace SmartDots.ViewModel
                 files = value;
                 if (files.Any())
                 {
-                    loadingfolder = true;
                     if (SelectedFile?.ID != files[0]?.ID)
                     {
                         SelectedFile = files[0];
                         LoadNewFile();
                     }
                     
-                    loadingfolder = false;
                 }
                 RaisePropertyChanged("Files");
             }
@@ -147,7 +145,9 @@ namespace SmartDots.ViewModel
             get { return currentFolder; }
             set
             {
+                Files?.Clear();
                 currentFolder = value;
+                loadingfolder = true;
                 Helper.DoAsync(LoadImages);
                 RaisePropertyChanged("CurrentFolder");
             }
@@ -414,6 +414,7 @@ namespace SmartDots.ViewModel
         public void FileList_FocusedRowChanged(object sender, FocusedRowChangedEventArgs e)
         {
             if(!loadingfolder) LoadNewFile();
+            loadingfolder = false;
         }
 
         public void LoadNewFile()

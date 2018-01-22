@@ -72,6 +72,7 @@ namespace SmartDots.Helpers
             if (typeof(t) == typeof(Guid)) result = Guid.Parse(unparsedResult);
             else if (typeof(t) == typeof(bool)) result = bool.Parse(unparsedResult);
             else if (typeof(t) != typeof(string)) result = Newtonsoft.Json.JsonConvert.DeserializeObject<t>(unparsedResult);
+            else if (typeof(t) == typeof(string)) result = unparsedResult;
 
             return new WebApiResult<t> { Result = result };
         }
@@ -165,6 +166,11 @@ namespace SmartDots.Helpers
             return PerformCall<List<DtoReadabilityQuality>>("getreadabilityqualities?token=" + CurrentUser.Token);
         }
 
+        public static WebApiResult<string> GetGuestToken()
+        {
+            return PerformCall<string>("getguesttoken");
+        }
+
         public static WebApiResult<DtoUser> Authenticate(DtoUserAuthentication userauthentication)
         {
             var result = PerformPost<DtoUser, DtoUserAuthentication>("authenticate", userauthentication);
@@ -233,7 +239,8 @@ namespace SmartDots.Helpers
         }
         public static WebApiResult<bool> UpdateAnalysisFolder(Guid analysisid, string folderpath)
         {
-            return PerformPost<bool, Guid>("updateanalysisfolder?token=" + CurrentUser.Token + "&folderpath=" + folderpath, analysisid);
+            string folder = System.Net.WebUtility.UrlEncode(folderpath);
+            return PerformPost<bool, Guid>("updateanalysisfolder?token=" + CurrentUser.Token + "&folderpath=" + folder, analysisid);
         }
     }
 }

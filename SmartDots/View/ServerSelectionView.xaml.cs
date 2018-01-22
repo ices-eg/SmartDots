@@ -435,6 +435,19 @@ namespace SmartDots.View
 
         #region Events
 
+        private void GetToken(object sender, RoutedEventArgs e)
+        {
+            WebAPI.EstablishConnection(FieldApi.Text);
+            var webapiresult = WebAPI.GetGuestToken();
+            if (!webapiresult.Succeeded)
+            {
+                Helper.ShowWinUIMessageBox(webapiresult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            FieldUser.Text = webapiresult.Result;
+            WebAPI.Reset();
+        }
+
         private void Connect_Click(object sender, RoutedEventArgs e)
         {
             Login();
@@ -499,6 +512,8 @@ namespace SmartDots.View
 
         private void Auth_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            FieldUser.Clear();
+            FieldPassword.Clear();
             switch (e.AddedItems[0]?.ToString())
             {
                 case AuthUser:
@@ -507,6 +522,8 @@ namespace SmartDots.View
                     LabelPassword.Visibility = Visibility.Visible;
                     FieldUser.Visibility = Visibility.Visible;
                     FieldPassword.Visibility = Visibility.Visible;
+                    ButtonToken.Visibility = Visibility.Collapsed;
+                    FieldUser.MinWidth = 330;
                     break;
                 case AuthToken:
                     LabelUser.Content = "Token";
@@ -514,12 +531,16 @@ namespace SmartDots.View
                     LabelPassword.Visibility = Visibility.Collapsed;
                     FieldUser.Visibility = Visibility.Visible;
                     FieldPassword.Visibility = Visibility.Collapsed;
+                    ButtonToken.Visibility = Visibility.Visible;
+                    FieldUser.MinWidth = 210;
                     break;
                 default:
                     LabelUser.Visibility = Visibility.Collapsed;
                     LabelPassword.Visibility = Visibility.Collapsed;
                     FieldUser.Visibility = Visibility.Collapsed;
                     FieldPassword.Visibility = Visibility.Collapsed;
+                    ButtonToken.Visibility = Visibility.Collapsed;
+                    FieldUser.MinWidth = 330;
                     break;
             }
         }
