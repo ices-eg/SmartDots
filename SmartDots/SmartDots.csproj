@@ -20,7 +20,7 @@
     <SccProvider>SAK</SccProvider>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetFrameworkProfile />
-    <PublishUrl>\\clo.be\dfs\data\data_d1\software\development\smartdotsinternational\</PublishUrl>
+    <PublishUrl>C:\Users\kdecoster\source\repos\SmartDots\SmartDots\publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -28,18 +28,18 @@
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>true</UpdateRequired>
+    <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://193.190.112.136/smartdots/</InstallUrl>
-    <UpdateUrl>http://193.190.112.136/smartdots/</UpdateUrl>
+    <InstallUrl>https://raw.githubusercontent.com/ices-eg/SmartDots/master/SmartDots/publish/</InstallUrl>
+    <UpdateUrl>https://raw.githubusercontent.com/ices-eg/SmartDots/master/SmartDots/publish/</UpdateUrl>
     <ProductName>SmartDots</ProductName>
     <PublisherName>ILVO</PublisherName>
-    <MinimumRequiredVersion>1.3.0.37</MinimumRequiredVersion>
+    <MinimumRequiredVersion>1.3.0.44</MinimumRequiredVersion>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <AutorunEnabled>true</AutorunEnabled>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>44</ApplicationRevision>
+    <ApplicationRevision>45</ApplicationRevision>
     <ApplicationVersion>1.3.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -257,7 +257,6 @@
     <Compile Include="Model\Smartdots\Quality.cs" />
     <Compile Include="Model\Smartdots\Sample.cs" />
     <Compile Include="Model\Smartdots\User.cs" />
-    <Compile Include="publish\temp.cs" />
     <Compile Include="Service References\ServiceReferenceBroadCast\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -641,7 +640,9 @@
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\ServiceReferenceBroadCast\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="publish\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
