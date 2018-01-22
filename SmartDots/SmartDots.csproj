@@ -257,6 +257,7 @@
     <Compile Include="Model\Smartdots\Quality.cs" />
     <Compile Include="Model\Smartdots\Sample.cs" />
     <Compile Include="Model\Smartdots\User.cs" />
+    <Compile Include="publish\temp.cs" />
     <Compile Include="Service References\ServiceReferenceBroadCast\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
