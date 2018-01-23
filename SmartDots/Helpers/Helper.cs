@@ -20,22 +20,22 @@ namespace SmartDots.Helpers
                 new WinUIMessageBoxService().Show(message, caption, msgBoxButton, img);
 
             });
-            
 
-            //try
-            //{
-            //    using (StreamWriter writer = new StreamWriter(@"\\clo.be\dfs\Data\data_d1\software\smartdots\errorlogs.txt", true))
-            //    {
-            //        writer.WriteLine(DateTime.Now + Environment.NewLine + "Computer: " + Environment.MachineName + Environment.NewLine +
-            //            "User: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString() + Environment.NewLine +
-            //            "Version: " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version + Environment.NewLine +
-            //            message + Environment.NewLine + e?.ToString() + Environment.NewLine);
-            //    }
-            //}
-            //catch (Exception)
-            //{
 
-            //}
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(@"\\clo.be\dfs\Data\data_d1\software\smartdots\errorlogs.txt", true))
+                {
+                    writer.WriteLine(DateTime.Now + Environment.NewLine + "Computer: " + Environment.MachineName + Environment.NewLine +
+                        "User: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString() + Environment.NewLine +
+                        "Version: " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version + Environment.NewLine +
+                        message + Environment.NewLine + e?.ToString() + Environment.NewLine);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         public static object ConvertType(object sourceObject, Type targetType)

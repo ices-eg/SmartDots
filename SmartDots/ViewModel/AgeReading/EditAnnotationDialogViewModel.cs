@@ -120,9 +120,14 @@ namespace SmartDots.ViewModel
             get
             {
                 if (String.IsNullOrWhiteSpace(WebAPI.Connection)) return false;
+                if (AgeReadingViewModel == null) return false;
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return false;
                 if (Annotation == null) return false;
                 if (Quality != null && Quality.ID != Qualities.FirstOrDefault(x => x.Code == "AQ1").ID && WebAPI.Settings.RequireAq1ForApproval) return false;
-                return AnalysisParameter?.ID != null || !WebAPI.Settings.RequireParamForApproval;
+                if (AnalysisParameter?.ID == null && WebAPI.Settings.RequireParamForApproval) return false;
+                
+                return true;
+
             }
         }
 

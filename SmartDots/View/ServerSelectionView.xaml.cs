@@ -523,7 +523,7 @@ namespace SmartDots.View
                     FieldUser.Visibility = Visibility.Visible;
                     FieldPassword.Visibility = Visibility.Visible;
                     ButtonToken.Visibility = Visibility.Collapsed;
-                    FieldUser.MinWidth = 330;
+                    //FieldUser.MinWidth = 330;
                     break;
                 case AuthToken:
                     LabelUser.Content = "Token";
@@ -531,8 +531,8 @@ namespace SmartDots.View
                     LabelPassword.Visibility = Visibility.Collapsed;
                     FieldUser.Visibility = Visibility.Visible;
                     FieldPassword.Visibility = Visibility.Collapsed;
-                    ButtonToken.Visibility = Visibility.Visible;
-                    FieldUser.MinWidth = 210;
+                    //ButtonToken.Visibility = Visibility.Visible;
+                    //FieldUser.MinWidth = 210;
                     break;
                 default:
                     LabelUser.Visibility = Visibility.Collapsed;
@@ -540,7 +540,7 @@ namespace SmartDots.View
                     FieldUser.Visibility = Visibility.Collapsed;
                     FieldPassword.Visibility = Visibility.Collapsed;
                     ButtonToken.Visibility = Visibility.Collapsed;
-                    FieldUser.MinWidth = 330;
+                    //FieldUser.MinWidth = 330;
                     break;
             }
         }

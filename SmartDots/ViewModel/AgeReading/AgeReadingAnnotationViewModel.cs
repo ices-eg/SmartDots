@@ -184,11 +184,9 @@ namespace SmartDots.ViewModel
                 //if(WorkOffline) return false; //todo yann
                 if (String.IsNullOrWhiteSpace(WebAPI.Connection)) return false;
                 if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return false;
-                if (WorkingAnnotation == null) return false;
-                if (WorkingAnnotation.QualityID == null) return false;
-                if (WorkingAnnotation.QualityID != Qualities.FirstOrDefault(x => x.Code == "AQ1").ID && WebAPI.Settings.RequireAq1ForApproval) return false;
-                if (WorkingAnnotation.ParameterID == null && WebAPI.Settings.RequireParamForApproval) return false;
-                return !WorkingAnnotation.IsApproved;
+                if (WorkingAnnotation?.QualityID != Qualities.FirstOrDefault(x => x.Code == "AQ1").ID && WebAPI.Settings.RequireAq1ForApproval) return false;
+                if (WorkingAnnotation?.ParameterID == null && WebAPI.Settings.RequireParamForApproval) return false;
+                return WorkingAnnotation != null && !WorkingAnnotation.IsApproved;
             }
             
         }
