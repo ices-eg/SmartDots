@@ -20,7 +20,7 @@
     <SccProvider>SAK</SccProvider>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetFrameworkProfile />
-    <PublishUrl>C:\Users\kdecoster\source\repos\SmartDots\SmartDots\dev\</PublishUrl>
+    <PublishUrl>C:\Users\kdecoster\source\repos\SmartDots\SmartDots\publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -30,8 +30,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>https://raw.githubusercontent.com/ices-eg/SmartDots/master/SmartDots/dev/</InstallUrl>
-    <UpdateUrl>https://raw.githubusercontent.com/ices-eg/SmartDots/master/SmartDots/dev/</UpdateUrl>
+    <InstallUrl>https://raw.githubusercontent.com/ices-eg/SmartDots/master/SmartDots/publish/</InstallUrl>
+    <UpdateUrl>https://raw.githubusercontent.com/ices-eg/SmartDots/master/SmartDots/publish/</UpdateUrl>
     <ProductName>SmartDots</ProductName>
     <PublisherName>ILVO</PublisherName>
     <MinimumRequiredVersion>1.3.0.44</MinimumRequiredVersion>
