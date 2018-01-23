@@ -257,7 +257,7 @@ namespace SmartDots.ViewModel
             }
             catch (Exception e)
             {
-                Helper.ShowWinUIMessageBox(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, e);
+                //Helper.ShowWinUIMessageBox(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, e);
                 return false;
             }
         }
