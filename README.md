@@ -9,7 +9,7 @@ https://github.com/ices-eg/SmartDots/raw/master/SmartDots/publish/setup.exe
 
 2. Login with the following settings:
 
-Web API: http://webapi.smartfisheries.be/api/demo
+Web API: https://webapi.smartfisheries.be/api/demo
 
 Security: User credentials
 
