@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using AForge.Imaging;
 using AForge.Imaging.Filters;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
@@ -26,6 +27,7 @@ using ColorConverter = System.Windows.Media.ColorConverter;
 using Image = System.Windows.Controls.Image;
 using Line = System.Windows.Shapes.Line;
 using Point = System.Windows.Point;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace SmartDots.ViewModel
 {
@@ -533,14 +535,16 @@ namespace SmartDots.ViewModel
             AgeReadingViewModel.AgeReadingAnnotationViewModel.SetAge(age);
         }
 
-        public async void GetPixelLength(string uri)
+        public async void GetPixelLength()
         {
             try
             {
                 var oldvalue = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale;
                 AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = false;
 
-                PixelLength = await System.Threading.Tasks.Task.Run( () => CalculatePixelLength(OriginalImage));
+                //PixelLength = await System.Threading.Tasks.Task.Run( () => CalculatePixelLengthOld(OriginalImage));
+                PixelLength = await Task.Run( () => CalculatePixelLength(OriginalImage, 128));
+                if(PixelLength == 0) PixelLength = await Task.Run(() => CalculatePixelLength(OriginalImage, 20));
 
                 string scaleText = await System.Threading.Tasks.Task.Run(() => FindScaleText());
                 scaleText = Regex.Replace(scaleText, " ", "");
@@ -569,11 +573,17 @@ namespace SmartDots.ViewModel
                     factor = 0.001;
                     resultIndex = scaleText.IndexOf("um");
                 }
+                else if (scaleText.Contains("m"))
+                {
+                    factor = 1;
+                    resultIndex = scaleText.IndexOf("m");
+                }
 
                 scaleText = scaleText.Substring(0, resultIndex);
                 decimal number = 0;
 
                 scaleText = scaleText.Replace(',', '.');
+                scaleText = new String(scaleText.Where(Char.IsDigit).ToArray());
                 number = decimal.Parse(scaleText, CultureInfo.InvariantCulture);
                 PixelLength = (decimal) (PixelLength/number/(decimal) factor);
                 var newvalue = PixelLength;
@@ -641,11 +651,11 @@ namespace SmartDots.ViewModel
                     Application.Current.Dispatcher.Invoke((Action) delegate
                     {
 
-                        Invert filter = new Invert();
+                        //Invert filter = new Invert();
                         Bitmap bitmapimage =
-                            AForge.Imaging.Image.Clone(new Bitmap(BitmapConverter.BitmapImage2Bitmap(OriginalImage)),
+                            AForge.Imaging.Image.Clone(BitmapConverter.PreProcessForScaleDetection(OriginalImage, 128),
                                 System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                        filter.ApplyInPlace(bitmapimage);
+                        //filter.ApplyInPlace(bitmapimage);
                         using (var img = PixConverter.ToPix(bitmapimage))
                         {
                             using (
@@ -667,7 +677,7 @@ namespace SmartDots.ViewModel
             return ocrtext;
         }
 
-        public decimal CalculatePixelLength(BitmapImage image)
+        public decimal CalculatePixelLengthOld(BitmapImage image)
         {
             var pixels = GetPixels(image);
             decimal milimeterPixels = 0;
@@ -726,6 +736,68 @@ namespace SmartDots.ViewModel
             {
                 return 0;
             }
+        }
+
+        public decimal CalculatePixelLength(BitmapImage image, int threshold)
+        {
+            decimal milimeterPixels = 0;
+            var newImage = BitmapConverter.PreProcessForScaleDetection(image,threshold);
+            
+            
+            // create an instance of blob counter algorithm
+            BlobCounterBase bc = new BlobCounter();
+            // set filtering options
+            bc.FilterBlobs = true;
+            bc.MinWidth = 40;
+            bc.MinHeight = 0;
+            bc.MaxHeight = 70;
+            bc.MaxWidth = newImage.Width / 3;
+            // set ordering options
+            bc.ObjectsOrder = ObjectsOrder.Size;
+            // process binary image
+            bc.ProcessImage(newImage);
+            List<Blob> blobs = bc.GetObjectsInformation().ToList();
+            blobs = blobs.Where(x => (x.Rectangle.Width / x.Rectangle.Height) > 4).OrderByDescending(x => x.Rectangle.Width / x.Rectangle.Height).ToList();
+            // extract the biggest blob
+            if (blobs.Count > 0)
+            {
+                milimeterPixels = blobs[0].Rectangle.Width;
+                try
+                {
+                    if (milimeterPixels == 0) return 0;
+                    var rect = new System.Drawing.Rectangle();
+                    rect.X = blobs[0].Rectangle.X;
+                    if (blobs[0].Rectangle.Y < 70) rect.Y = 0;
+                    else
+                    {
+                        rect.Y = blobs[0].Rectangle.Y - 70;
+                    }
+                    if (blobs[0].Rectangle.Y + 70 > newImage.Height)
+                    {
+
+                        rect.Height = 70 + newImage.Height - blobs[0].Rectangle.Y;
+                    }
+                    else
+                    {
+                        rect.Height = 140;
+                    }
+                    rect.Width = (int)milimeterPixels;
+                    if (rect.Y + rect.Height > newImage.Height) return 0;
+                    if (rect.X + rect.Width > newImage.Width) return 0;
+                    ScaleRectangle = rect;
+                    return milimeterPixels;
+                }
+                catch (Exception e)
+                {
+                    return 0;
+                }
+            }
+            else
+            {
+                return 0;
+            }
+            
+
         }
 
         public struct PixelColor
@@ -1663,7 +1735,7 @@ namespace SmartDots.ViewModel
                 try
                 {
 
-                        GetPixelLength(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFileLocation);
+                        GetPixelLength();
 
                     
                 }

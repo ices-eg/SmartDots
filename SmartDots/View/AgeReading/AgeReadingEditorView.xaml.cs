@@ -31,7 +31,7 @@ namespace SmartDots.View
 
             //DeleteBtn.Checked += DeleteBtn_Checked;
 
-            ScaleButton.PrimaryButtonClick += (sender, args) => ageReadingEditorViewModel.AutoMeasureScale();
+            ScaleButton.PrimaryButtonClick += (sender, args) => ageReadingEditorViewModel.AutoMeasureScale(true);
             ScaleButton.ContextButtonClick += (sender, args) => ScaleContextMenu.ShowPopup(ScaleButton);
             ContextMeasureAutomatic.ItemClick += (sender, args) => ageReadingEditorViewModel.AutoMeasureScale(true);
             ContextMeasureManual.ItemClick += (sender, args) => ageReadingEditorViewModel.ManualMeasureScale();
