@@ -17,7 +17,7 @@ User: userX   (Where X is any number from 0-30. Example: user4)
 
 Password: pwdX (Where X is the same number used for the user. Example: pwd4)
 
-![alt tag](http://193.190.112.136/smartdots/smartdots-login-demo.PNG "SmartDots login")
+![alt tag](http://193.190.112.136/smartdots/smartdots-auth-demo.PNG "SmartDots login")
 
 3. Press connect. If authentication succeeded, you will see a list of Analyses/Activities/Events
 
