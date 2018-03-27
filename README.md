@@ -1,7 +1,7 @@
 # SmartDots
 SmartDots is the otolith reading software developed by ILVO that ICES is collaborating on
 
-# Demo
+## Demo
 You can try out the features of SmartDots in a demo environment.
 
 ### Download the setup file and install the application. 
