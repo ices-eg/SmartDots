@@ -542,11 +542,12 @@ namespace SmartDots.ViewModel
                 var oldvalue = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale;
                 AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = false;
 
-                //PixelLength = await System.Threading.Tasks.Task.Run( () => CalculatePixelLengthOld(OriginalImage));
+                
                 PixelLength = await Task.Run( () => CalculatePixelLength(OriginalImage, 128));
                 if(PixelLength == 0) PixelLength = await Task.Run(() => CalculatePixelLength(OriginalImage, 20));
+                if (PixelLength == 0) PixelLength = await Task.Run( () => CalculatePixelLengthOld(OriginalImage));
 
-                string scaleText = await System.Threading.Tasks.Task.Run(() => FindScaleText());
+                    string scaleText = await System.Threading.Tasks.Task.Run(() => FindScaleText());
                 scaleText = Regex.Replace(scaleText, " ", "");
                 if (scaleText.StartsWith(".")) scaleText = scaleText.Substring(1, scaleText.Length - 1);
                 if (scaleText.StartsWith(",")) scaleText = scaleText.Substring(1, scaleText.Length - 1);
@@ -648,8 +649,8 @@ namespace SmartDots.ViewModel
                     engine.SetVariable("textord_min_xheight", 15);
                     engine.SetVariable("textord_max_noise_size", 10);
                     engine.SetVariable("tessedit_char_whitelist", "0123456789uµmc.,");
-                    engine.SetVariable("classify_font_name", "Arial");
-                    engine.SetVariable("x_ht_acceptance_tolerance", 3);
+                    //engine.SetVariable("classify_font_name", "Arial");
+                    //engine.SetVariable("x_ht_acceptance_tolerance", 3);
 
                     Application.Current.Dispatcher.Invoke((Action) delegate
                     {

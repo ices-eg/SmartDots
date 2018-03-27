@@ -38,7 +38,7 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>59</ApplicationRevision>
+    <ApplicationRevision>60</ApplicationRevision>
     <ApplicationVersion>1.3.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -510,114 +510,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\AForge.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\AForge.Imaging.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\AForge.Math.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DefaultLayout.xml.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.CodeParser.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Data.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Mvvm.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Office.v17.1.Core.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Pdf.v17.1.Core.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Printing.v17.1.Core.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.RichEdit.v17.1.Core.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.RichEdit.v17.1.Export.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Controls.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Core.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Docking.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.DocumentViewer.v17.1.Core.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Grid.v17.1.Core.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Grid.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Layout.v17.1.Core.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.LayoutControl.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Printing.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Ribbon.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Themes.HybridApp.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Themes.Office2016Colorful.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Themes.Office2016White.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\DevExpress.Xpf.Themes.Seven.v17.1.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Data.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Office.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Pdf.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Printing.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.RichEdit.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Xpf.Controls.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Xpf.Core.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Xpf.Docking.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Xpf.DocumentViewer.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Xpf.Grid.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Xpf.LayoutControl.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Xpf.Printing.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\de\DevExpress.Xpf.Ribbon.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Data.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Office.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Pdf.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Printing.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.RichEdit.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Xpf.Controls.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Xpf.Core.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Xpf.Docking.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Xpf.DocumentViewer.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Xpf.Grid.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Xpf.LayoutControl.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Xpf.Printing.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\es\DevExpress.Xpf.Ribbon.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\External\AForge.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\External\AForge.Imaging.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\External\AForge.Math.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\External\Microsoft.Expression.Interactions.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\External\Newtonsoft.Json.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\External\System.Windows.Interactivity.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\External\Tesseract.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Data.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Office.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Pdf.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Printing.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.RichEdit.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Xpf.Controls.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Xpf.Core.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Xpf.Docking.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Xpf.DocumentViewer.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Xpf.Grid.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Xpf.LayoutControl.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Xpf.Printing.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ja\DevExpress.Xpf.Ribbon.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\Microsoft.Expression.Interactions.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\Newtonsoft.Json.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Data.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Office.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Pdf.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Printing.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.RichEdit.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Xpf.Controls.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Xpf.Core.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Xpf.Docking.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Xpf.DocumentViewer.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Xpf.Grid.v17.1.Core.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Xpf.LayoutControl.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Xpf.Printing.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\ru\DevExpress.Xpf.Ribbon.v17.1.resources.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\smartdots icon.ico.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\SmartDots.application" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\SmartDots.exe.config.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\SmartDots.exe.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\SmartDots.exe.manifest" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\System.Net.Http.Formatting.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\System.Windows.Interactivity.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\tessdata\eng.cube.bigrams.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\tessdata\eng.cube.fold.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\tessdata\eng.cube.lm.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\tessdata\eng.cube.nn.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\tessdata\eng.cube.params.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\tessdata\eng.cube.size.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\tessdata\eng.cube.word-freq.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\tessdata\eng.tesseract_cube.nn.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\tessdata\eng.traineddata.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\Tesseract.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\x64\liblept172.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\x64\libtesseract304.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\x86\liblept172.dll.deploy" />
-    <None Include="publish\Application Files\SmartDots_1_3_0_58\x86\libtesseract304.dll.deploy" />
     <None Include="Service References\ServiceReferenceBroadCast\BroadCastService.wsdl">
       <SubType>Designer</SubType>
     </None>
@@ -751,6 +643,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dev\" />
+    <Folder Include="publish\Application Files\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
