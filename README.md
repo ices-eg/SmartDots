@@ -20,11 +20,11 @@ Password: pwdX (Where X is the same number used for the user. Example: pwd4)
 
 ![alt tag](http://193.190.112.136/smartdots/smartdots-auth-demo.PNG "SmartDots login")
 
-### Press connect. 
+### Press connect
 If authentication succeeded, you will see a list of Analyses/Activities/Events
 
 ![alt tag](http://193.190.112.136/smartdots/smartdots-activities-demo.PNG "SmartDots login")
 
-### Doubleclick any row (or select and press Age Reading at the bottom) to go to the Age Reading screen
+### Double-Click any row (or select and press Age Reading at the bottom) to go to the Age Reading screen
 
 ![alt tag](http://193.190.112.136/smartdots/smartdots-agereading-demo.PNG "SmartDots login")
