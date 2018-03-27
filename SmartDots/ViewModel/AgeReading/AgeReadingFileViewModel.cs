@@ -145,10 +145,11 @@ namespace SmartDots.ViewModel
             get { return currentFolder; }
             set
             {
+                LoadingFolder = true;
                 Files?.Clear();
                 currentFolder = value;
-                loadingfolder = true;
                 Helper.DoAsync(LoadImages);
+                AgeReadingViewModel.AgeReadingView.Opacity = 1;
                 RaisePropertyChanged("CurrentFolder");
             }
         }
@@ -181,7 +182,7 @@ namespace SmartDots.ViewModel
             set { changingFile = value; }
         }
 
-        public bool LoadingFolder { get; set; }
+        public bool LoadingFolder { get { return loadingfolder; } set { loadingfolder = value; } }
 
         public Visibility CanAttachDetachSampleVisibility
         {
@@ -402,7 +403,8 @@ namespace SmartDots.ViewModel
             {
                 //savechecks
                 if (!AgeReadingViewModel.AgeReadingAnnotationViewModel.EditAnnotation())
-                    AgeReadingViewModel.SaveAnnotations();
+                    //AgeReadingViewModel.SaveAnnotations();
+                    return;
             }
 
             else
@@ -413,8 +415,8 @@ namespace SmartDots.ViewModel
 
         public void FileList_FocusedRowChanged(object sender, FocusedRowChangedEventArgs e)
         {
-            if(!loadingfolder) LoadNewFile();
-            loadingfolder = false;
+            if(!LoadingFolder) LoadNewFile();
+            LoadingFolder = false;
         }
 
         public void LoadNewFile()
@@ -562,7 +564,7 @@ namespace SmartDots.ViewModel
                 var filesResult = WebAPI.GetFiles(AgeReadingViewModel.Analysis.ID, fullImageNames);
                 if (!filesResult.Succeeded)
                 {
-                    Helper.ShowWinUIMessageBox("Error loading Files from Web API", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Helper.ShowWinUIMessageBox("Error loading Files from Web API\n" + filesResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 if (!WebAPI.Settings.ScanFolder)
@@ -596,6 +598,7 @@ namespace SmartDots.ViewModel
             {
                 AgeReadingViewModel.CloseSplashScreen();
                 AgeReadingViewModel.FirstLoad = false;
+                LoadingFolder = false;
             }
         }
 

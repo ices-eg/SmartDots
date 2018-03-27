@@ -101,7 +101,6 @@ namespace SmartDots.ViewModel
             SmartDotsControl.AgeReadingViewModel.AgeReadingFileViewModel.UseSampleStatus = WebAPI.Settings.UseSampleStatus;
             SmartDotsControl.AgeReadingViewModel.AgeReadingAnnotationViewModel.CanApproveAnnotation = WebAPI.Settings.CanApproveAnnotation;
             SmartDotsControl.AgeReadingViewModel.EditAnnotationDialogViewModel.CanApproveAnnotation = WebAPI.Settings.CanApproveAnnotation ? Visibility.Visible : Visibility.Collapsed;
-
             var newWindow = !WebAPI.Settings.OpenSocket;
             if (!_isListening && !newWindow)
             {

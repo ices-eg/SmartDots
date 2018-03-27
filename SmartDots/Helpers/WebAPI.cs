@@ -174,11 +174,7 @@ namespace SmartDots.Helpers
         public static WebApiResult<DtoUser> Authenticate(DtoUserAuthentication userauthentication)
         {
             var result = PerformPost<DtoUser, DtoUserAuthentication>("authenticate", userauthentication);
-            if (!string.IsNullOrWhiteSpace(result.ErrorMessage)) result.ErrorMessage = "Authentication failed.";
-            else
-            {
-                CurrentUser = (User)Helper.ConvertType(result.Result, typeof(User));
-            }
+            if (string.IsNullOrWhiteSpace(result.ErrorMessage)) CurrentUser = (User)Helper.ConvertType(result.Result, typeof(User));
             return result;
         }
 

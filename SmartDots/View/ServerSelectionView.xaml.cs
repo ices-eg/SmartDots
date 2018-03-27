@@ -150,6 +150,8 @@ namespace SmartDots.View
         public bool LoadSettings()
         {
             var settings = WebAPI.GetSettings();
+            settings.Result.CanBrowseFolder = false;
+            settings.Result.CanAttachDetachSample = false;
             if (!settings.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error loading SmartDots settings from the Web API", "Error",
@@ -226,7 +228,12 @@ namespace SmartDots.View
                     break;
             }
 
-            return WebAPI.Authenticate(auth);
+            var dtoUser = WebAPI.Authenticate(auth);
+            if (!dtoUser.Succeeded)
+            {
+                Helper.ShowWinUIMessageBox(dtoUser.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            return dtoUser;
         }
 
         private void LoadGrid()
@@ -348,7 +355,7 @@ namespace SmartDots.View
         {
             Fields.Visibility = Visibility.Collapsed;
             Analyses.Visibility = Visibility.Visible;
-            MainWindowViewModel.HeaderInfo = "Activities overview";
+            MainWindowViewModel.HeaderInfo = WebAPI.Settings.EventAlias + " overview";
             AnalysesActions.Visibility = Visibility.Visible;
             Logo.Visibility = Visibility.Collapsed;
 

@@ -443,7 +443,7 @@ namespace SmartDots.ViewModel
             AgeReadingEditorViewModel.SaveUserPreferences();
             if (AgeReadingAnnotationViewModel.WorkingAnnotation != null && AgeReadingAnnotationViewModel.WorkingAnnotation.QualityID == null && !AgeReadingAnnotationViewModel.WorkingAnnotation.IsFixed)
             {
-                if (!AgeReadingAnnotationViewModel.EditAnnotation()) SaveAnnotations();
+                if (!AgeReadingAnnotationViewModel.EditAnnotation()) return; //SaveAnnotations();
             }
             else if (AgeReadingAnnotationViewModel.Outcomes.Any())
             {
@@ -457,7 +457,8 @@ namespace SmartDots.ViewModel
             AgeReadingEditorViewModel.SaveUserPreferences();
             if (AgeReadingEditorViewModel.ShapeChangeFlag && AgeReadingAnnotationViewModel.WorkingAnnotation != null)
             {
-                if (AgeReadingAnnotationViewModel.EditAnnotation() && AgeReadingAnnotationViewModel.Outcomes.Any()) SaveAnnotations();
+                if (AgeReadingAnnotationViewModel.EditAnnotation() && AgeReadingAnnotationViewModel.Outcomes.Any())
+                    SaveAnnotations();
                 else
                 {
                     return;
@@ -536,8 +537,9 @@ namespace SmartDots.ViewModel
         public void ReturnBtn_Click(object sender, RoutedEventArgs e)
         {
             Save();
+            AgeReadingAnnotationViewModel.WorkingAnnotation = null;
             AgeReadingView.MainWindowViewModel.SetActiveControl(AgeReadingView.MainWindowViewModel.ServerSelectionView);
-            AgeReadingView.MainWindowViewModel.HeaderInfo = "Analyses overview";
+            AgeReadingView.MainWindowViewModel.HeaderInfo = WebAPI.Settings.EventAlias + " overview";
             AgeReadingView.Opacity = 0;
             AgeReadingView.WinFormBrightness.Visibility = Visibility.Hidden;
             AgeReadingView.WinFormRedness.Visibility = Visibility.Hidden;

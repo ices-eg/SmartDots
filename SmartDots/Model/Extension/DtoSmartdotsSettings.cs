@@ -12,5 +12,6 @@
         public bool ScanFolder { get; set; }
         public bool AnnotateWithoutSample { get; set; }
         public bool OpenSocket { get; set; }
+        public string EventAlias { get; set; }
     }
 }
