@@ -95,6 +95,7 @@ namespace SmartDots.ViewModel
 
         public void ApplySettings()
         {
+            if (WebAPI.Settings.EventAlias == null) WebAPI.Settings.EventAlias = "Event";
             SmartDotsControl.AgeReadingViewModel.AgeReadingFileViewModel.CanAttachDetachSampleVisibility = WebAPI.Settings.CanAttachDetachSample ? Visibility.Visible : Visibility.Collapsed;
             //SmartDotsControl.AgeReadingViewModel.AgeReadingFileViewModel.CanBrowseFolderVisibility = WebAPI.Settings.CanBrowseFolder ? Visibility.Visible : Visibility.Collapsed;
             ServerSelectionView.ButtonFolder.Visibility = WebAPI.Settings.CanBrowseFolder ? Visibility.Visible : Visibility.Collapsed;

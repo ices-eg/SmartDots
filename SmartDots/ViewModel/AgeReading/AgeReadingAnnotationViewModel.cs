@@ -236,6 +236,8 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public bool AllowEditing => AgeReadingViewModel?.AgeReadingFileViewModel.SelectedFile != null && !AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly;
+
         public Dictionary<string, SolidColorBrush> AQColors { get; set; } = new Dictionary<string, SolidColorBrush>();
 
         public List<FormatCondition> ConditionalRowStyles
@@ -460,6 +462,7 @@ namespace SmartDots.ViewModel
             //RaisePropertyChanged("ApproveVisibility");
             //RaisePropertyChanged("DisApproveVisibility");
             RaisePropertyChanged("CanToggleApprove");
+            RaisePropertyChanged("AllowEditing");
         }
 
         public void GridControl_OnSelectionChanged(object sender, GridSelectionChangedEventArgs e)
@@ -526,49 +529,62 @@ namespace SmartDots.ViewModel
 
         //public void AnnotationList_ShowingEditor(object sender, ShowingEditorEventArgs e)
         //{
-        //    if (e.Column.FieldName == "IsApproved")
+        //    if (WorkingAnnotation == null)
         //    {
-        //        var newValue = !(bool)e.Value;
-        //        var an = Outcomes.FirstOrDefault(x => x.ID == ((Annotation)e.Row).ID);
-        //        if (an == null)
-        //        {
-        //            e.Cancel = true;
-        //            return;
-        //        }
-        //        if (an.QualityID != Qualities.FirstOrDefault(x => x.Code == "AQ1").ID && WebAPI.Settings.RequireAq1ForApproval && newValue)
-        //        {
-        //            new WinUIMessageBoxService().Show("Can not approve an Annotation without an AQ1 value", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        //            e.Cancel = true;
-        //            return;
-        //        }
-        //        if (newValue)
-        //        {
-        //            foreach (var outcome in Outcomes)
-        //            {
-        //                if (outcome.IsApproved) outcome.IsChanged = true;
-        //                outcome.IsApproved = false;
-        //            }
-
-        //            an.IsApproved = true;
-        //            an.IsChanged = true;
-        //        }
-        //        else
-        //        {
-        //            an.IsApproved = false;
-        //            an.IsChanged = true;
-        //        }
-        //        AgeReadingViewModel.SaveAnnotations();
-
-        //        //Helper.DoAsync(SetSampleStatus);
-
-        //        //hack
-        //        e.Column.AllowFocus = false;
-        //        e.Column.AllowFocus = true;
-        //        if (newValue)
-        //        {
-        //            AgeReadingViewModel.AgeReadingAnnotationView.AnnotationList.AllowEditing = false;
-        //        }
+        //        e.Cancel = true;
+        //        return;
         //    }
+        //    var an = Outcomes.FirstOrDefault(x => x.ID == ((Annotation)e.Row).ID);
+        //    if (an != null && an.IsApproved)
+        //    {
+        //        e.Cancel = true;
+        //        return;
+        //    }
+            
+
+            //if (e.Column.FieldName == "IsApproved")
+            //{
+            //    var newValue = !(bool)e.Value;
+            //    var an = Outcomes.FirstOrDefault(x => x.ID == ((Annotation)e.Row).ID);
+            //    if (an == null)
+            //    {
+            //        e.Cancel = true;
+            //        return;
+            //    }
+            //    if (an.QualityID != Qualities.FirstOrDefault(x => x.Code == "AQ1").ID && WebAPI.Settings.RequireAq1ForApproval && newValue)
+            //    {
+            //        new WinUIMessageBoxService().Show("Can not approve an Annotation without an AQ1 value", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //        e.Cancel = true;
+            //        return;
+            //    }
+            //    if (newValue)
+            //    {
+            //        foreach (var outcome in Outcomes)
+            //        {
+            //            if (outcome.IsApproved) outcome.IsChanged = true;
+            //            outcome.IsApproved = false;
+            //        }
+
+                //        an.IsApproved = true;
+                //        an.IsChanged = true;
+                //    }
+                //    else
+                //    {
+                //        an.IsApproved = false;
+                //        an.IsChanged = true;
+                //    }
+                //    AgeReadingViewModel.SaveAnnotations();
+
+                //    //Helper.DoAsync(SetSampleStatus);
+
+                //    //hack
+                //    e.Column.AllowFocus = false;
+                //    e.Column.AllowFocus = true;
+                //    if (newValue)
+                //    {
+                //        AgeReadingViewModel.AgeReadingAnnotationView.AnnotationList.AllowEditing = false;
+                //    }
+                //}
         //}
         public void TogglePinAnnotation()
         {
@@ -642,7 +658,7 @@ namespace SmartDots.ViewModel
             WorkingAnnotation.IsChanged = true;
 
             AgeReadingViewModel.SaveAnnotations();
-            AgeReadingViewModel.AgeReadingAnnotationView.AnnotationList.AllowEditing = false;
+            //AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly = true;
             AgeReadingViewModel.AgeReadingEditorViewModel.UndoRedo.EmptyStacks();
             RefreshActions();
             AgeReadingViewModel.AgeReadingEditorViewModel.UpdateButtons();
@@ -653,6 +669,7 @@ namespace SmartDots.ViewModel
             WorkingAnnotation.IsApproved = false;
             WorkingAnnotation.IsChanged = true;
             AgeReadingViewModel.SaveAnnotations();
+            //AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly = false;
             RefreshActions();
         }
 

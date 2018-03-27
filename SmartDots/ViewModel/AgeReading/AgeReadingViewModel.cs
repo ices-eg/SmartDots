@@ -333,6 +333,7 @@ namespace SmartDots.ViewModel
                     selectedFile.Sample = file.Sample;
                     selectedFile.AnnotationCount = file.AnnotationCount;
                     selectedFile.IsReadOnly = file.IsReadOnly;
+                    selectedFile.Scale = file.Scale;
                     selectedFile.FetchProps();
                 }
                 AgeReadingAnnotationViewModel.UpdateList();

@@ -211,13 +211,13 @@ namespace SmartDots.Helpers
             {
                 Invert filter = new Invert();
                 filter.ApplyInPlace(newImage);
-                newImage.Save("newImage.jpg");
+                //newImage.Save("newImage.jpg");
             }
             // create filter
             Threshold filter2 = new Threshold(threshold);
             // apply the filter
             filter2.ApplyInPlace(newImage);
-            newImage.Save("bw.jpg");
+            //newImage.Save("bw.jpg");
             return newImage;
         }
     }

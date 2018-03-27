@@ -150,8 +150,6 @@ namespace SmartDots.View
         public bool LoadSettings()
         {
             var settings = WebAPI.GetSettings();
-            settings.Result.CanBrowseFolder = false;
-            settings.Result.CanAttachDetachSample = false;
             if (!settings.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error loading SmartDots settings from the Web API", "Error",

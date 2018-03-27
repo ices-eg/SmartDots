@@ -70,6 +70,7 @@ namespace SmartDots.ViewModel
             file.Sample = tempfile.Sample;
             file.SampleNumber = tempfile.SampleNumber;
             file.IsReadOnly = tempfile.IsReadOnly;
+            file.Scale = tempfile.Scale;
             file.FetchProps();
             AgeReadingViewModel.AgeReadingSampleViewModel.SetSample();
 

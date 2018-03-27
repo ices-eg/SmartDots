@@ -646,8 +646,11 @@ namespace SmartDots.ViewModel
                 {
 
                     engine.SetVariable("textord_min_xheight", 15);
-                    engine.SetVariable("textord_max_noise_size", 5);
+                    engine.SetVariable("textord_max_noise_size", 10);
                     engine.SetVariable("tessedit_char_whitelist", "0123456789uµmc.,");
+                    engine.SetVariable("classify_font_name", "Arial");
+                    engine.SetVariable("x_ht_acceptance_tolerance", 3);
+
                     Application.Current.Dispatcher.Invoke((Action) delegate
                     {
 
