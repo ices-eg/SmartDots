@@ -331,7 +331,7 @@ namespace SmartDots.ViewModel
                 if (selectedFile != null)
                 {
                     selectedFile.Sample = file.Sample;
-                    selectedFile.AnnotationCount = file.AnnotationCount;
+                    //selectedFile.AnnotationCount = file.AnnotationCount; this is not needed here
                     selectedFile.IsReadOnly = file.IsReadOnly;
                     selectedFile.Scale = file.Scale;
                     selectedFile.FetchProps();

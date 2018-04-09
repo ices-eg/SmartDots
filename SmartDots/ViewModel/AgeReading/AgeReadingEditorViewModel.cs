@@ -1762,8 +1762,9 @@ namespace SmartDots.ViewModel
             AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale = null;
             AgeReadingViewModel.AgeReadingFileView.FileGrid.RefreshData();
             var dtofile = (DtoFile)Helper.ConvertType(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile, typeof(DtoFile));
-            if (!WebAPI.UpdateFile(dtofile).Succeeded)
-                Helper.ShowWinUIMessageBox("Error saving File to Web API", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            var deleteResult = WebAPI.UpdateFile(dtofile);
+            if (!deleteResult.Succeeded)
+                Helper.ShowWinUIMessageBox(deleteResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         public void ClearScaleLine()

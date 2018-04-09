@@ -84,6 +84,7 @@ namespace SmartDots.Model
         {
             if (WebAPI.Settings.UseSampleStatus)
             {
+                if (Sample != null) SampleID = Sample.Id;
                 Status = SampleID != null ? new StatusIcon((Color)ColorConverter.ConvertFromString(Sample?.StatusColor), Sample?.StatusCode, (int)Sample?.StatusRank) : new StatusIcon(Color.FromRgb(200, 200, 200), "No Sample Linked", 0);
             }
             
