@@ -575,7 +575,11 @@ namespace SmartDots.ViewModel
                 {
                     foreach (string image in fullImageNames)
                     {
-                        var dtoFile = filesResult.Result.FirstOrDefault(x => x.Filename == image);
+                        var dtoFile = filesResult.Result.FirstOrDefault(x => x.Filename.ToLower() == image.ToLower());
+                        if (dtoFile == null)
+                        {
+                            
+                        }
                         var file = (File)Helper.ConvertType(dtoFile, typeof(File));
                         if (dtoFile.Sample != null) file.Sample = (Sample)Helper.ConvertType(dtoFile.Sample, typeof(Sample));
                         if (file != null)

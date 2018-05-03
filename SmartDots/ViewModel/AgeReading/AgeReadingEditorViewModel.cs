@@ -388,7 +388,7 @@ namespace SmartDots.ViewModel
             {
                 originalImage = value;
                 originalImage.Freeze();
-                if (WebAPI.Settings.AutoMeasureScale && AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale == null)
+                if (WebAPI.Settings.AutoMeasureScale && (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale == null || AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale == 0.0m))
                 {
                     AutoMeasureScale();
                 }
