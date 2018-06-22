@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Deployment.Application;
 using System.Reflection;
 using System.Windows;
 using DevExpress.Xpf.Core;

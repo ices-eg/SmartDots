@@ -411,9 +411,10 @@ namespace SmartDots.ViewModel
                         Helper.ShowWinUIMessageBox("Can not delete a fixed Annotation! " + action, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
-                    if (!WebAPI.DeleteAnnotations(SelectedAnnotations.Select(x => x.ID).ToList()).Succeeded)
+                    var deleteAnnotationsResult = WebAPI.DeleteAnnotations(SelectedAnnotations.Select(x => x.ID).ToList());
+                    if (!deleteAnnotationsResult.Succeeded)
                     {
-                        Helper.ShowWinUIMessageBox("Error deleting Annotations", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Helper.ShowWinUIMessageBox("Error deleting Annotations\n" + deleteAnnotationsResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
                 }

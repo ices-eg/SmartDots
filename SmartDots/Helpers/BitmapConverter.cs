@@ -202,21 +202,26 @@ namespace SmartDots.Helpers
         public static Bitmap PreProcessForScaleDetection(BitmapImage bi, int threshold)
         {
             var temp = BitmapImage2Bitmap(bi);
+            //temp.Save("step1.jpg");
 
             Bitmap newImage = ColorToGrayscale(temp);
+            //newImage.Save("step2.jpg");
 
             float averageBrightness = AverageBrightness(temp);
 
             if (averageBrightness > 0.5)
             {
+                
                 Invert filter = new Invert();
                 filter.ApplyInPlace(newImage);
+                //newImage.Save("step3.jpg");
                 //newImage.Save("newImage.jpg");
             }
             // create filter
             Threshold filter2 = new Threshold(threshold);
             // apply the filter
             filter2.ApplyInPlace(newImage);
+            //newImage.Save("step4.jpg");
             //newImage.Save("bw.jpg");
             return newImage;
         }

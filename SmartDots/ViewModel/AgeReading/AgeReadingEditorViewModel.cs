@@ -596,9 +596,10 @@ namespace SmartDots.ViewModel
                     DtoFile dtofile =
                         (DtoFile)
                         Helper.ConvertType(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile, typeof(DtoFile));
-                    if (!WebAPI.UpdateFile(dtofile).Succeeded)
+                    var updateFileResult = WebAPI.UpdateFile(dtofile);
+                    if (!updateFileResult.Succeeded)
                     {
-                        Helper.ShowWinUIMessageBox("Error saving File to Web API", "Error", MessageBoxButton.OK,
+                        Helper.ShowWinUIMessageBox("Error saving File to Web API\n" + updateFileResult.ErrorMessage, "Error", MessageBoxButton.OK,
                             MessageBoxImage.Error);
                         AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = false;
                         return;
@@ -760,6 +761,7 @@ namespace SmartDots.ViewModel
             bc.ObjectsOrder = ObjectsOrder.Size;
             // process binary image
             bc.ProcessImage(newImage);
+            //newImage.Save("step5.jpg");
             List<Blob> blobs = bc.GetObjectsInformation().ToList();
             blobs = blobs.Where(x => (x.Rectangle.Width / x.Rectangle.Height) > 4).OrderByDescending(x => x.Rectangle.Width / x.Rectangle.Height).ToList();
             // extract the biggest blob
@@ -800,8 +802,6 @@ namespace SmartDots.ViewModel
             {
                 return 0;
             }
-            
-
         }
 
         public struct PixelColor
@@ -1792,9 +1792,10 @@ namespace SmartDots.ViewModel
                 AgeReadingViewModel.AgeReadingFileView.FileGrid.RefreshData();
                 AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = true;
                 DtoFile dtofile = (DtoFile)Helper.ConvertType(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile, typeof(DtoFile));
-                if (!WebAPI.UpdateFile(dtofile).Succeeded)
+                var updateFileResult = WebAPI.UpdateFile(dtofile);
+                if (!updateFileResult.Succeeded)
                 {
-                    Helper.ShowWinUIMessageBox("Error saving File to Web API", "Error", MessageBoxButton.OK,
+                    Helper.ShowWinUIMessageBox("Error saving File to Web API\n" + updateFileResult.ErrorMessage, "Error", MessageBoxButton.OK,
                         MessageBoxImage.Error);
                     return;
                 }

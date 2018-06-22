@@ -80,6 +80,8 @@ namespace SmartDots.View
             FieldAuth.SelectionChanged += Auth_SelectionChanged;
             SizeChanged += ServerSelectionView_SizeChanged;
 
+            VersionLabel.Content = $"v{Helper.Version.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)}";
+
             LoadChoices();
         }
 
@@ -129,8 +131,16 @@ namespace SmartDots.View
 
             if (c.ConnectionSucceeded)
             {
-                if (!LoadSettings()) return;
-                if (!LoadQualities()) return;
+                if (!LoadSettings())
+                {
+                    LabelConnecting.Content = string.Empty;
+                    return;
+                }
+                if (!LoadQualities())
+                {
+                    LabelConnecting.Content = string.Empty;
+                    return;
+                }
                 IsLoggedIn = true;
                 LabelConnecting.Content = string.Empty;
                 Background = Brushes.White;
@@ -152,11 +162,16 @@ namespace SmartDots.View
             var settings = WebAPI.GetSettings();
             if (!settings.Succeeded)
             {
-                Helper.ShowWinUIMessageBox("Error loading SmartDots settings from the Web API", "Error",
+                Helper.ShowWinUIMessageBox("Error loading SmartDots settings from the Web API\n" + settings.ErrorMessage, "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             WebAPI.Settings = settings.Result;
+            if (WebAPI.Settings.MinRequiredVersion > Helper.Version)
+            {
+                Helper.ShowWinUIMessageBox($"The minimum supported version of SmartDots is {WebAPI.Settings.MinRequiredVersion.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)}.\nPlease install the latest version.", "Incompatible version", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
             MainWindowViewModel.ApplySettings();
             return true;
         }
@@ -245,7 +260,7 @@ namespace SmartDots.View
             var itemsResult = WebAPI.GetAnalysesDynamic();
             if (!itemsResult.Succeeded)
             {
-                Helper.ShowWinUIMessageBox("Error loading Analyses from the Web API\n" + itemsResult.ToString(), "Error", MessageBoxButton.OK,
+                Helper.ShowWinUIMessageBox("Error loading Analyses from the Web API\n" + itemsResult.ErrorMessage, "Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 return;
             }

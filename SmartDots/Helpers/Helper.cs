@@ -12,6 +12,8 @@ namespace SmartDots.Helpers
 {
     public static class Helper
     {
+
+        public static float Version { get; } = 1.4f;
         
         public static void ShowWinUIMessageBox(string message, string caption, MessageBoxButton msgBoxButton, MessageBoxImage img, Exception e = null)
         {
@@ -22,20 +24,27 @@ namespace SmartDots.Helpers
             });
 
 
-            //try
-            //{
-            //    using (StreamWriter writer = new StreamWriter(@"\\clo.be\dfs\Data\data_d1\software\smartdots\errorlogs.txt", true))
-            //    {
-            //        writer.WriteLine(DateTime.Now + Environment.NewLine + "Computer: " + Environment.MachineName + Environment.NewLine +
-            //            "User: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString() + Environment.NewLine +
-            //            "Version: " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version + Environment.NewLine +
-            //            message + Environment.NewLine + e?.ToString() + Environment.NewLine);
-            //    }
-            //}
-            //catch (Exception)
-            //{
+            Log(message, e);
+        }
 
-            //}
+
+
+        public static void Log(string message, Exception e= null)
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter("log.txt", true))
+                {
+                    writer.WriteLine(DateTime.Now + Environment.NewLine + "Computer: " + Environment.MachineName + Environment.NewLine +
+                                     "User: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString() + Environment.NewLine +
+                                     "Version: " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version + Environment.NewLine +
+                                     message + Environment.NewLine + e.InnerException?.ToString() + Environment.NewLine);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         public static object ConvertType(object sourceObject, Type targetType)

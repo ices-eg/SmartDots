@@ -13,5 +13,6 @@
         public bool AnnotateWithoutSample { get; set; }
         public bool OpenSocket { get; set; }
         public string EventAlias { get; set; }
+        public float MinRequiredVersion { get; set; }
     }
 }

@@ -32,6 +32,7 @@ namespace SmartDots.Helpers
             e.Command = cmd;
             e.Object = obj;
             e.Error = ex;
+            Helper.Log("Web API connection error", ex);
             OnError?.Invoke(null, e);
         }
 

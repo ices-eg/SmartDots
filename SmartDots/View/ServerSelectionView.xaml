@@ -25,7 +25,6 @@
         <StackPanel Orientation="Vertical" x:Name="Fields">
             <Image x:Name="Logo" Source="/Resources/SmartDotsBW.png" HorizontalAlignment="Center" Height="70" 
                 common:VisibilityAnimation.AnimationType="Fade" RenderOptions.BitmapScalingMode="HighQuality"/>
-
             <Border Background="White" CornerRadius="5" Margin="0" BorderBrush="WhiteSmoke" BorderThickness="2">
                 <Grid common:VisibilityAnimation.AnimationType="Fade">
                     <Grid.RowDefinitions>
@@ -64,6 +63,7 @@
                     <Label Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" x:Name="LabelConnecting" HorizontalAlignment="Center"/>
                 </Grid>
             </Border>
+            <Label Name="VersionLabel" Foreground="White" HorizontalAlignment="Right"></Label>
         </StackPanel>
         <dxg:GridControl Name="Analyses" Height="400" SelectionMode="Row" dx:ThemeManager.Theme="HybridApp" Margin="0,-32,0,0"
                          common:VisibilityAnimation.AnimationType="Fade" SelectionChanged="GridAnalysis_OnSelectionChanged" StartSorting="Analyses_StartSorting" >

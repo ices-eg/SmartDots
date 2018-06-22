@@ -225,7 +225,7 @@ namespace SmartDots.ViewModel
                 var dtoAnalysis = WebAPI.GetAnalysis(analysisid);
                 if (!dtoAnalysis.Succeeded)
                 {
-                    Helper.ShowWinUIMessageBox("Error loading Analysis from the Web API", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Helper.ShowWinUIMessageBox("Error loading Analysis from the Web API\n" + dtoAnalysis.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }
 
@@ -311,9 +311,10 @@ namespace SmartDots.ViewModel
                     dboutcome.Lines = lines;
                     dboutcomes.Add(dboutcome);
                 }
-                if (!WebAPI.UpdateAnnotations(dboutcomes).Succeeded)
+                var updateAnnotationsResult = WebAPI.UpdateAnnotations(dboutcomes);
+                if (!updateAnnotationsResult.Succeeded)
                 {
-                    Helper.ShowWinUIMessageBox("Error Saving Annotations", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Helper.ShowWinUIMessageBox("Error Saving Annotations\n" + updateAnnotationsResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -322,7 +323,7 @@ namespace SmartDots.ViewModel
                 var dbfile = WebAPI.GetFile(AgeReadingFileViewModel.SelectedFile.ID, false, true);
                 if (!dbfile.Succeeded)
                 {
-                    Helper.ShowWinUIMessageBox("Error loading File from Web API", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Helper.ShowWinUIMessageBox("Error loading File from Web API\n" + dbfile.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 var file = (File)Helper.ConvertType(dbfile.Result, typeof(File));

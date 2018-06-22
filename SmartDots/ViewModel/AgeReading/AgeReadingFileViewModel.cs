@@ -471,16 +471,17 @@ namespace SmartDots.ViewModel
             var file = WebAPI.GetFile(fileid, false, false);
             if (!file.Succeeded)
             {
-                Helper.ShowWinUIMessageBox("Error loading File from Web API", "Error", MessageBoxButton.OK,
+                Helper.ShowWinUIMessageBox("Error loading File from Web API\n" + file.ErrorMessage, "Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 return;
             }
             file.Result.SampleID = null;
             file.Result.Sample = null;
             file.Result.SampleNumber = null;
-            if (!WebAPI.UpdateFile(file.Result).Succeeded)
+            var updateFileResult = WebAPI.UpdateFile(file.Result);
+            if (!updateFileResult.Succeeded)
             {
-                Helper.ShowWinUIMessageBox("Error saving File to Web API", "Error", MessageBoxButton.OK,
+                Helper.ShowWinUIMessageBox("Error saving File to Web API\n" + updateFileResult.ErrorMessage , "Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 return;
             }
@@ -503,7 +504,7 @@ namespace SmartDots.ViewModel
             var file = WebAPI.GetFile(fileid, true, true);
             if (!file.Succeeded)
             {
-                Helper.ShowWinUIMessageBox("Error loading File from Web API", "Error", MessageBoxButton.OK,
+                Helper.ShowWinUIMessageBox("Error loading File from Web API\n" + file.ErrorMessage, "Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 return null;
             }
@@ -578,7 +579,7 @@ namespace SmartDots.ViewModel
                         var dtoFile = filesResult.Result.FirstOrDefault(x => x.Filename.ToLower() == image.ToLower());
                         if (dtoFile == null)
                         {
-                            
+                            //todo
                         }
                         var file = (File)Helper.ConvertType(dtoFile, typeof(File));
                         if (dtoFile.Sample != null) file.Sample = (Sample)Helper.ConvertType(dtoFile.Sample, typeof(Sample));
