@@ -27,7 +27,6 @@ using ColorConverter = System.Windows.Media.ColorConverter;
 using Image = System.Windows.Controls.Image;
 using Line = System.Windows.Shapes.Line;
 using Point = System.Windows.Point;
-using Rectangle = System.Drawing.Rectangle;
 
 namespace SmartDots.ViewModel
 {
@@ -657,8 +656,7 @@ namespace SmartDots.ViewModel
                     {
 
                         //Invert filter = new Invert();
-                        Bitmap bitmapimage =
-                            AForge.Imaging.Image.Clone(BitmapConverter.PreProcessForScaleDetection(OriginalImage, 128),
+                        Bitmap bitmapimage = AForge.Imaging.Image.Clone(BitmapConverter.PreProcessForScaleDetection(OriginalImage, 128),
                                 System.Drawing.Imaging.PixelFormat.Format24bppRgb);
                         //filter.ApplyInPlace(bitmapimage);
                         using (var img = PixConverter.ToPix(bitmapimage))
@@ -763,7 +761,7 @@ namespace SmartDots.ViewModel
             bc.ProcessImage(newImage);
             //newImage.Save("step5.jpg");
             List<Blob> blobs = bc.GetObjectsInformation().ToList();
-            blobs = blobs.Where(x => (x.Rectangle.Width / x.Rectangle.Height) > 4).OrderByDescending(x => x.Rectangle.Width / x.Rectangle.Height).ToList();
+            blobs = blobs.Where(x => ((double)x.Rectangle.Width / (double)x.Rectangle.Height) > 3.7).OrderByDescending(x => x.Rectangle.Width / x.Rectangle.Height).ToList();
             // extract the biggest blob
             if (blobs.Count > 0)
             {

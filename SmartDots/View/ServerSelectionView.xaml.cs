@@ -273,7 +273,7 @@ namespace SmartDots.View
             var selecteditem = Analyses.SelectedItem;
             if (selecteditem != null) selectedItem = selecteditem;
 
-            Dictionary<string, object> values = itemsResult.Result[0].ToObject<Dictionary<string, object>>();
+            Dictionary<string, string> values = itemsResult.Result[0].ToObject<Dictionary<string, string>>();
             List<string> toReturn = values.Keys.ToList();
 
             string idKey = toReturn.FirstOrDefault(x => x.ToUpper().Equals("ID"));

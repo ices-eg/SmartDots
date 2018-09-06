@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using SmartDots.Model;
 using SmartDots.Model.Security;
 using SmartDots.Model.Smartdots;
@@ -32,7 +33,7 @@ namespace SmartDots.Helpers
             e.Command = cmd;
             e.Object = obj;
             e.Error = ex;
-            Helper.Log("Web API connection error", ex);
+            Helper.Log("log.txt","Web API connection error", ex);
             OnError?.Invoke(null, e);
         }
 
@@ -125,7 +126,10 @@ namespace SmartDots.Helpers
         {
             try
             {
-                return Task.Run(() => PerformCallAsync<t>(path)).Result;
+                //return Task.Run(() => PerformCallAsync<t>(path)).Result;
+                var temp = Task.Run(() => PerformCallAsync<t>(path)).Result;
+                Helper.Log("webapi.txt", path + Environment.NewLine + JsonConvert.SerializeObject(temp));
+                return temp;
             }
             catch (Exception ex)
             {
@@ -139,6 +143,7 @@ namespace SmartDots.Helpers
             try
             {
                 var response = client.PostAsJsonAsync(path, obj).Result;
+                Helper.Log("webapi.txt", path + Environment.NewLine + JsonConvert.SerializeObject(response));
                 if (response.IsSuccessStatusCode)
                 {
                     var apiPost = response.Content.ReadAsAsync<WebApiResult>().Result;

@@ -24,21 +24,20 @@ namespace SmartDots.Helpers
             });
 
 
-            Log(message, e);
+            Log("errors.txt", message, e);
         }
 
 
 
-        public static void Log(string message, Exception e= null)
+        public static void Log(string file, string message, Exception e= null)
         {
             try
             {
-                using (StreamWriter writer = new StreamWriter("log.txt", true))
+                using (StreamWriter writer = new StreamWriter(file, true))
                 {
                     writer.WriteLine(DateTime.Now + Environment.NewLine + "Computer: " + Environment.MachineName + Environment.NewLine +
                                      "User: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString() + Environment.NewLine +
-                                     "Version: " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version + Environment.NewLine +
-                                     message + Environment.NewLine + e.InnerException?.ToString() + Environment.NewLine);
+                                     message + Environment.NewLine + e?.InnerException?.ToString() + Environment.NewLine);
                 }
             }
             catch (Exception)

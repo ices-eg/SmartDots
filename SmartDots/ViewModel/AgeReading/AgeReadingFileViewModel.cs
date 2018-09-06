@@ -512,7 +512,11 @@ namespace SmartDots.ViewModel
             fileResult.ConvertDbAnnotations(file.Result.Annotations.ToList());
             try
             {
-                fileResult.Sample = (Sample)Helper.ConvertType(file.Result.Sample, typeof(Sample));
+                if (file.Result.Sample != null)
+                {
+                    fileResult.Sample = (Sample)Helper.ConvertType(file.Result.Sample, typeof(Sample));
+
+                }
             }
             catch (Exception)
             {
@@ -550,9 +554,9 @@ namespace SmartDots.ViewModel
                         fullImageNames = Directory.EnumerateFiles(CurrentFolder.Path).ToList();
 
                     }
-                    fullImageNames = fullImageNames.Where(file => file.ToLower().EndsWith("tif") || file.ToLower().EndsWith("jpg")
-                                           || file.ToLower().EndsWith("jpeg") || file.ToLower().EndsWith("png") ||
-                                           file.ToLower().EndsWith("gif") || file.ToLower().EndsWith("bmp")).ToList();
+                    fullImageNames = fullImageNames.Where(file => file.ToLower().EndsWith(".tif") || file.ToLower().EndsWith(".jpg")
+                                           || file.ToLower().EndsWith(".jpeg") || file.ToLower().EndsWith(".png") ||
+                                           file.ToLower().EndsWith(".gif") || file.ToLower().EndsWith(".bmp")).ToList();
                     List<string> tempImageNames = new List<string>();
                     foreach (var image in fullImageNames)
                     {
