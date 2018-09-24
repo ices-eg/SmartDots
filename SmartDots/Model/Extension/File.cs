@@ -19,7 +19,12 @@ namespace SmartDots.Model
         public System.Guid ID { get; set; }
         public Nullable<System.Guid> FolderID { get; set; }
         public string Filename { get; set; }
-        public Nullable<long> SampleNumber { get; set; }
+
+        public string DisplayName { get; set; }
+
+        public string Display => DisplayName ?? Filename;
+
+        public string SampleNumber { get; set; }
         public Nullable<System.Guid> SampleID { get; set; }
         public decimal? Scale { get; set; }
 

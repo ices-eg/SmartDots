@@ -22,6 +22,8 @@ namespace SmartDots.ViewModel
         private bool isListening;
         private bool firstLoad = true;
         private string headerInfo;
+        private string sampleAlias;
+
         private Analysis analysis;
 
         private ICommand closeToolsetPanelCommand;
@@ -143,6 +145,16 @@ namespace SmartDots.ViewModel
                 EditAnnotationDialogViewModel.Parameters = analysis.AnalysisParameters;
                 AgeReadingView.MainWindowViewModel.HeaderInfo = Analysis.HeaderInfo;
                 RaisePropertyChanged("Analysis");
+            }
+        }
+
+        public string SampleAlias
+        {
+            get { return sampleAlias; }
+            set
+            {
+                sampleAlias = value;
+                RaisePropertyChanged("SampleAlias");
             }
         }
 

@@ -68,7 +68,7 @@
                                     </StackPanel>
                                 </StackPanel>
                             </dxdo:LayoutPanel>
-                        <dxdo:LayoutPanel x:Name="SamplePanel" Caption="Sample" ItemWidth="Auto" ItemHeight="0.30*" AllowClose="False" AllowHide="False" AllowMove="True">
+                        <dxdo:LayoutPanel x:Name="SamplePanel" Caption="{Binding SampleAlias}" ItemWidth="Auto" ItemHeight="0.30*" AllowClose="False" AllowHide="False" AllowMove="True">
                                 <ContentControl Content="{Binding AgeReadingSampleView}"/>
                             </dxdo:LayoutPanel>
                         </dxdo:LayoutGroup>

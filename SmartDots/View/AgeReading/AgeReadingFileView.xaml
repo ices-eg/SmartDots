@@ -48,8 +48,8 @@
             </dxg:GridControl.View>
             <dxg:GridControl.Columns>
                 <dxg:GridColumn FieldName="Status" Header="@" ToolTip="Sample status" Width="16" CellTemplate="{StaticResource StatusColumn}" AllowEditing="False" AllowSorting="True" SortMode="Custom" Visible="{Binding UseSampleStatus}" VisibleIndex="0" />
-                <dxg:GridColumn FieldName="Filename" Header="File" ToolTip="Filename" AllowEditing="False" />
-                <dxg:GridColumn FieldName="SampleNumber" Header="Sample number" ToolTip="Sample number" AllowEditing="False" Width="60"  />
+                <dxg:GridColumn FieldName="Display" Header="File" ToolTip="Filename" AllowEditing="False" />
+                <dxg:GridColumn FieldName="SampleNumber" Header="{Binding SampleNumberAlias}" ToolTip="{Binding SampleNumberAlias}" AllowEditing="False" Width="60"  />
                 <dxg:GridColumn FieldName="AnnotationCount" Header="#Annotations" ToolTip="Number of annotations" AllowEditing="False"  Width="60" />
                 <dxg:GridColumn FieldName="Scale" AllowEditing="False" Header="Scale (px/mm)" Width="80" >
                     <dxg:GridColumn.EditSettings>

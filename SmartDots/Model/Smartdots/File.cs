@@ -7,7 +7,8 @@ namespace SmartDots.Model
     {
         public Guid ID { get; set; }
         public string Filename { get; set; }
-        public long? SampleNumber { get; set; } //ilvo only
+        public string DisplayName { get; set; }
+        public string SampleNumber { get; set; } 
         public Guid? SampleID { get; set; }
         public int AnnotationCount { get; set; }
         public bool IsReadOnly { get; set; }

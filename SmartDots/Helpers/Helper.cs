@@ -13,7 +13,7 @@ namespace SmartDots.Helpers
     public static class Helper
     {
 
-        public static float Version { get; } = 1.4f;
+        public static float Version { get; } = 1.5f;
         
         public static void ShowWinUIMessageBox(string message, string caption, MessageBoxButton msgBoxButton, MessageBoxImage img, Exception e = null)
         {
@@ -22,7 +22,6 @@ namespace SmartDots.Helpers
                 new WinUIMessageBoxService().Show(message, caption, msgBoxButton, img);
 
             });
-
 
             Log("errors.txt", message, e);
         }

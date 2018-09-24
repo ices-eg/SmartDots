@@ -32,6 +32,7 @@ namespace SmartDots.ViewModel
         private bool loadingNextPicture;
         private bool useSampleStatus;
         private bool loadingfolder;
+        private string sampleNumberAlias;
         private Visibility canAttachDetachSampleVisibility;
         private Visibility toolbarVisibility;
 
@@ -243,6 +244,16 @@ namespace SmartDots.ViewModel
         {
             get { return nextFileLocation; }
             set { nextFileLocation = value; }
+        }
+
+        public string SampleNumberAlias
+        {
+            get { return sampleNumberAlias; }
+            set
+            {
+                sampleNumberAlias = value;
+                RaisePropertyChanged("SampleNumberAlias");
+            }
         }
 
         public void LoadImage(string imagepath)

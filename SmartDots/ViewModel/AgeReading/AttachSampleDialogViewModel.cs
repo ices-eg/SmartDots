@@ -48,7 +48,7 @@ namespace SmartDots.ViewModel
         {
             File file = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile;
             file.SampleID = Sample.ID;
-            file.SampleNumber = Sample.No;
+            file.SampleNumber = Sample.No.ToString();
 
             var dbfile = (DtoFile)Helper.ConvertType(file, typeof(DtoFile));
             var updateFileResult = WebAPI.UpdateFile(dbfile);

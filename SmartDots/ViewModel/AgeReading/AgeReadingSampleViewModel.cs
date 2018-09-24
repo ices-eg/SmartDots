@@ -12,6 +12,7 @@ namespace SmartDots.ViewModel.AgeReading
     {
         private Sample sample;
         private string propertyValues;
+        
 
         public Sample Sample
         {

@@ -35,7 +35,7 @@ namespace SmartDots.ViewModel
                     Quality = Qualities.FirstOrDefault(x => x.ID == annotation.QualityID);
                     IsApproved = annotation.IsApproved;
                     Comment = annotation.Comment;
-                    DetailString = $"{AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Filename} - {Annotation.LabTechnician} - {Annotation.DateCreation.ToString()}";
+                    DetailString = $"{AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.DisplayName} - {Annotation.LabTechnician} - {Annotation.DateCreation.ToString()}";
                 }
                 catch (Exception e)
                 {
