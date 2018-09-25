@@ -14,7 +14,7 @@ https://github.com/ices-eg/SmartDots/raw/master/SmartDots/publish/setup.exe
 **Note: A firewall or antivirus may block the application. If you are experiencing these issues please use the portable version.**
 
 #### 2) Portable version
-Use this option whe you are experiencing firewall/antivirus issues. This version will not have these issues, however it will also not check for updates. When you want to update to the latest version, you will have to download it again.
+Use this option when you are experiencing firewall/antivirus issues. This version will not have these issues, however it will also not check for updates. When you want to update to the latest version, you will have to download it again.
 
 You can download the portable version here:
 https://github.com/ices-eg/SmartDots/raw/master/SmartDots/Portable/SmartDots.zip
