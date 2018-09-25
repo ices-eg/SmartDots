@@ -1,12 +1,30 @@
 # SmartDots
 SmartDots is the otolith reading software developed by ILVO that ICES is collaborating on
 
+## Getting started
+There are to ways to get started with SmartDots:
+
+#### 1) Installer
+This is the recommended way to use SmartDots.
+This version will install on your PC and it will automatically check for updates.
+
+You can download the installer here:
+https://github.com/ices-eg/SmartDots/raw/master/SmartDots/publish/setup.exe
+
+**Note: A firewall or antivirus may block the application. If you are experiencing these issues please use the portable version.**
+
+#### 2) Portable version
+Use this option whe you are experiencing firewall/antivirus issues. This version will not have these issues, however it will also not check for updates. When you want to update to the latest version, you will have to download it again.
+
+You can download the portable version here:
+https://github.com/ices-eg/SmartDots/raw/master/SmartDots/Portable/SmartDots.zip
+
+1) Download the .zip-file
+2) Unzip to a location of choice
+3) Double-click SmartDots(.bat) to run the application
+
 ## Demo
 You can try out the features of SmartDots in a demo environment.
-
-### Download the setup file and install the application. 
-The setup file can be found here:
-https://github.com/ices-eg/SmartDots/raw/master/SmartDots/publish/setup.exe
 
 ### Login with the following settings:
 
