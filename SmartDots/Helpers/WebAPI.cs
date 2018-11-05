@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -111,6 +112,10 @@ namespace SmartDots.Helpers
                         throw new Exception(webapiresult.ErrorMessage);
 
                     return ParseResult<t>(webapiresult.Result?.ToString());
+                }
+                else if(response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new Exception($"Not supported on this Web API");
                 }
                 throw new Exception($"Error posting {typeof(t).Name} to WebAPI");
             }

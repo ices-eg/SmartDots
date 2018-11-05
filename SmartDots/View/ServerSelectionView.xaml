@@ -55,7 +55,7 @@
                     <local:CleanableComboBox Grid.Column="1" Grid.Row="1" x:Name="FieldApi" Margin="10 0" Height="25" VerticalContentAlignment="Center" Text="http://smartdots.ices.dk/webapi/" KeyDown="Field_KeyDown" />
                     <ComboBox Grid.Column="1" Grid.Row="2" x:Name="FieldAuth" Margin="10 0" Height="25" VerticalContentAlignment="Center" KeyDown="Field_KeyDown"/>
                     <TextBox Grid.Column="1" Grid.Row="3" x:Name="FieldUser" MinWidth="330" Margin="10 0" Height="25" HorizontalAlignment="Left" VerticalContentAlignment="Center" KeyDown="Field_KeyDown"/>
-                    <dx:SimpleButton Grid.Row="4" Grid.Column="1" x:Name="ButtonToken" Margin="10 0" Height="25" Click="GetToken" Content="Get guest token" HorizontalAlignment="Left" Visibility="Collapsed" />
+                    <dx:SimpleButton Grid.Row="3" Grid.Column="1" x:Name="ButtonToken" Margin="10 0" Padding="5 0" Height="25" Click="GetToken" Content="Get guest token" FontSize="10"  HorizontalAlignment="Right" Visibility="Collapsed" />
                     <PasswordBox Grid.Column="1" Grid.Row="4" x:Name="FieldPassword" Margin="10 0" Height="25" VerticalContentAlignment="Center" KeyDown="Password_KeyDown"/>
 
                     <dx:SimpleButton Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ButtonConnect" Width="100"
