@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Navigation;
 using SmartDots.Helpers;
 using SmartDots.ViewModel;
 
@@ -109,6 +110,16 @@ namespace SmartDots.View
         public void Restore_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Normal;
+        }
+
+        private void Hyperlink_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.Uri.AbsoluteUri);
+        }
+
+        private void HelpHyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://ices.dk/publications/library/Pages/default.aspx#k=smartdots%20handbook");
         }
     }
 }

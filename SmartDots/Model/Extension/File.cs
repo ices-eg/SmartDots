@@ -74,8 +74,18 @@ namespace SmartDots.Model
                     Lines = lines,
                     Dots = dots,
                     Comment = annotation.Comment,
-                    IsFixed = annotation.IsFixed
+                    IsFixed = annotation.IsFixed,
+                    DynamicProperties = annotation.DynamicProperties
                 };
+                if (annotation.Nucleus == "Opaque" || annotation.Nucleus == "Translucent") temp.Nucleus = annotation.Nucleus;
+                else
+                {
+                    temp.Nucleus = null;
+                }
+                if(annotation.Edge == "Opaque" || annotation.Edge == "Translucent") temp.Edge = annotation.Edge;
+                else {
+                    temp.Edge = null;
+                }
                 if (temp.Lines.Any())
                     temp.CombinedLines.Add(new CombinedLine() { Lines = lines, Dots = dots });
                 result.Add(temp);

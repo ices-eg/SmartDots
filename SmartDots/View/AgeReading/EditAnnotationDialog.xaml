@@ -25,71 +25,103 @@
 
     <StackPanel Width="600"  Orientation="Vertical" Height="{Binding Height}" Margin="0,-60,0,0" x:Name="EditAnnotationContainer">
         <dxlc:LayoutControl DockPanel.Dock="Left" Orientation="Horizontal" Width="600">
-                
-            
+
+
             <dxlc:LayoutGroup Orientation="Vertical" Width="580" HorizontalAlignment="Center" VerticalAlignment="Top" Height="{Binding Height}" Margin="0,0,15,0">
                 <StackPanel Orientation="Horizontal" Height="57">
                     <dxlc:LayoutItem Label="EDIT ANNOTATION" FontSize="18" Margin="0,0,0,15"/>
                     <TextBlock Text="{Binding DetailString}" FontSize="11" Foreground="Red" Margin="0,12,0,0"></TextBlock>
                 </StackPanel>
-                
-        <dxlc:LayoutItem Label="PARAM" Margin="0,0,0,0" >
-            <dxg:LookUpEdit x:Name="Parameters" EditValue="{Binding AnalysisParameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding Parameters, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding AnalysisParameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Code"  >
-                <dxg:LookUpEdit.PopupContentTemplate>
-                    <ControlTemplate >
-                        <dxg:GridControl x:Name="PART_GridControl">
-                            <dxg:GridControl.View>
-                                <dxg:TableView AutoWidth="True" RowMinHeight="32"/>
-                            </dxg:GridControl.View>
+
+                <dxlc:LayoutItem Label="PARAM" Margin="0,0,0,0" >
+                    <dxg:LookUpEdit x:Name="Parameters" EditValue="{Binding AnalysisParameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding Parameters, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding AnalysisParameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Code"  >
+                        <dxg:LookUpEdit.PopupContentTemplate>
+                            <ControlTemplate >
+                                <dxg:GridControl x:Name="PART_GridControl">
+                                    <dxg:GridControl.View>
+                                        <dxg:TableView AutoWidth="True" RowMinHeight="32"/>
+                                    </dxg:GridControl.View>
                                     <dxg:GridColumn FieldName="Code" Header="Code" Width="20*"/>
                                     <dxg:GridColumn FieldName="Description" Header="Description" Width="80*"/>
-                        </dxg:GridControl>
-                    </ControlTemplate>
-                </dxg:LookUpEdit.PopupContentTemplate>
-            </dxg:LookUpEdit>
-        </dxlc:LayoutItem>
-        <dxlc:LayoutItem Label="AQ-code" Margin="0,0,0,15">
-            <!--<Border BorderBrush="Red" BorderThickness="2">-->
-                        <dxg:LookUpEdit x:Name="Qualities" EditValue="{Binding Quality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding Qualities, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding Quality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Code">
-                            <dxg:LookUpEdit.PopupContentTemplate>
-                                <ControlTemplate >
-                                    <dxg:GridControl x:Name="PART_GridControl">
-                                        <dxg:GridControl.View>
-                                            <dxg:TableView AutoWidth="True" RowMinHeight="32"/>
-                                        </dxg:GridControl.View>
-                                        <dxg:GridColumn FieldName="Code" Width="20*"/>
-                                        <dxg:GridColumn FieldName="Description" Width="80*" />
-                                    </dxg:GridControl>
-                                </ControlTemplate>
-                            </dxg:LookUpEdit.PopupContentTemplate>
-                        </dxg:LookUpEdit>
+                                </dxg:GridControl>
+                            </ControlTemplate>
+                        </dxg:LookUpEdit.PopupContentTemplate>
+                    </dxg:LookUpEdit>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="AQ-code" Margin="0,0,0,15">
+                    <!--<Border BorderBrush="Red" BorderThickness="2">-->
+                    <dxg:LookUpEdit x:Name="Qualities" EditValue="{Binding Quality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding Qualities, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding Quality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Code">
+                        <dxg:LookUpEdit.PopupContentTemplate>
+                            <ControlTemplate >
+                                <dxg:GridControl x:Name="PART_GridControl">
+                                    <dxg:GridControl.View>
+                                        <dxg:TableView AutoWidth="True" RowMinHeight="32"/>
+                                    </dxg:GridControl.View>
+                                    <dxg:GridColumn FieldName="Code" Width="20*"/>
+                                    <dxg:GridColumn FieldName="Description" Width="80*" />
+                                </dxg:GridControl>
+                            </ControlTemplate>
+                        </dxg:LookUpEdit.PopupContentTemplate>
+                    </dxg:LookUpEdit>
                     <!--</Border>-->
-            
-        </dxlc:LayoutItem>
+
+                </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Approved" Margin="0,0,0,15" Visibility="{Binding CanApproveAnnotation}">
-            <dxe:CheckEdit EditValue="{Binding IsApproved}" IsEnabled="{Binding CanApprove}"></dxe:CheckEdit>
-        </dxlc:LayoutItem>
+                    <dxe:CheckEdit EditValue="{Binding IsApproved}" IsEnabled="{Binding CanApprove}"></dxe:CheckEdit>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="Edge" Margin="0,0,0,15" Visibility="{Binding EdgeColumnVisibility}">
+                    <!--<Border BorderBrush="Red" BorderThickness="2">-->
+                    <dxg:LookUpEdit x:Name="Edge" EditValue="{Binding Edge, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding VisibilityStates, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding Edge, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Visibility">
+                        <dxg:LookUpEdit.PopupContentTemplate>
+                            <ControlTemplate >
+                                <dxg:GridControl x:Name="PART_GridControl">
+                                    <dxg:GridControl.View>
+                                        <dxg:TableView AutoWidth="True" RowMinHeight="32"/>
+                                    </dxg:GridControl.View>
+                                    <dxg:GridColumn FieldName="Visibility" Header="Code" Width="80*" />
+                                </dxg:GridControl>
+                            </ControlTemplate>
+                        </dxg:LookUpEdit.PopupContentTemplate>
+                    </dxg:LookUpEdit>
+                    <!--</Border>-->
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="Nucleus" Margin="0,0,0,15" Visibility="{Binding NucleusColumnVisibility}">
+                    <!--<Border BorderBrush="Red" BorderThickness="2">-->
+                    <dxg:LookUpEdit x:Name="Nucleus" EditValue="{Binding Nucleus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding VisibilityStates, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding Nucleus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Visibility">
+                        <dxg:LookUpEdit.PopupContentTemplate>
+                            <ControlTemplate >
+                                <dxg:GridControl x:Name="PART_GridControl">
+                                    <dxg:GridControl.View>
+                                        <dxg:TableView AutoWidth="True" RowMinHeight="32"/>
+                                    </dxg:GridControl.View>
+                                    <dxg:GridColumn FieldName="Visibility" Header="Code" Width="80*" />
+                                </dxg:GridControl>
+                            </ControlTemplate>
+                        </dxg:LookUpEdit.PopupContentTemplate>
+                    </dxg:LookUpEdit>
+                    <!--</Border>-->
+                </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Comment" Margin="0,0,0,15" Height="86">
                     <dxe:ButtonEdit EditValue="{Binding Comment}" Height="86" TextWrapping="Wrap" AcceptsReturn="True"></dxe:ButtonEdit>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Height="40" Margin="0,0,0,15">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Name="btnSave" IsTabStop="False" Content="Save" Margin="0,0,10,0" Width="60" >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:Name="btnSave" IsTabStop="False" Content="Save" Margin="0,0,10,0" Width="60" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Click">
                                     <ei:CallMethodAction TargetObject="{Binding}" MethodName="Save"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </Button>
-                <Button x:Name="btnCancel" IsTabStop="False" Content="Cancel" Width="60" >
+                        <Button x:Name="btnCancel" IsTabStop="False" Content="Cancel" Width="60" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Click">
                                     <ei:CallMethodAction TargetObject="{Binding}" MethodName="Cancel"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </Button>
-            </StackPanel>
-        </dxlc:LayoutItem>
+                    </StackPanel>
+                </dxlc:LayoutItem>
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>
 

@@ -14,12 +14,25 @@ namespace SmartDots.ViewModel
         private List<AnalysisParameter> parameters = new List<AnalysisParameter>();
         private Quality quality;
         private List<Quality> qualities = new List<Quality>();
+        private List<VisibilityState> visibilityStates;
         private bool isApproved;
+        private VisibilityState edge;
+        private VisibilityState nucleus;
         private string comment;
         private string detailString;
         private bool canApprove;
+        private bool showNucleusColumn;
+        private bool showEdgeColumn;
         private int height = 420;
         private Visibility canApproveAnnotation;
+
+        public EditAnnotationDialogViewModel()
+        {
+            VisibilityStates = new List<VisibilityState>();
+            VisibilityStates.Add(new VisibilityState() { Value = "Opaque", Visibility = "Opaque" });
+            VisibilityStates.Add(new VisibilityState() { Value = "Translucent", Visibility = "Translucent" });
+            VisibilityStates.Add(new VisibilityState() { Value = null, Visibility = "NA" });
+        }
 
         public Annotation Annotation
         {
@@ -34,6 +47,8 @@ namespace SmartDots.ViewModel
                     AnalysisParameter = Parameters.FirstOrDefault(x => x.ID == annotation.ParameterID);
                     Quality = Qualities.FirstOrDefault(x => x.ID == annotation.QualityID);
                     IsApproved = annotation.IsApproved;
+                    Edge = VisibilityStates.FirstOrDefault(x => x.Value == annotation.Edge);
+                    Nucleus = VisibilityStates.FirstOrDefault(x => x.Value == annotation.Nucleus);
                     Comment = annotation.Comment;
                     DetailString = $"{AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.DisplayName} - {Annotation.LabTechnician} - {Annotation.DateCreation.ToString()}";
                 }
@@ -92,6 +107,70 @@ namespace SmartDots.ViewModel
             {
                 qualities = value;
                 RaisePropertyChanged("Qualities");
+            }
+        }
+
+        public bool ShowNucleusColumn
+        {
+            get { return showNucleusColumn; }
+            set
+            {
+                showNucleusColumn = value;
+                CalculateHeight();
+                RaisePropertyChanged("ShowNucleusColumn");
+                RaisePropertyChanged("NucleusColumnVisibility");
+            }
+        }
+
+        public Visibility NucleusColumnVisibility
+        {
+            get { return showNucleusColumn == true ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        public bool ShowEdgeColumn
+        {
+            get { return showEdgeColumn; }
+            set
+            {
+                showEdgeColumn = value;
+                CalculateHeight();
+                RaisePropertyChanged("ShowEdgeColumn");
+                RaisePropertyChanged("EdgeColumnVisibility");
+            }
+        }
+
+        public Visibility EdgeColumnVisibility
+        {
+            get { return showEdgeColumn == true ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        public VisibilityState Edge
+        {
+            get { return edge; }
+            set
+            {
+                edge = value;
+                RaisePropertyChanged("Edge");
+            }
+        }
+
+        public VisibilityState Nucleus
+        {
+            get { return nucleus; }
+            set
+            {
+                nucleus = value;
+                RaisePropertyChanged("Nucleus");
+            }
+        }
+
+        public List<VisibilityState> VisibilityStates
+        {
+            get { return visibilityStates; }
+            set
+            {
+                visibilityStates = value;
+                RaisePropertyChanged("VisibilityStates");
             }
         }
 
@@ -161,12 +240,23 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public void CalculateHeight()
+        {
+            int h = 420;
+            if (showNucleusColumn) h += 64;
+            if (showEdgeColumn) h += 64;
+            Height = h;
+        }
+
         public void Save()
         {
             //update the annotation in the annotationlist
             AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ParameterID = AnalysisParameter?.ID;
             AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.QualityID = Quality?.ID;
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.Quality = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.FirstOrDefault(x => x.ID == Quality.ID);
 
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.Edge = Edge.Value;
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.Nucleus = Nucleus.Value;
             AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.Comment = Comment;
 
             if (IsApproved)
@@ -174,18 +264,24 @@ namespace SmartDots.ViewModel
                 //set all outcomes to approved false
                 foreach (var outcome in AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes)
                 {
-                    outcome.IsApproved = false;
+                    if (outcome.IsApproved && !WebAPI.Settings.AllowMultipleApprovements)
+                    {
+                        outcome.IsApproved = false;
+                        outcome.IsChanged = true;
+                    }
                 }
                 //approve the selected one
                 AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsApproved = IsApproved;
             }
             AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsChanged = true;
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CalculateAge();
             //saving uses all data from the annotationlist
             AgeReadingViewModel.SaveAnnotations();
 
             AgeReadingViewModel.AgeReadingAnnotationViewModel.UpdateList();
             AgeReadingViewModel.EditAnnotationDialog.DialogResult = true;
             CloseDialog(AgeReadingViewModel.EditAnnotationDialog);
+            AgeReadingViewModel.AgeReadingEditorViewModel.RefreshShapes();
         }
 
         public void Cancel()
@@ -200,7 +296,9 @@ namespace SmartDots.ViewModel
             {
                 CanApproveAnnotation = Visibility.Collapsed;
             }
-            
+
+            ShowEdgeColumn = AgeReadingViewModel.Analysis.ShowEdgeColumn;
+            ShowNucleusColumn = AgeReadingViewModel.Analysis.ShowNucleusColumn;
         }
     }
 }

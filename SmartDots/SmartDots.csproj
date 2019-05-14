@@ -248,6 +248,7 @@
     <Compile Include="Model\Security\LoginToken.cs" />
     <Compile Include="Model\Smartdots\Analysis.cs" />
     <Compile Include="Model\Smartdots\AnalysisSample.cs" />
+    <Compile Include="Model\Smartdots\AnnotationProperty.cs" />
     <Compile Include="Model\Smartdots\Dot.cs" />
     <Compile Include="Model\Smartdots\File.cs" />
     <Compile Include="Model\Smartdots\Folder.cs" />
@@ -257,6 +258,7 @@
     <Compile Include="Model\Smartdots\Quality.cs" />
     <Compile Include="Model\Smartdots\Sample.cs" />
     <Compile Include="Model\Smartdots\User.cs" />
+    <Compile Include="Model\Smartdots\VisibilityState.cs" />
     <Compile Include="Service References\ServiceReferenceBroadCast\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -313,6 +315,10 @@
     <Content Include="External\Tesseract.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\ShowLines.png" />
+    <Resource Include="Resources\thumbsup.png" />
+    <Resource Include="Resources\tape-measure-2-32.png" />
+    <Resource Include="Resources\check.png" />
     <Content Include="tessdata\eng.cube.bigrams">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

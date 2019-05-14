@@ -34,6 +34,8 @@
             <Setter Property="MaxHeight" Value="12"></Setter>
             <Setter Property="Height" Value="12"></Setter>
         </Style>-->
+        <helpers:NullImageConverter x:Key="nullImageConverter"/>
+
     </UserControl.Resources>
         
 
@@ -42,7 +44,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <dxg:GridControl Grid.Row="0" x:Name="AnnotationGrid" ItemsSource="{Binding Outcomes, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectionMode="Row" SelectedItems="{Binding SelectedAnnotations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="None" FontSize="11" AllowLiveDataShaping="True" >
+        <dxg:GridControl Grid.Row="0" x:Name="AnnotationGrid" ItemsSource="{Binding Outcomes, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectionMode="Row" SelectedItems="{Binding SelectedAnnotations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="None" FontSize="11" AllowLiveDataShaping="False" >
             <dxg:GridControl.View>
                 <dxg:TableView FormatConditionsSource="{Binding ConditionalRowStyles}" AllowConditionalFormattingMenu="True" ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" x:Name="AnnotationList" EditorShowMode="MouseDown" ShowCheckBoxSelectorColumn="True" CheckBoxSelectorColumnWidth="30"  RowMinHeight="22" CellStyle="{x:Null}" EnableImmediatePosting="True" AllowEditing="{Binding AllowEditing}" >
                     <dxmvvm:Interaction.Behaviors>
@@ -87,7 +89,7 @@
                         </dxg:LookUpEditSettings>
                     </dxg:GridColumn.EditSettings>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="LabTechnician" Header="Lab technician" ToolTip="Lab technician" Width="150*" AllowEditing="False" VisibleIndex="2"/>
+                <dxg:GridColumn FieldName="LabTechnician" Header="Creator" ToolTip="Creator" Width="150*" AllowEditing="False" VisibleIndex="2"/>
                 <dxg:GridColumn FieldName="DateCreation" Header="Created" ToolTip="Date created" AllowEditing="False" Width="90*" VisibleIndex="3" >
                     <dxg:GridColumn.EditSettings>
                         <dxe:DateEditSettings DisplayFormat="dd-MM-yy"/>
@@ -103,7 +105,7 @@
                         <dxg:LookUpEditSettings Name="Quality" DisplayMember="Code" ValueMember="ID" ItemsSource="{Binding Qualities}" PopupMinWidth="100" PopupMinHeight="180" AutoPopulateColumns="False">
                             <dxg:LookUpEditSettings.PopupContentTemplate>
                                 <ControlTemplate>
-                                    <dxg:GridControl Name="PART_GridControl" >
+                                    <dxg:GridControl Name="PART_GridControl" Height="200">
                                         <dxg:GridControl.Columns>
                                             <dxg:GridColumn FieldName="Code"/>
                                         </dxg:GridControl.Columns>
@@ -122,7 +124,7 @@
                     <dxg:GridColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
-                                <Image Source="{Binding Path=Data.ApprovedPicture}" HorizontalAlignment="Center" Margin="0,0,0,0"  Stretch="Uniform" Width="17" Height="17" VerticalAlignment="Center" />
+                                <Image Source="{Binding Path=Data.ApprovedPicture, Converter={StaticResource nullImageConverter}}" HorizontalAlignment="Center" Margin="0,0,0,0"  Stretch="Uniform" Width="17" Height="17" VerticalAlignment="Center" />
                             </StackPanel>
                         </DataTemplate>
                     </dxg:GridColumn.CellTemplate>
@@ -131,12 +133,48 @@
                     <dxg:GridColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Image Source="{Binding Path=Data.PinPicture}" HorizontalAlignment="Center" Margin="0,0,0,0"  Stretch="Uniform" Width="17" Height="17" VerticalAlignment="Center" />
+                                <Image Source="{Binding Path=Data.PinPicture, Converter={StaticResource nullImageConverter}}" HorizontalAlignment="Center" Margin="0,0,0,0"  Stretch="Uniform" Width="17" Height="17" VerticalAlignment="Center" />
                             </StackPanel>
                         </DataTemplate>
                     </dxg:GridColumn.CellTemplate>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="Comment" Header="Comment" ToolTip="Comment" Width="60*" AllowEditing="False" VisibleIndex="8"/>
+                <dxg:GridColumn FieldName="Nucleus" Width="80*" Header="Nucleus" ToolTip="Nucleus visibility" VisibleIndex="8" Visible="{Binding ShowNucleusColumn}" ShowInColumnChooser="{Binding ShowNucleusColumn}">
+                    <dxg:GridColumn.EditSettings>
+                        <dxg:LookUpEditSettings DisplayMember="Visibility" ValueMember="Value" ItemsSource="{Binding VisibilityStates}" PopupMinWidth="100" PopupMinHeight="152" AutoPopulateColumns="False">
+                            <dxg:LookUpEditSettings.PopupContentTemplate>
+                                <ControlTemplate>
+                                    <dxg:GridControl Name="PART_GridControl" Height="150">
+                                        <dxg:GridControl.Columns>
+                                            <dxg:GridColumn FieldName="Visibility" Header="Code"/>
+                                        </dxg:GridControl.Columns>
+                                        <dxg:GridControl.View>
+                                            <dxg:TableView AutoWidth="True"/>
+                                        </dxg:GridControl.View>
+                                    </dxg:GridControl>
+                                </ControlTemplate>
+                            </dxg:LookUpEditSettings.PopupContentTemplate>
+                        </dxg:LookUpEditSettings>
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn FieldName="Edge" Width="80*" Header="Edge" ToolTip="Edge visibility" VisibleIndex="9" Visible="{Binding ShowEdgeColumn}" ShowInColumnChooser="{Binding ShowEdgeColumn}">
+                    <dxg:GridColumn.EditSettings>
+                        <dxg:LookUpEditSettings DisplayMember="Visibility" ValueMember="Value" ItemsSource="{Binding VisibilityStates}" PopupMinWidth="100" PopupMinHeight="152" AutoPopulateColumns="False">
+                            <dxg:LookUpEditSettings.PopupContentTemplate>
+                                <ControlTemplate>
+                                    <dxg:GridControl Name="PART_GridControl" Height="150">
+                                        <dxg:GridControl.Columns>
+                                            <dxg:GridColumn FieldName="Visibility" Header="Code"/>
+                                        </dxg:GridControl.Columns>
+                                        <dxg:GridControl.View>
+                                            <dxg:TableView AutoWidth="True"/>
+                                        </dxg:GridControl.View>
+                                    </dxg:GridControl>
+                                </ControlTemplate>
+                            </dxg:LookUpEditSettings.PopupContentTemplate>
+                        </dxg:LookUpEditSettings>
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+                <dxg:GridColumn FieldName="Comment" Header="Comment" ToolTip="Comment" Width="60*" AllowEditing="False" VisibleIndex="10"/>
 
 
 
@@ -155,7 +193,7 @@
         <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Background="#ccc" Height="33">
             <StackPanel x:Name="FilesOperations" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Background="#ccc" Margin="1">
                 <Button Style="{StaticResource SDButtonBase}" x:Name="btnNewAnnotation" Height="27" Width="28" Padding="2" Margin="2" ToolTip="New Annotation" HorizontalAlignment="Center" IsEnabled="{Binding CanCreate}">
-                    <Image Source="../../Resources/New.png" Width="22" Height="22"/>
+                    <Image Source="{Binding Path=ImageNew, Converter={StaticResource nullImageConverter}}" Width="22" Height="22"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <ei:CallMethodAction TargetObject="{Binding}" MethodName="NewAnnotation"/>
@@ -163,7 +201,7 @@
                     </i:Interaction.Triggers>
                 </Button>
                 <Button Style="{StaticResource SDButtonBase}" x:Name="btnEditAnnotation" Height="27" Width="28" Padding="2" Margin="2" ToolTip="Edit Annotation" HorizontalAlignment="Center" IsEnabled="{Binding CanEdit}">
-                    <Image Source="../../Resources/Edit.png" Width="22" Height="22"/>
+                    <Image Source="{Binding Path=ImageEdit, Converter={StaticResource nullImageConverter}}" Width="22" Height="22"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <ei:CallMethodAction TargetObject="{Binding}" MethodName="ShowEditAnnotation"/>
@@ -171,7 +209,7 @@
                     </i:Interaction.Triggers>
                 </Button>
                 <Button Style="{StaticResource SDButtonBase}" x:Name="btnDeleteAnnotations" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Delete Annotations" IsEnabled="{Binding CanDelete}">
-                    <Image Source="../../Resources/delete-32.png" Width="22" Height="22"/>
+                    <Image Source="{Binding Path=ImageDelete, Converter={StaticResource nullImageConverter}}" Width="22" Height="22"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <ei:CallMethodAction TargetObject="{Binding}" MethodName="DeleteAnnotation" />
@@ -181,7 +219,7 @@
                 <StackPanel Width="28" Height="33" Margin="0"  ></StackPanel>
 
                 <Button Style="{StaticResource SDButtonBase}" x:Name="btnPinAnnotation" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Toggle fixed reading line" IsEnabled="{Binding CanTogglePin}">
-                    <Image Source="../../Resources/pin-32.png" Width="22" Height="22"/>
+                    <Image Source="{Binding Path=ImagePin, Converter={StaticResource nullImageConverter}}" Width="22" Height="22"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <ei:CallMethodAction TargetObject="{Binding}" MethodName="TogglePinAnnotation" />
@@ -197,7 +235,7 @@
                     </i:Interaction.Triggers>
                 </Button>-->
                 <Button Style="{StaticResource SDButtonBase}" x:Name="btnApproveAnnotation" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Toggle Approve Annotation" IsEnabled="{Binding CanToggleApprove}">
-                    <Image Source="../../Resources/ok-32.png" Width="22" Height="22"/>
+                    <Image Source="{Binding Path=ImageApprove, Converter={StaticResource nullImageConverter}}" Width="22" Height="22"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <ei:CallMethodAction TargetObject="{Binding}" MethodName="ToggleApprove" />

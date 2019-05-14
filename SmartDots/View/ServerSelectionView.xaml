@@ -85,6 +85,7 @@
             <dxwui:AppBarButton Glyph="/Resources/SmartLabIcon2-bw.png" Label="Age Reading" x:Name="ButtonWorkOnline" Click="WorkOnline_Click" />
             <dxwui:AppBarButton Glyph="/Resources/folder-3-32.png" Label="Edit Folder" x:Name="ButtonFolder" Click="Folder_Click" />
             <dxwui:AppBarButton Glyph="/Resources/refresh-2-32.png" Label="Reload" x:Name="ButtonReload" Click="ButtonReload_Click"/>
+            <dxwui:AppBarButton Glyph="/Resources/check.png" Label="Finished" x:Name="ButtonFinished" Click="ButtonFinish_Click" />
 
         </dxwui:AppBar>
     </Canvas>

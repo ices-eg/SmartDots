@@ -249,5 +249,9 @@ namespace SmartDots.Helpers
             string folder = System.Net.WebUtility.UrlEncode(folderpath);
             return PerformPost<bool, Guid>("updateanalysisfolder?token=" + CurrentUser.Token + "&folderpath=" + folder, analysisid);
         }
+        public static WebApiResult<bool> ToggleAnalysisUserProgress(Guid analysisid)
+        {
+            return PerformPost<bool, Guid>("toggleanalysisuserprogress?token=" + CurrentUser.Token, analysisid);
+        }
     }
 }

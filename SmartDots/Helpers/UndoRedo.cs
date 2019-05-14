@@ -78,6 +78,15 @@ namespace SmartDots.Helpers
             _Redocommands.Clear();
             CheckStacks();
         }
+
+        public void InsertInUnDoRedoForAddMeasure(System.Windows.Shapes.Line l, AgeReadingEditorViewModel editor)
+        {
+            IUndoRedoCommand cmd = new AddMeasureCommand(l, editor);
+            _Undocommands.Push(cmd);
+            _Redocommands.Clear();
+            CheckStacks();
+        }
+
         public void InsertInUnDoRedoForDelete(CombinedLine cl, AgeReadingEditorViewModel editor)
         {
             IUndoRedoCommand cmd = new DeleteCommand(cl, editor);
@@ -85,9 +94,26 @@ namespace SmartDots.Helpers
             _Redocommands.Clear();
             CheckStacks();
         }
+
+        public void InsertInUnDoRedoForDelete(System.Windows.Shapes.Line l, AgeReadingEditorViewModel editor)
+        {
+            IUndoRedoCommand cmd = new DeleteMeasureCommand(l, editor);
+            _Undocommands.Push(cmd);
+            _Redocommands.Clear();
+            CheckStacks();
+        }
+
         public void InsertInUnDoRedoForDeleteDot(Dot d, AgeReadingEditorViewModel editor)
         {
             IUndoRedoCommand cmd = new DeleteDotCommand(d, editor);
+            _Undocommands.Push(cmd);
+            _Redocommands.Clear();
+            CheckStacks();
+        }
+
+        public void InsertInUnDoRedoForDeleteMeasure(System.Windows.Shapes.Line l, AgeReadingEditorViewModel editor)
+        {
+            IUndoRedoCommand cmd = new DeleteMeasureCommand(l, editor);
             _Undocommands.Push(cmd);
             _Redocommands.Clear();
             CheckStacks();
@@ -160,6 +186,34 @@ namespace SmartDots.Helpers
         #endregion
     }
 
+    class AddMeasureCommand : IUndoRedoCommand
+    {
+        private System.Windows.Shapes.Line line;
+        private AgeReadingEditorViewModel editor;
+
+        public AddMeasureCommand(System.Windows.Shapes.Line l, AgeReadingEditorViewModel e)
+        {
+            line = l;
+            editor = e;
+        }
+
+        #region ICommand Members
+
+        public void Execute()
+        {
+            editor.OriginalMeasureShapes.Add(line);
+            editor.RefreshShapes();
+        }
+
+        public void UnExecute()
+        {
+            editor.OriginalMeasureShapes.Remove(line);
+            editor.RefreshShapes();
+        }
+
+        #endregion
+    }
+
     class DeleteCommand : IUndoRedoCommand
     {
         private CombinedLine combinedLine;
@@ -218,6 +272,33 @@ namespace SmartDots.Helpers
             editor.ActiveCombinedLine = dot.ParentCombinedLine;
             editor.AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsChanged = true;
             editor.RefreshShapes();
+        }
+        #endregion
+    }
+
+    class DeleteMeasureCommand : IUndoRedoCommand
+    {
+        private System.Windows.Shapes.Line line;
+        private AgeReadingEditorViewModel editor;
+
+        public DeleteMeasureCommand(System.Windows.Shapes.Line l, AgeReadingEditorViewModel e)
+        {
+            line = l;
+            editor = e;
+        }
+
+        #region ICommand Members
+
+        public void Execute()
+        {
+            editor.AgeReadingViewModel.AgeReadingEditorViewModel.OriginalMeasureShapes.Remove(line);
+            editor.RefreshMeasures();
+        }
+
+        public void UnExecute()
+        {
+            editor.AgeReadingViewModel.AgeReadingEditorViewModel.OriginalMeasureShapes.Add(line);
+            editor.RefreshMeasures();
         }
         #endregion
     }

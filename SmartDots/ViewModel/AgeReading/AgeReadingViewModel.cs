@@ -142,6 +142,10 @@ namespace SmartDots.ViewModel
                 //get parameters
 
                 AgeReadingAnnotationViewModel.Parameters = analysis.AnalysisParameters;
+                AgeReadingAnnotationViewModel.ShowNucleusColumn = analysis.ShowNucleusColumn;
+                AgeReadingAnnotationViewModel.ShowEdgeColumn = analysis.ShowEdgeColumn;
+                EditAnnotationDialogViewModel.ShowNucleusColumn = analysis.ShowNucleusColumn;
+                EditAnnotationDialogViewModel.ShowEdgeColumn = analysis.ShowEdgeColumn;
                 EditAnnotationDialogViewModel.Parameters = analysis.AnalysisParameters;
                 AgeReadingView.MainWindowViewModel.HeaderInfo = Analysis.HeaderInfo;
                 RaisePropertyChanged("Analysis");
@@ -309,7 +313,7 @@ namespace SmartDots.ViewModel
                     }
 
                     var dots = new List<DtoDot>();
-                    if (outcome.CombinedLines.Any())
+                    if (outcome.CombinedLines.Any() && !outcome.HasAqNoAge())
                     {
                         foreach (var dot in outcome.CombinedLines[0].Dots)
                         {
@@ -321,6 +325,8 @@ namespace SmartDots.ViewModel
                     DtoAnnotation dboutcome = (DtoAnnotation)Helper.ConvertType(outcome, typeof(DtoAnnotation));
                     dboutcome.Dots = dots;
                     dboutcome.Lines = lines;
+                    dboutcome.Nucleus = outcome.Nucleus;
+                    dboutcome.Edge = outcome.Edge;
                     dboutcomes.Add(dboutcome);
                 }
                 var updateAnnotationsResult = WebAPI.UpdateAnnotations(dboutcomes);

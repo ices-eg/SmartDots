@@ -18,6 +18,7 @@ using AForge.Imaging;
 using AForge.Imaging.Filters;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.WindowsUI;
 using SmartDots.Helpers;
 using SmartDots.Model;
@@ -27,20 +28,26 @@ using ColorConverter = System.Windows.Media.ColorConverter;
 using Image = System.Windows.Controls.Image;
 using Line = System.Windows.Shapes.Line;
 using Point = System.Windows.Point;
+using Rect = System.Windows.Rect;
 
 namespace SmartDots.ViewModel
 {
     public class AgeReadingEditorViewModel : AgeReadingBaseViewModel
     {
         private object lineColor;
+        private object measureColor;
         private object dotColor;
         private int lineWidth;
+        private int measureLineWidth;
+        private int measureFontSize;
         private int dotWidth;
-        private List<Line> originalLineShapes = new List<Line>();
         private List<Dot> originalDots = new List<Dot>();
         private ObservableCollection<Line> lineShapes = new ObservableCollection<Line>();
         private ObservableCollection<Line> scaleShapes = new ObservableCollection<Line>();
         private ObservableCollection<Shape> dotShapes = new ObservableCollection<Shape>();
+        private ObservableCollection<Line> originalMeasureShapes = new ObservableCollection<Line>();
+        private ObservableCollection<Line> measureShapes = new ObservableCollection<Line>();
+        private ObservableCollection<TextBlock> textShapes = new ObservableCollection<TextBlock>();
         private CombinedLine activeCombinedLine;
         private CombinedLine tempCombinedLine;
         private EditorModeEnum mode;
@@ -57,7 +64,9 @@ namespace SmartDots.ViewModel
         private decimal pixelLength;
         private bool canUndo;
         private bool canRedo;
+        private bool hideLines;
         private bool isScaleDrawn;
+        private bool isMeasureDrawn;
         private UndoRedo undoRedo;
         private string dotType = "Seawater";
         private string dotShape = "Dot";
@@ -69,6 +78,16 @@ namespace SmartDots.ViewModel
             {
                 lineColor = value;
                 RaisePropertyChanged("LineColor");
+            }
+        }
+
+        public object MeasureColor
+        {
+            get { return measureColor; }
+            set
+            {
+                measureColor = value;
+                RaisePropertyChanged("MeasureColor");
             }
         }
 
@@ -89,6 +108,26 @@ namespace SmartDots.ViewModel
             {
                 lineWidth = int.Parse(value.ToString());
                 RaisePropertyChanged("LineWidth");
+            }
+        }
+
+        public object MeasureLineWidth
+        {
+            get { return measureLineWidth; }
+            set
+            {
+                measureLineWidth = int.Parse(value.ToString());
+                RaisePropertyChanged("MeasureLineWidth");
+            }
+        }
+
+        public object MeasureFontSize
+        {
+            get { return measureFontSize; }
+            set
+            {
+                measureFontSize = int.Parse(value.ToString());
+                RaisePropertyChanged("MeasureFontSize");
             }
         }
 
@@ -142,13 +181,32 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public List<Line> OriginalLineShapes
+        public ObservableCollection<Line> OriginalMeasureShapes
         {
-            get { return originalLineShapes; }
+            get { return originalMeasureShapes; }
             set
             {
-                originalLineShapes = value;
-                RaisePropertyChanged("LineShapes");
+                originalMeasureShapes = value;
+            }
+        }
+
+        public ObservableCollection<Line> MeasureShapes
+        {
+            get { return measureShapes; }
+            set
+            {
+                measureShapes = value;
+                RaisePropertyChanged("MeasureShapes");
+            }
+        }
+
+        public ObservableCollection<TextBlock> TextShapes
+        {
+            get { return textShapes; }
+            set
+            {
+                textShapes = value;
+                RaisePropertyChanged("TextShapes");
             }
         }
 
@@ -178,13 +236,16 @@ namespace SmartDots.ViewModel
                     AgeReadingViewModel.AgeReadingEditorView.LineButton.IsPressed = false;
                     AgeReadingViewModel.AgeReadingEditorView.DotButton.IsPressed = false;
                     AgeReadingViewModel.AgeReadingEditorView.DeleteBtn.IsChecked = false;
+                    AgeReadingViewModel.AgeReadingEditorView.MeasureButton.IsPressed = false;
 
                     switch (value)
                     {
                         case EditorModeEnum.DrawLine:
                             AgeReadingViewModel.AgeReadingEditorView.LineButton.IsPressed = true;
+                            HideLines = false;
                             break;
                         case EditorModeEnum.MakingLine:
+                            HideLines = false;
                             AgeReadingViewModel.AgeReadingEditorView.LineButton.IsPressed = true;
                             break;
                         case EditorModeEnum.DrawDot:
@@ -199,10 +260,16 @@ namespace SmartDots.ViewModel
                         case EditorModeEnum.Delete:
                             AgeReadingViewModel.AgeReadingEditorView.DeleteBtn.IsChecked = true;
                             break;
+                        case EditorModeEnum.Measure:
+                            AgeReadingViewModel.AgeReadingEditorView.MeasureButton.IsPressed = true;
+                            HideLines = false;
+                            break;
                         case EditorModeEnum.None:
                             AgeReadingViewModel.AgeReadingEditorView.LineButton.IsPressed = false;
                             AgeReadingViewModel.AgeReadingEditorView.DotButton.IsPressed = false;
                             AgeReadingViewModel.AgeReadingEditorView.DeleteBtn.IsChecked = false;
+                            AgeReadingViewModel.AgeReadingEditorView.MeasureButton.IsPressed = false;
+                            AgeReadingViewModel.EnableUI(true);
                             break;
                     }
                 }
@@ -470,14 +537,16 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                return AgeReadingViewModel?.AgeReadingAnnotationViewModel?.SelectedAnnotations.Count == 1
+                return
+                       MeasureShapes.Any() || 
+                       (AgeReadingViewModel?.AgeReadingAnnotationViewModel?.SelectedAnnotations.Count < 2
                        && ActiveCombinedLine != null
                        && Mode != EditorModeEnum.MakingLine
                        && !AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsFixed
                        && !AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly
                        &&
                        (AgeReadingViewModel?.AgeReadingSampleViewModel.Sample != null ||
-                        WebAPI.Settings.AnnotateWithoutSample);
+                        WebAPI.Settings.AnnotateWithoutSample));
             }
         }
 
@@ -501,18 +570,42 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public bool IsMeasureDrawn
+        {
+            get { return isMeasureDrawn; }
+            set
+            {
+                isMeasureDrawn = value;
+                RaisePropertyChanged("IsScaleDrawn");
+            }
+        }
+
         public System.Drawing.Rectangle ScaleRectangle { get; private set; }
         public bool IsMeasuring { get; private set; }
         public List<Guid> MeasuredFileIDs { get; set; } = new List<Guid>();
+
+        public bool HideLines
+        {
+            get { return hideLines; }
+            set
+            {
+                hideLines = value;
+                RefreshShapes();
+                RaisePropertyChanged("HideLines");
+            }
+        }
 
         public AgeReadingEditorViewModel()
         {
             Mode = EditorModeEnum.DrawLine;
             Brightness = 0;
             Contrast = 0;
-            LineColor = (Color) ColorConverter.ConvertFromString("#FFFF00FF");
+            LineColor = (Color)ColorConverter.ConvertFromString("#FFFF00FF");
+            MeasureColor = (Color)ColorConverter.ConvertFromString("#FFFF00FF");
             LineWidth = 2;
-            DotColor = (Color) ColorConverter.ConvertFromString("#FF00FF00");
+            MeasureLineWidth = 1;
+            MeasureFontSize = 12;
+            DotColor = (Color)ColorConverter.ConvertFromString("#FF00FF00");
             DotWidth = 10;
             UndoRedo = new UndoRedo(this);
             LoadUserPreferences();
@@ -520,7 +613,13 @@ namespace SmartDots.ViewModel
 
         public void CalculateAge()
         {
-            if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation == null) return;
+            var annotation = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation;
+            if (annotation == null) return;
+            if (annotation.HasAqNoAge())
+            {
+                AgeReadingViewModel.AgeReadingAnnotationViewModel.SetAge(null);
+                return;
+            }
             int age = 0;
             foreach (
                 CombinedLine combinedLine in
@@ -541,12 +640,12 @@ namespace SmartDots.ViewModel
                 var oldvalue = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale;
                 AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = false;
 
-                
-                PixelLength = await Task.Run( () => CalculatePixelLength(OriginalImage, 128));
-                if(PixelLength == 0) PixelLength = await Task.Run(() => CalculatePixelLength(OriginalImage, 20));
-                if (PixelLength == 0) PixelLength = await Task.Run( () => CalculatePixelLengthOld(OriginalImage));
 
-                    string scaleText = await System.Threading.Tasks.Task.Run(() => FindScaleText());
+                PixelLength = await Task.Run(() => CalculatePixelLength(OriginalImage, 128));
+                if (PixelLength == 0) PixelLength = await Task.Run(() => CalculatePixelLength(OriginalImage, 20));
+                if (PixelLength == 0) PixelLength = await Task.Run(() => CalculatePixelLengthOld(OriginalImage));
+
+                string scaleText = await System.Threading.Tasks.Task.Run(() => FindScaleText());
                 scaleText = Regex.Replace(scaleText, " ", "");
                 if (scaleText.StartsWith(".")) scaleText = scaleText.Substring(1, scaleText.Length - 1);
                 if (scaleText.StartsWith(",")) scaleText = scaleText.Substring(1, scaleText.Length - 1);
@@ -585,7 +684,7 @@ namespace SmartDots.ViewModel
                 scaleText = scaleText.Replace(',', '.');
                 scaleText = new String(scaleText.Where(Char.IsDigit).ToArray());
                 number = decimal.Parse(scaleText, CultureInfo.InvariantCulture);
-                PixelLength = (decimal) (PixelLength/number/(decimal) factor);
+                PixelLength = (decimal)(PixelLength / number / (decimal)factor);
                 var newvalue = PixelLength;
                 if (oldvalue != newvalue)
                 {
@@ -621,18 +720,18 @@ namespace SmartDots.ViewModel
 
         public PixelColor[,] GetPixels(BitmapSource source)
         {
-            
+
             //Application.Current.Dispatcher.Invoke((Action)delegate {
 
-                if (source.Format != PixelFormats.Bgra32)
-                    source = new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
+            if (source.Format != PixelFormats.Bgra32)
+                source = new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
 
-                int width = source.PixelWidth;
-                int height = source.PixelHeight;
-                PixelColor[,] result = new PixelColor[width, height];
+            int width = source.PixelWidth;
+            int height = source.PixelHeight;
+            PixelColor[,] result = new PixelColor[width, height];
 
-                BitmapSourceHelper.CopyPixels(source, result, width * 4, 0);
-                
+            BitmapSourceHelper.CopyPixels(source, result, width * 4, 0);
+
 
             //});
             return result;
@@ -649,27 +748,25 @@ namespace SmartDots.ViewModel
                     engine.SetVariable("textord_min_xheight", 15);
                     engine.SetVariable("textord_max_noise_size", 10);
                     engine.SetVariable("tessedit_char_whitelist", "0123456789uµmc.,");
-                    //engine.SetVariable("classify_font_name", "Arial");
-                    //engine.SetVariable("x_ht_acceptance_tolerance", 3);
 
-                    Application.Current.Dispatcher.Invoke((Action) delegate
-                    {
+                    Application.Current.Dispatcher.Invoke((Action)delegate
+                   {
 
-                        //Invert filter = new Invert();
-                        Bitmap bitmapimage = AForge.Imaging.Image.Clone(BitmapConverter.PreProcessForScaleDetection(OriginalImage, 128),
-                                System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                        //filter.ApplyInPlace(bitmapimage);
-                        using (var img = PixConverter.ToPix(bitmapimage))
-                        {
-                            using (
-                                var page = engine.Process(img,
-                                    new Tesseract.Rect(ScaleRectangle.X, ScaleRectangle.Y, ScaleRectangle.Width,
-                                        ScaleRectangle.Height), PageSegMode.SingleLine))
-                            {
-                                ocrtext = page.GetText();
-                            }
-                        }
-                    });
+                       //Invert filter = new Invert();
+                       Bitmap bitmapimage = AForge.Imaging.Image.Clone(BitmapConverter.PreProcessForScaleDetection(OriginalImage, 128),
+                              System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                       //filter.ApplyInPlace(bitmapimage);
+                       using (var img = PixConverter.ToPix(bitmapimage))
+                       {
+                           using (
+                               var page = engine.Process(img,
+                                   new Tesseract.Rect(ScaleRectangle.X, ScaleRectangle.Y, ScaleRectangle.Width,
+                                       ScaleRectangle.Height), PageSegMode.SingleLine))
+                           {
+                               ocrtext = page.GetText();
+                           }
+                       }
+                   });
                 }
             }
             catch (Exception e)
@@ -729,7 +826,7 @@ namespace SmartDots.ViewModel
                 {
                     rect.Y = y - 70;
                 }
-                rect.Width = (int) milimeterPixels;
+                rect.Width = (int)milimeterPixels;
                 rect.Height = 68;
                 ScaleRectangle = rect;
                 return milimeterPixels;
@@ -744,9 +841,9 @@ namespace SmartDots.ViewModel
         public decimal CalculatePixelLength(BitmapImage image, int threshold)
         {
             decimal milimeterPixels = 0;
-            var newImage = BitmapConverter.PreProcessForScaleDetection(image,threshold);
-            
-            
+            var newImage = BitmapConverter.PreProcessForScaleDetection(image, threshold);
+
+
             // create an instance of blob counter algorithm
             BlobCounterBase bc = new BlobCounter();
             // set filtering options
@@ -815,11 +912,14 @@ namespace SmartDots.ViewModel
             try
             {
                 Properties.Settings.Default.DotColor = DotColor.ToString();
-                Properties.Settings.Default.DotWidth = (int) DotWidth;
+                Properties.Settings.Default.DotWidth = (int)DotWidth;
                 Properties.Settings.Default.DotShape = DotShape;
                 Properties.Settings.Default.DotType = DotType;
                 Properties.Settings.Default.LineColor = LineColor.ToString();
-                Properties.Settings.Default.LineWidth = (int) LineWidth;
+                Properties.Settings.Default.LineWidth = (int)LineWidth;
+                Properties.Settings.Default.MeasureColor = MeasureColor.ToString();
+                Properties.Settings.Default.MeasureLineWidth = (int)MeasureLineWidth;
+                Properties.Settings.Default.MeasureFontSize = (int)MeasureFontSize;
                 Properties.Settings.Default.Save();
             }
             catch (Exception e)
@@ -844,12 +944,15 @@ namespace SmartDots.ViewModel
         {
             try
             {
-                DotColor = (Color) ColorConverter.ConvertFromString(Properties.Settings.Default.DotColor);
+                DotColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.DotColor);
                 DotWidth = Properties.Settings.Default.DotWidth;
                 DotShape = Properties.Settings.Default.DotShape;
                 DotType = Properties.Settings.Default.DotType;
-                LineColor = (Color) ColorConverter.ConvertFromString(Properties.Settings.Default.LineColor);
+                LineColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.LineColor);
                 LineWidth = Properties.Settings.Default.LineWidth;
+                MeasureColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.MeasureColor);
+                MeasureLineWidth = Properties.Settings.Default.MeasureLineWidth;
+                MeasureFontSize = Properties.Settings.Default.MeasureFontSize;
             }
             catch (Exception e)
             {
@@ -862,12 +965,15 @@ namespace SmartDots.ViewModel
         {
             try
             {
-                DotColor = (Color) ColorConverter.ConvertFromString("#FF00FF00");
+                DotColor = (Color)ColorConverter.ConvertFromString("#FF00FF00");
                 DotWidth = 8;
                 DotShape = "Dot";
                 DotType = "Seawater";
-                LineColor = (Color) ColorConverter.ConvertFromString("#FFFF00FF");
+                LineColor = (Color)ColorConverter.ConvertFromString("#FFFF00FF");
                 LineWidth = 2;
+                MeasureColor = (Color)ColorConverter.ConvertFromString("#FFFF00FF");
+                MeasureLineWidth = 1;
+                MeasureFontSize = 12;
             }
             catch (Exception e)
             {
@@ -894,12 +1000,12 @@ namespace SmartDots.ViewModel
                     {
                         Line line = new Line()
                         {
-                            X1 = (float) l.X1*zoomfactor,
-                            Y1 = (float) l.Y1*zoomfactor,
-                            X2 = (float) l.X2*zoomfactor,
-                            Y2 = (float) l.Y2*zoomfactor,
-                            Stroke = (SolidColorBrush) (new BrushConverter().ConvertFrom(l.Color)),
-                            StrokeThickness = (float) l.Width*zoomfactor,
+                            X1 = (float)l.X1 * zoomfactor,
+                            Y1 = (float)l.Y1 * zoomfactor,
+                            X2 = (float)l.X2 * zoomfactor,
+                            Y2 = (float)l.Y2 * zoomfactor,
+                            Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(l.Color)),
+                            StrokeThickness = (float)l.Width * zoomfactor,
                             StrokeStartLineCap = PenLineCap.Round,
                             StrokeEndLineCap = PenLineCap.Round
 
@@ -907,93 +1013,100 @@ namespace SmartDots.ViewModel
                         lines.Add(line);
                     }
 
-                    foreach (Dot d in cl.Dots)
+                    if (!annotation.HasAqNoAge())
                     {
-                        if (d.DotShape == "Cross")
+                        foreach (Dot d in cl.Dots)
                         {
-                            Shape c = new Cross()
+                            if (d.DotShape == "Cross")
                             {
-                                Fill = (SolidColorBrush) (new BrushConverter().ConvertFrom(d.Color)),
-                                Width = (float) d.Width*zoomfactor,
-                                X = (float) d.X*zoomfactor,
-                                Y = (float) d.Y*zoomfactor,
-                            };
-                            var line1 = ((Cross) c).Line1;
-                            line1.StrokeStartLineCap = PenLineCap.Round;
-                            line1.StrokeEndLineCap = PenLineCap.Round;
+                                Shape c = new Cross()
+                                {
+                                    Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(d.Color)),
+                                    Width = (float)d.Width * zoomfactor,
+                                    X = (float)d.X * zoomfactor,
+                                    Y = (float)d.Y * zoomfactor,
+                                };
+                                var line1 = ((Cross)c).Line1;
+                                line1.StrokeStartLineCap = PenLineCap.Round;
+                                line1.StrokeEndLineCap = PenLineCap.Round;
+                                line1.Tag = "Cross";
 
-                            var line2 = ((Cross) c).Line2;
-                            line2.StrokeStartLineCap = PenLineCap.Round;
-                            line2.StrokeEndLineCap = PenLineCap.Round;
+                                var line2 = ((Cross)c).Line2;
+                                line2.StrokeStartLineCap = PenLineCap.Round;
+                                line2.StrokeEndLineCap = PenLineCap.Round;
+                                line2.Tag = "Cross";
 
-                            lines.Add(line1);
-                            lines.Add(line2);
-                        }
-                        else
-                        {
-                            Shape l = new Ellipse()
+                                lines.Add(line1);
+                                lines.Add(line2);
+                            }
+                            else
                             {
-                                Fill = (SolidColorBrush) (new BrushConverter().ConvertFrom(d.Color)),
-                                Width = (float) d.Width*zoomfactor,
-                                Height = (float) d.Width*zoomfactor,
-                                SnapsToDevicePixels = false
+                                Shape l = new Ellipse()
+                                {
+                                    Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(d.Color)),
+                                    Width = (float)d.Width * zoomfactor,
+                                    Height = (float)d.Width * zoomfactor,
+                                    SnapsToDevicePixels = false
 
-                            };
-                            var left = (float) d.X*zoomfactor - (float) d.Width/2*zoomfactor;
-                            var top = (float) d.Y*zoomfactor - (float) d.Width/2*zoomfactor;
-                            Canvas.SetLeft(l, left);
-                            Canvas.SetTop(l, top);
-                            dots.Add(l);
-                        }
-                        if (d.DotType == "Freshwater")
-                        {
-                            var radius = (float) d.Width*1.8;
-                            Shape l = new Ellipse()
+                                };
+                                var left = (float)d.X * zoomfactor - (float)d.Width / 2 * zoomfactor;
+                                var top = (float)d.Y * zoomfactor - (float)d.Width / 2 * zoomfactor;
+                                Canvas.SetLeft(l, left);
+                                Canvas.SetTop(l, top);
+                                dots.Add(l);
+                            }
+                            if (d.DotType == "Freshwater")
                             {
-                                Stroke = (SolidColorBrush) (new BrushConverter().ConvertFrom(d.Color)),
-                                Width = ((radius)*zoomfactor),
-                                Height = ((radius)*zoomfactor),
-                                StrokeThickness = (float) d.Width/8*zoomfactor,
-                                StrokeDashArray = new DoubleCollection() {3, 3}
+                                var radius = (float)d.Width * 1.8;
+                                Shape l = new Ellipse()
+                                {
+                                    Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(d.Color)),
+                                    Width = ((radius) * zoomfactor),
+                                    Height = ((radius) * zoomfactor),
+                                    StrokeThickness = (float)d.Width / 8 * zoomfactor,
+                                    StrokeDashArray = new DoubleCollection() { 3, 3 }
 
-                            };
-                            var left = (float) d.X*zoomfactor - (radius)/2*zoomfactor;
-                            var top = (float) d.Y*zoomfactor - (radius)/2*zoomfactor;
-                            Canvas.SetLeft(l, left);
-                            Canvas.SetTop(l, top);
-                            dots.Add(l);
+                                };
+                                var left = (float)d.X * zoomfactor - (radius) / 2 * zoomfactor;
+                                var top = (float)d.Y * zoomfactor - (radius) / 2 * zoomfactor;
+                                Canvas.SetLeft(l, left);
+                                Canvas.SetTop(l, top);
+                                dots.Add(l);
+                            }
                         }
+
                     }
+
                     if (Mode != EditorModeEnum.MakingLine && cl.Lines.Any())
                     {
                         var lastLine = cl.Lines.OrderBy(x => x.LineIndex).Last();
-                        var n = Math.Atan2(lastLine.Y1 - lastLine.Y2, lastLine.X2 - lastLine.X1)*180/Math.PI;
+                        var n = Math.Atan2(lastLine.Y1 - lastLine.Y2, lastLine.X2 - lastLine.X1) * 180 / Math.PI;
                         Point point1 = new Point(lastLine.X2, lastLine.Y2);
-                        var cos = Math.Cos((n + 30)*(Math.PI/180.0))*10;
-                        var sin = Math.Sin((n + 30)*(Math.PI/180.0))*10;
+                        var cos = Math.Cos((n + 30) * (Math.PI / 180.0)) * 10;
+                        var sin = Math.Sin((n + 30) * (Math.PI / 180.0)) * 10;
                         Point point2 = new Point(lastLine.X2 - cos, lastLine.Y2 + sin);
-                        cos = Math.Cos((n - 30)*(Math.PI/180.0))*10;
-                        sin = Math.Sin((n - 30)*(Math.PI/180.0))*10;
+                        cos = Math.Cos((n - 30) * (Math.PI / 180.0)) * 10;
+                        sin = Math.Sin((n - 30) * (Math.PI / 180.0)) * 10;
                         Point point3 = new Point(lastLine.X2 - cos, lastLine.Y2 + sin);
                         var line1 = new Line()
                         {
-                            X1 = (float) point1.X*zoomfactor,
-                            Y1 = (float) point1.Y*zoomfactor,
-                            X2 = (float) point2.X*zoomfactor,
-                            Y2 = (float) point2.Y*zoomfactor,
-                            Stroke = (SolidColorBrush) (new BrushConverter().ConvertFrom(lastLine.Color)),
-                            StrokeThickness = (lastLine.Width*zoomfactor),
+                            X1 = (float)point1.X * zoomfactor,
+                            Y1 = (float)point1.Y * zoomfactor,
+                            X2 = (float)point2.X * zoomfactor,
+                            Y2 = (float)point2.Y * zoomfactor,
+                            Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(lastLine.Color)),
+                            StrokeThickness = (lastLine.Width * zoomfactor),
                             StrokeStartLineCap = PenLineCap.Round,
                             StrokeEndLineCap = PenLineCap.Round
                         };
                         var line2 = new Line()
                         {
-                            X1 = (float) point1.X*zoomfactor,
-                            Y1 = (float) point1.Y*zoomfactor,
-                            X2 = (float) point3.X*zoomfactor,
-                            Y2 = (float) point3.Y*zoomfactor,
-                            Stroke = (SolidColorBrush) (new BrushConverter().ConvertFrom(lastLine.Color)),
-                            StrokeThickness = (lastLine.Width*zoomfactor),
+                            X1 = (float)point1.X * zoomfactor,
+                            Y1 = (float)point1.Y * zoomfactor,
+                            X2 = (float)point3.X * zoomfactor,
+                            Y2 = (float)point3.Y * zoomfactor,
+                            Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(lastLine.Color)),
+                            StrokeThickness = (lastLine.Width * zoomfactor),
                             StrokeStartLineCap = PenLineCap.Round,
                             StrokeEndLineCap = PenLineCap.Round
                         };
@@ -1001,6 +1114,16 @@ namespace SmartDots.ViewModel
                         lines.Add(line2);
                     }
 
+                }
+
+            }
+            RefreshMeasures();
+
+            if (HideLines)
+            {
+                foreach (var line in lines.Where(x => x.Tag == null))
+                {
+                    line.StrokeThickness = 0;
                 }
             }
 
@@ -1010,6 +1133,125 @@ namespace SmartDots.ViewModel
 
             if (updategraphs) AgeReadingViewModel.UpdateGraphs();
             CalculateAge();
+        }
+
+        public void RefreshMeasures(bool onlyLast = false)
+        {
+            if (HideLines)
+            {
+                MeasureShapes = new ObservableCollection<Line>();
+                TextShapes = new ObservableCollection<TextBlock>();
+                return;
+            }
+
+            float zoomfactor = AgeReadingViewModel == null
+                ? 0
+                : AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
+            ObservableCollection<Line> measures = new ObservableCollection<Line>();
+            ObservableCollection<TextBlock> text = new ObservableCollection<TextBlock>();
+
+            foreach (var line in originalMeasureShapes)
+            {
+                Line l = new Line()
+                {
+                    X1 = line.X1 * zoomfactor,
+                    Y1 = line.Y1 * zoomfactor,
+                    X2 = line.X2 * zoomfactor,
+                    Y2 = line.Y2 * zoomfactor,
+                    Stroke = line.Stroke,
+                    StrokeThickness = line.StrokeThickness * zoomfactor,
+                    StrokeDashCap = PenLineCap.Round,
+                    StrokeStartLineCap = PenLineCap.Round,
+                    StrokeEndLineCap = PenLineCap.Round,
+                    StrokeDashArray = new DoubleCollection() { 0.25, 1.5 },
+                    Uid = line.Uid,
+                    IsHitTestVisible = true,
+                    Tag = line.Tag
+                };
+
+                Line l2 = new Line()
+                {
+                    X1 = l.X1,
+                    Y1 = l.Y1,
+                    X2 = l.X2,
+                    Y2 = l.Y2,
+                    StrokeThickness = 30 * zoomfactor,
+                    IsHitTestVisible = true,
+                    Uid = l.Uid,
+                    Stroke = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0))
+                };
+
+
+                measures.Add(l);
+                measures.Add(l2);
+                var tb = new TextBlock()
+                {
+                    Text = "Placeholder",
+                    Foreground = l.Stroke,
+                    FontSize = int.Parse(l.Tag.ToString()) * zoomfactor,
+                };
+
+                var scale = AgeReadingViewModel?.AgeReadingFileViewModel.SelectedFile.Scale;
+
+                if (scale != null && scale != 0)
+                {
+                    var lengthText = "";
+                    var length = (decimal)Math.Sqrt((int)Math.Abs(Math.Pow((line.X2 - line.X1), 2) + Math.Pow((line.Y2 - line.Y1), 2))) / scale;
+
+                    if (length < 0.001m)
+                    {
+                        var tempLength = length * 1000000;
+                        tempLength = decimal.Round((decimal)tempLength, 0);
+                        lengthText = tempLength.ToString() + " nm";
+                    }
+                    else if (length < 1m)
+                    {
+                        var tempLength = length * 1000;
+                        tempLength = decimal.Round((decimal)tempLength, 1);
+                        lengthText = tempLength.ToString() + " µm";
+                    }
+                    else
+                    {
+                        length = decimal.Round((decimal)length, 2);
+                        lengthText = length.ToString() + " mm";
+                    }
+
+                    tb.Text = lengthText;
+                }
+                else
+                {
+                    tb.Text = Math.Sqrt((int)Math.Abs(Math.Pow((line.X2 - line.X1), 2) + Math.Pow((line.Y2 - line.Y1), 2))).ToString("N0") + " px";
+                }
+
+
+                //atan2 for angle
+                var radians = Math.Atan2(line.Y2 - line.Y1, line.X2 - line.X1);
+
+                //radians into degrees
+                var angle = radians * (180 / Math.PI);
+
+                var size = Helper.MeasureString(tb);
+
+                var left = (line.X2 * zoomfactor + line.X1 * zoomfactor - size.Width) / 2 + Math.Sin(radians) * size.Height * 0.6;
+                if (left < 0) left = 0;
+
+                var top = (line.Y2 * zoomfactor + line.Y1 * zoomfactor - size.Height) / 2 - Math.Cos(radians) * size.Height * 0.6;
+                if (top < 0) top = 0;
+
+                if (angle < -90 || angle > 90)
+                {
+                    angle += 180;
+                }
+
+                tb.Margin = new Thickness(left, top, 0, 0);
+
+                tb.RenderTransform = new RotateTransform(angle, size.Width / 2, size.Height / 2);
+
+                text.Add(tb);
+            }
+
+            MeasureShapes = measures;
+            TextShapes = text;
         }
 
         public Tuple<LinePoint, double> GetClosestLinePointWithDistance(Point p)
@@ -1023,7 +1265,7 @@ namespace SmartDots.ViewModel
             {
                 closestPoint =
                     AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0]
-                        .GetClosestPointWithDistance(new Point(p.X/zoomfactor, p.Y/zoomfactor));
+                        .GetClosestPointWithDistance(new Point(p.X / zoomfactor, p.Y / zoomfactor));
             }
 
             Tuple<LinePoint, double> point = null;
@@ -1034,7 +1276,7 @@ namespace SmartDots.ViewModel
                     CombinedLine l in AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines)
                 {
                     if (l.Points.Count > 0)
-                        point = l.GetClosestPointWithDistance(new Point(p.X/zoomfactor, p.Y/zoomfactor));
+                        point = l.GetClosestPointWithDistance(new Point(p.X / zoomfactor, p.Y / zoomfactor));
 
                     if (closestPoint != null && (point != null && point.Item2 < closestPoint.Item2))
                     {
@@ -1043,6 +1285,20 @@ namespace SmartDots.ViewModel
                 }
             }
             return closestPoint;
+        }
+
+        public Line GetClosesMeasure(Point p)
+        {
+            var canvas = AgeReadingViewModel.AgeReadingEditorView.MeasureShapesContainer;
+            HitTestResult result = VisualTreeHelper.HitTest(canvas, p);
+            if (result != null)
+            {
+                var line = (Line)result.VisualHit;
+                var originalLine = OriginalMeasureShapes.FirstOrDefault(x => x.Uid == line.Uid);
+                return originalLine;
+            }
+
+            return null;
         }
 
         public void AddLine(Model.Line l)
@@ -1112,34 +1368,34 @@ namespace SmartDots.ViewModel
                 BitmapData bitmapData = bmap.LockBits(new System.Drawing.Rectangle(0, 0, bmap.Width, bmap.Height),
                     ImageLockMode.ReadWrite, bmap.PixelFormat);
 
-                int bytesPerPixel = Bitmap.GetPixelFormatSize(bmap.PixelFormat)/8;
+                int bytesPerPixel = Bitmap.GetPixelFormatSize(bmap.PixelFormat) / 8;
                 int heightInPixels = bitmapData.Height;
-                int widthInBytes = bitmapData.Width*bytesPerPixel;
-                byte* PtrFirstPixel = (byte*) bitmapData.Scan0;
+                int widthInBytes = bitmapData.Width * bytesPerPixel;
+                byte* PtrFirstPixel = (byte*)bitmapData.Scan0;
 
-                Parallel.For((long) 0, heightInPixels, y =>
-                {
-                    byte* currentLine = PtrFirstPixel + (y*bitmapData.Stride);
+                Parallel.For((long)0, heightInPixels, y =>
+               {
+                   byte* currentLine = PtrFirstPixel + (y * bitmapData.Stride);
 
-                    for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
-                    {
-                        double oldBlue = currentLine[x] + brightness;
-                        if (oldBlue < 0) oldBlue = 1;
-                        if (oldBlue > 255) oldBlue = 255;
+                   for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
+                   {
+                       double oldBlue = currentLine[x] + brightness;
+                       if (oldBlue < 0) oldBlue = 1;
+                       if (oldBlue > 255) oldBlue = 255;
 
-                        double oldGreen = currentLine[x + 1] + brightness;
-                        if (oldGreen < 0) oldGreen = 1;
-                        if (oldGreen > 255) oldGreen = 255;
+                       double oldGreen = currentLine[x + 1] + brightness;
+                       if (oldGreen < 0) oldGreen = 1;
+                       if (oldGreen > 255) oldGreen = 255;
 
-                        double oldRed = currentLine[x + 2] + brightness;
-                        if (oldRed < 0) oldRed = 1;
-                        if (oldRed > 255) oldRed = 255;
+                       double oldRed = currentLine[x + 2] + brightness;
+                       if (oldRed < 0) oldRed = 1;
+                       if (oldRed > 255) oldRed = 255;
 
-                        currentLine[x] = (byte) oldBlue;
-                        currentLine[x + 1] = (byte) oldGreen;
-                        currentLine[x + 2] = (byte) oldRed;
-                    }
-                });
+                       currentLine[x] = (byte)oldBlue;
+                       currentLine[x + 1] = (byte)oldGreen;
+                       currentLine[x + 2] = (byte)oldRed;
+                   }
+               });
                 bmap.UnlockBits(bitmapData);
                 return BitmapConverter.Bitmap2BitmapImage(bmap);
             }
@@ -1156,51 +1412,51 @@ namespace SmartDots.ViewModel
             {
                 double contrast = Contrast;
                 Bitmap bmap = BitmapConverter.BitmapImage2Bitmap(img);
-                contrast = (100.0 + contrast)/100.0;
+                contrast = (100.0 + contrast) / 100.0;
                 contrast *= contrast;
                 BitmapData bitmapData = bmap.LockBits(new System.Drawing.Rectangle(0, 0, bmap.Width, bmap.Height),
                     ImageLockMode.ReadWrite, bmap.PixelFormat);
 
-                int bytesPerPixel = Bitmap.GetPixelFormatSize(bmap.PixelFormat)/8;
+                int bytesPerPixel = Bitmap.GetPixelFormatSize(bmap.PixelFormat) / 8;
                 int heightInPixels = bitmapData.Height;
-                int widthInBytes = bitmapData.Width*bytesPerPixel;
-                byte* PtrFirstPixel = (byte*) bitmapData.Scan0;
+                int widthInBytes = bitmapData.Width * bytesPerPixel;
+                byte* PtrFirstPixel = (byte*)bitmapData.Scan0;
 
-                Parallel.For((long) 0, heightInPixels, y =>
-                {
-                    byte* currentLine = PtrFirstPixel + (y*bitmapData.Stride);
+                Parallel.For((long)0, heightInPixels, y =>
+               {
+                   byte* currentLine = PtrFirstPixel + (y * bitmapData.Stride);
 
-                    for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
-                    {
-                        double oldBlue = currentLine[x]/255.0;
-                        oldBlue -= 0.5;
-                        oldBlue *= contrast;
-                        oldBlue += 0.5;
-                        oldBlue *= 255;
-                        if (oldBlue < 0) oldBlue = 0;
-                        if (oldBlue > 255) oldBlue = 255;
+                   for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
+                   {
+                       double oldBlue = currentLine[x] / 255.0;
+                       oldBlue -= 0.5;
+                       oldBlue *= contrast;
+                       oldBlue += 0.5;
+                       oldBlue *= 255;
+                       if (oldBlue < 0) oldBlue = 0;
+                       if (oldBlue > 255) oldBlue = 255;
 
-                        double oldGreen = currentLine[x + 1]/255.0;
-                        oldGreen -= 0.5;
-                        oldGreen *= contrast;
-                        oldGreen += 0.5;
-                        oldGreen *= 255;
-                        if (oldGreen < 0) oldGreen = 0;
-                        if (oldGreen > 255) oldGreen = 255;
+                       double oldGreen = currentLine[x + 1] / 255.0;
+                       oldGreen -= 0.5;
+                       oldGreen *= contrast;
+                       oldGreen += 0.5;
+                       oldGreen *= 255;
+                       if (oldGreen < 0) oldGreen = 0;
+                       if (oldGreen > 255) oldGreen = 255;
 
-                        double oldRed = currentLine[x + 2]/255.0;
-                        oldRed -= 0.5;
-                        oldRed *= contrast;
-                        oldRed += 0.5;
-                        oldRed *= 255;
-                        if (oldRed < 0) oldRed = 0;
-                        if (oldRed > 255) oldRed = 255;
+                       double oldRed = currentLine[x + 2] / 255.0;
+                       oldRed -= 0.5;
+                       oldRed *= contrast;
+                       oldRed += 0.5;
+                       oldRed *= 255;
+                       if (oldRed < 0) oldRed = 0;
+                       if (oldRed > 255) oldRed = 255;
 
-                        currentLine[x] = (byte) oldBlue;
-                        currentLine[x + 1] = (byte) oldGreen;
-                        currentLine[x + 2] = (byte) oldRed;
-                    }
-                });
+                       currentLine[x] = (byte)oldBlue;
+                       currentLine[x + 1] = (byte)oldGreen;
+                       currentLine[x + 2] = (byte)oldRed;
+                   }
+               });
                 bmap.UnlockBits(bitmapData);
 
                 // Stop timing.
@@ -1212,7 +1468,7 @@ namespace SmartDots.ViewModel
             }
         }
 
-        
+
         public void ScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (AgeReadingViewModel.AgeReadingStatusbarViewModel.IsFittingImage)
@@ -1231,26 +1487,27 @@ namespace SmartDots.ViewModel
 
             if (e.ChangedButton == MouseButton.Left)
             {
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly &&
-                    Mode != EditorModeEnum.DrawScale)
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly && !(Mode == EditorModeEnum.DrawScale || Mode == EditorModeEnum.Measure || Mode == EditorModeEnum.MakingMeasure))
                 {
                     new WinUIMessageBoxService().Show("The selected file is ReadOnly!", "Error", MessageBoxButton.OK,
                         MessageBoxImage.Error);
                     return;
                 }
                 if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null &&
-                    AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsReadOnly)
+                    AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsReadOnly
+                    && !(Mode == EditorModeEnum.DrawScale || Mode == EditorModeEnum.Measure || Mode == EditorModeEnum.MakingMeasure))
                 {
                     new WinUIMessageBoxService().Show("The selected annotation is ReadOnly!", "Error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-                if (AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations.Count > 1)
+                if (Mode != EditorModeEnum.Measure && Mode != EditorModeEnum.MakingMeasure && Mode != EditorModeEnum.Delete)
                 {
-                    new WinUIMessageBoxService().Show(
-                        "Can not draw any shapes when multiple annotations are selected!", "Error", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                    return;
+                    if (AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations.Count > 1)
+                    {
+                        new WinUIMessageBoxService().Show("Can not draw any shapes when multiple annotations are selected!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
                 }
 
                 switch (Mode)
@@ -1270,6 +1527,12 @@ namespace SmartDots.ViewModel
                     case EditorModeEnum.DrawScale:
                         DrawScale(e);
                         break;
+                    case EditorModeEnum.Measure:
+                        DrawMeasure(e);
+                        break;
+                    case EditorModeEnum.MakingMeasure:
+                        MakingMeasure(e);
+                        break;
                 }
             }
             else if (e.ChangedButton == MouseButton.Right)
@@ -1279,9 +1542,13 @@ namespace SmartDots.ViewModel
                     case EditorModeEnum.MakingLine:
                         EndLine(e);
                         break;
+                    case EditorModeEnum.MakingMeasure:
+                        MakingMeasure(e);
+                        break;
                 }
             }
-            AgeReadingViewModel.AgeReadingAnnotationViewModel.RefreshActions();
+            else
+                AgeReadingViewModel.AgeReadingAnnotationViewModel.RefreshActions();
             UpdateButtons();
         }
 
@@ -1297,8 +1564,8 @@ namespace SmartDots.ViewModel
                     Y1 = position.Y,
                     X2 = position.X,
                     Y2 = position.Y,
-                    Stroke = (SolidColorBrush) (new BrushConverter().ConvertFrom(LineColor.ToString())),
-                    StrokeThickness = ((int) LineWidth*zoomfactor),
+                    Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(LineColor.ToString())),
+                    StrokeThickness = ((int)LineWidth * zoomfactor),
                 };
                 ScaleShapes.Add(line);
             }
@@ -1308,6 +1575,46 @@ namespace SmartDots.ViewModel
                 Mode = EditorModeEnum.None;
             }
             RefreshShapes();
+        }
+
+        private void DrawMeasure(MouseButtonEventArgs e)
+        {
+            //if (!MeasureShapes.Any())
+            //{
+            float zoomfactor = AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
+            var position = e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas);
+            var id = Guid.NewGuid();
+            Line line = new Line()
+            {
+                X1 = position.X / zoomfactor,
+                Y1 = position.Y / zoomfactor,
+                X2 = position.X / zoomfactor,
+                Y2 = position.Y / zoomfactor,
+                Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(MeasureColor.ToString())),
+                StrokeThickness = (int)MeasureLineWidth,
+                StrokeDashCap = PenLineCap.Round,
+                StrokeDashArray = new DoubleCollection() { 0.25, 1.5 },
+                Uid = id.ToString(),
+                Tag = MeasureFontSize.ToString()
+
+            };
+            OriginalMeasureShapes.Add(line);
+            UndoRedo.InsertInUnDoRedoForAddMeasure(line, this);
+            Mode = EditorModeEnum.MakingMeasure;
+            AgeReadingViewModel.EnableUI(false);
+
+            //}
+            //else
+            //{
+            //    Mode = EditorModeEnum.None;
+            //}
+            RefreshShapes();
+        }
+
+        private void MakingMeasure(MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Right) OriginalMeasureShapes.Remove(OriginalMeasureShapes.Last());
+            CancelMeasure();
         }
 
         private void DrawLine(MouseButtonEventArgs e)
@@ -1327,11 +1634,11 @@ namespace SmartDots.ViewModel
             {
                 ID = Guid.NewGuid(),
                 Color = LineColor.ToString(),
-                X1 = (int) ((int) e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).X/zoomfactor),
-                X2 = (int) ((int) e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).X/zoomfactor),
-                Y1 = (int) ((int) e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).Y/zoomfactor),
-                Y2 = (int) ((int) e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).Y/zoomfactor),
-                Width = (int) LineWidth,
+                X1 = (int)((int)e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).X / zoomfactor),
+                X2 = (int)((int)e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).X / zoomfactor),
+                Y1 = (int)((int)e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).Y / zoomfactor),
+                Y2 = (int)((int)e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).Y / zoomfactor),
+                Width = (int)LineWidth,
                 ParentCombinedLine = temp,
                 AnnotationID = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ID,
                 LineIndex = 0
@@ -1352,11 +1659,11 @@ namespace SmartDots.ViewModel
                     AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last()
                             .Lines.Last()
                             .X2
-                        = (int) (e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).X/zoomfactor);
+                        = (int)(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).X / zoomfactor);
                     AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last()
                             .Lines.Last()
                             .Y2
-                        = (int) (e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).Y/zoomfactor);
+                        = (int)(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).Y / zoomfactor);
 
                     Model.Line l =
                         AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last()
@@ -1370,7 +1677,7 @@ namespace SmartDots.ViewModel
                         X2 = l.X2,
                         Y1 = l.Y2,
                         Y2 = l.Y2,
-                        Width = (int) LineWidth,
+                        Width = (int)LineWidth,
                         ParentCombinedLine =
                             AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last(),
                         AnnotationID = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ID,
@@ -1455,7 +1762,7 @@ namespace SmartDots.ViewModel
                             ID = Guid.NewGuid(),
                             X = closestPoint.Item1.X,
                             Y = closestPoint.Item1.Y,
-                            Width = (int) DotWidth,
+                            Width = (int)DotWidth,
                             Color = DotColor.ToString(),
                             ParentCombinedLine = closestPoint.Item1.ParentCombinedLine,
                             AnnotationID = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ID,
@@ -1468,10 +1775,21 @@ namespace SmartDots.ViewModel
                     }
                 }
             }
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.RefreshActions();
         }
 
         private void DeleteLineOrDot(MouseButtonEventArgs e)
         {
+            //measures have priority
+            var measure = GetClosesMeasure(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
+            if (measure != null)
+            {
+                OriginalMeasureShapes.Remove(measure);
+                UndoRedo.InsertInUnDoRedoForDeleteMeasure(measure, this);
+                RefreshMeasures();
+                return;
+            }
+
             if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation == null) return;
             if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Count == 0) return;
             if (e.ChangedButton == MouseButton.Left &&
@@ -1522,6 +1840,7 @@ namespace SmartDots.ViewModel
                 AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsChanged = true;
                 RefreshShapes();
             }
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.RefreshActions();
         }
 
         private Tuple<Dot, double> CalculateClosestDot(List<Dot> allDots, Point p)
@@ -1529,13 +1848,13 @@ namespace SmartDots.ViewModel
             if (!allDots.Any()) return null;
             Dot dot = allDots[0];
             var smallestDistance =
-                Math.Abs(Math.Pow(p.X/AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor - allDots[0].X, 2) +
-                         Math.Pow(p.Y/AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor - allDots[0].Y, 2));
+                Math.Abs(Math.Pow(p.X / AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor - allDots[0].X, 2) +
+                         Math.Pow(p.Y / AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor - allDots[0].Y, 2));
             foreach (Dot d in allDots)
             {
                 var distance =
-                    Math.Abs(Math.Pow(p.X/AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor - d.X, 2) +
-                             Math.Pow(p.Y/AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor - d.Y, 2));
+                    Math.Abs(Math.Pow(p.X / AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor - d.X, 2) +
+                             Math.Pow(p.Y / AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor - d.Y, 2));
 
                 if (distance < smallestDistance)
                 {
@@ -1554,6 +1873,7 @@ namespace SmartDots.ViewModel
 
         public void ParentCanvas_MouseMove(object sender, MouseEventArgs e)
         {
+            var zoomfactor = AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
             try
             {
                 if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null &&
@@ -1578,8 +1898,7 @@ namespace SmartDots.ViewModel
 
                 if (Mode == EditorModeEnum.MakingLine && AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any())
                 {
-                    float zoomfactor = AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
-
+                    AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Arrow;
                     AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last().Lines.Last().X2
                         = (int)((int)e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).X / zoomfactor);
                     AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last().Lines.Last().Y2
@@ -1591,7 +1910,7 @@ namespace SmartDots.ViewModel
                          AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null &&
                          AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any())
                 {
-
+                    AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Arrow;
 
 
 
@@ -1635,23 +1954,16 @@ namespace SmartDots.ViewModel
                         }
                     }
                 }
-                else if ((Mode == EditorModeEnum.Delete || Mode == EditorModeEnum.SelectLine) &&
-                         AgeReadingViewModel.AgeReadingAnnotationViewModel?.SelectedAnnotations.Count == 1)
+                else if (Mode == EditorModeEnum.Delete || Mode == EditorModeEnum.SelectLine)
                 {
-                    if (AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations[0].CombinedLines.Count > 0)
+                    Tuple<LinePoint, double> linepointwithdistance = GetClosestLinePointWithDistance(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
+                    Line measure = GetClosesMeasure(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
+
+                    if (linepointwithdistance != null && linepointwithdistance.Item2 <= 30)
                     {
-                        Tuple<LinePoint, double> linepointwithdistance =
-                            GetClosestLinePointWithDistance(
-                                e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
-                        if (linepointwithdistance.Item2 <= 30)
-                        {
-                            AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Hand;
-                        }
-                        else
-                        {
-                            AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Arrow;
-                        }
+                        AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Hand;
                     }
+                    else if (measure != null) AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Hand;
                     else
                     {
                         AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Arrow;
@@ -1659,22 +1971,36 @@ namespace SmartDots.ViewModel
                 }
                 else if (Mode == EditorModeEnum.DrawScale && ScaleShapes.Any())
                 {
+                    AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Arrow;
                     var position = e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas);
                     var line = ScaleShapes.Last();
                     line.X2 = position.X;
-                    var zoomfactor = AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
                     AgeReadingViewModel.AgeReadingEditorView.ScalePixels.Text =
                         Math.Sqrt(
                             (int)
                             Math.Abs(Math.Pow((line.X2 - line.X1) / zoomfactor, 2) +
                                      Math.Pow((line.Y2 - line.Y1) / zoomfactor, 2))).ToString("N0");
                 }
+                else if (Mode == EditorModeEnum.MakingMeasure)
+                {
+                    AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Arrow;
+                    var position = e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas);
+                    var line = originalMeasureShapes.Last();
+                    line.X2 = position.X / zoomfactor;
+                    line.Y2 = position.Y / zoomfactor;
+
+                    RefreshMeasures(true); //todo option to only refresh last one
+                }
+                else
+                {
+                    AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Arrow;
+                }
             }
             catch (Exception)
             {
                 //
             }
-            
+
         }
 
         public void DrawLineBtn_Checked(object sender, RoutedEventArgs e)
@@ -1725,7 +2051,7 @@ namespace SmartDots.ViewModel
         {
             if (!buttonPressed)
             {
-                if(MeasuredFileIDs.Contains(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID)) return;
+                if (MeasuredFileIDs.Contains(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID)) return;
                 else
                 {
                     MeasuredFileIDs.Add(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID);
@@ -1737,15 +2063,21 @@ namespace SmartDots.ViewModel
                 try
                 {
 
-                        GetPixelLength();
+                    GetPixelLength();
 
-                    
+
                 }
                 catch (Exception e)
                 {
                     Helper.ShowWinUIMessageBox("Could not determine the scale automatically. Please measure the scale manually", "Info", MessageBoxButton.OK, MessageBoxImage.Information, e);
                 }
             }
+            RefreshMeasures();
+        }
+
+        public void MeasureTool()
+        {
+            Mode = Mode == EditorModeEnum.Measure ? EditorModeEnum.None : EditorModeEnum.Measure;
         }
 
         public void ManualMeasureScale()
@@ -1777,11 +2109,11 @@ namespace SmartDots.ViewModel
         public void AcceptScale()
         {
             double pixels;
-            double.TryParse(AgeReadingViewModel.AgeReadingEditorView.ScalePixels.Text.Replace(',','.'), NumberStyles.Any, CultureInfo.InvariantCulture, out pixels);
+            double.TryParse(AgeReadingViewModel.AgeReadingEditorView.ScalePixels.Text.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out pixels);
             double milimeters;
             double.TryParse(AgeReadingViewModel.AgeReadingEditorView.ScaleMilimeters.Text.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out milimeters);
-            
-            PixelLength = (decimal) (pixels/milimeters);
+
+            PixelLength = (decimal)(pixels / milimeters);
             var oldvalue = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale;
             var newvalue = PixelLength;
             if (oldvalue != newvalue)
@@ -1804,7 +2136,6 @@ namespace SmartDots.ViewModel
             RefreshShapes();
             AgeReadingViewModel.AgeReadingEditorView.MeasureScalePanel.Visibility = Visibility.Collapsed;
             Mode = EditorModeEnum.None;
-            AgeReadingViewModel.EnableUI(true);
         }
 
         public void CancelScale()
@@ -1815,7 +2146,16 @@ namespace SmartDots.ViewModel
             RefreshShapes();
             AgeReadingViewModel.AgeReadingEditorView.MeasureScalePanel.Visibility = Visibility.Collapsed;
             Mode = EditorModeEnum.None;
+        }
+
+        public void CancelMeasure()
+        {
+            MeasureShapes.Clear();
+            IsMeasureDrawn = false;
+            RefreshShapes();
+            Mode = EditorModeEnum.None;
             AgeReadingViewModel.EnableUI(true);
+
         }
     }
 }

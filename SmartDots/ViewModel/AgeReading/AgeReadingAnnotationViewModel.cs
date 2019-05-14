@@ -28,8 +28,11 @@ namespace SmartDots.ViewModel
         private Annotation workingAnnotation;
         private List<Quality> qualities;
         private List<AnalysisParameter> parameters;
+        private List<VisibilityState> visibilityStates;
         private List<FormatCondition> conditionalRowStyles;
         private bool canApproveAnnotation;
+        private bool showNucleusColumn;
+        private bool showEdgeColumn;
 
         public ObservableCollection<Annotation> Outcomes
         {
@@ -41,6 +44,11 @@ namespace SmartDots.ViewModel
                 annotations = value;
                 SelectedAnnotations = new List<Annotation>();
                 WorkingAnnotation = null;
+                foreach (var annotation in value)
+                {
+                    annotation.Quality = Qualities.FirstOrDefault(x => x.ID == annotation.QualityID);
+                    annotation.CalculateAge();
+                }
                 AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = value.Count;
                 RefreshActions();
                 AgeReadingViewModel.AgeReadingEditorViewModel.UpdateButtons();
@@ -91,6 +99,36 @@ namespace SmartDots.ViewModel
             {
                 parameters = value;
                 RaisePropertyChanged("Parameters");
+            }
+        }
+
+        public List<VisibilityState> VisibilityStates
+        {
+            get { return visibilityStates; }
+            set
+            {
+                visibilityStates = value;
+                RaisePropertyChanged("VisibilityStates");
+            }
+        }
+
+        public bool ShowNucleusColumn
+        {
+            get { return showNucleusColumn; }
+            set
+            {
+                showNucleusColumn = value;
+                RaisePropertyChanged("ShowNucleusColumn");
+            }
+        }
+
+        public bool ShowEdgeColumn
+        {
+            get { return showEdgeColumn; }
+            set
+            {
+                showEdgeColumn = value;
+                RaisePropertyChanged("ShowEdgeColumn");
             }
         }
 
@@ -257,6 +295,15 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public string ImageNew { get; set; } = "../../Resources/New.png";
+        public string ImageEdit { get; set; } = "../../Resources/Edit.png";
+        public string ImageDelete { get; set; } = "../../Resources/delete-32.png";
+        public string ImageApprove { get; set; } = "../../Resources/ok-32.png";
+        public string ImagePin { get; set; } = "../../Resources/pin-32.png";
+        public string ApproveIcon { get; set; } = "../../Resources/ok-16.png";
+        public string PinIcon { get; set; } = "../../Resources/pin-16.png";
+
+
         public void ShowEditAnnotation()
         {
             EditAnnotation();
@@ -275,6 +322,10 @@ namespace SmartDots.ViewModel
         {
             selectedAnnotations = new List<Annotation>();
             Parameters = new List<AnalysisParameter>();
+            VisibilityStates = new List<VisibilityState>();
+            VisibilityStates.Add(new VisibilityState(){ Value = "Opaque", Visibility = "Opaque" });
+            VisibilityStates.Add(new VisibilityState(){ Value = "Translucent", Visibility = "Translucent" });
+            VisibilityStates.Add(new VisibilityState() { Value = null, Visibility = "NA" });
             ConditionalRowStyles = new List<FormatCondition>();
         }
 
@@ -443,7 +494,7 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public void SetAge(int age)
+        public void SetAge(int? age)
         {
             WorkingAnnotation?.SetAge(age);
         }
@@ -516,7 +567,25 @@ namespace SmartDots.ViewModel
             {
                 an.QualityID = (Guid?)e.Value;
                 an.IsChanged = true;
-                //AgeReadingViewModel.SaveAnnotations();
+                var quality = Qualities.FirstOrDefault(x => x.ID == an.QualityID);
+                if (quality == null) return;
+                an.Quality = quality;
+                an.CalculateAge();
+                ageReadingViewModel.AgeReadingEditorViewModel.RefreshShapes();
+                //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
+
+            }
+            else if (e.Column.FieldName == "Nucleus")
+            {
+                an.Nucleus = e.Value?.ToString();
+                an.IsChanged = true;
+                //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
+            }
+            else if (e.Column.FieldName == "Edge")
+            {
+                an.Edge = e.Value?.ToString();
+                an.IsChanged = true;
+                //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
             }
         }
 
@@ -616,18 +685,22 @@ namespace SmartDots.ViewModel
                 {
                     annotation.IsChanged = true;
                     annotation.IsFixed = false;
+
                 }
             }
             WorkingAnnotation.IsFixed = true;
+            WorkingAnnotation.Quality = null;
+            WorkingAnnotation.QualityID = null;
+            WorkingAnnotation.IsApproved = false;
 
             WorkingAnnotation.IsChanged = true;
 
             AgeReadingViewModel.AgeReadingEditorViewModel.UpdateButtons();
-            RefreshActions();
             AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
             //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.InvalidateVisual();
             //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationList.UpdateLayout();
             AgeReadingViewModel.AgeReadingEditorViewModel.UndoRedo.EmptyStacks();
+            RefreshActions();
 
             RaisePropertyChanged("Outcomes");
         }
@@ -658,8 +731,11 @@ namespace SmartDots.ViewModel
         {
             foreach (var outcome in Outcomes)
             {
-                if (outcome.IsApproved) outcome.IsChanged = true;
-                outcome.IsApproved = false;
+                if (outcome.IsApproved && !WebAPI.Settings.AllowMultipleApprovements)
+                {
+                    outcome.IsChanged = true;
+                    outcome.IsApproved = false;
+                }
             }
 
             WorkingAnnotation.IsApproved = true;

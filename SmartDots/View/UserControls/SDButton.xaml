@@ -2,9 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="clr-namespace:SmartDots.Helpers"
              Margin="2" Height="28"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <helpers:NullImageConverter x:Key="nullImageConverter"/>
+    </UserControl.Resources>
 
     <Border x:Name="ButtonBorder" BorderThickness="1" CornerRadius="3" Background="White">
         <WrapPanel Orientation="Horizontal">
@@ -16,7 +20,7 @@
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
-                <Image Name="ButtonImage" Width="22" Height="22" Source="{Binding ElementName=SD, Path=Glyph}"/>
+                <Image Name="ButtonImage" Width="22" Height="22" Source="{Binding ElementName=SD, Path=Glyph, Converter={StaticResource nullImageConverter}}"/>
             </Button>
             
             <Button Name="ContextButton" Width="16" Height="26" Padding="0" Margin="1 0 0 0" ToolTip="Click to expand">

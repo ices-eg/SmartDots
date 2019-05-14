@@ -324,6 +324,26 @@ namespace SmartDots.View
             //.ToList();
         }
 
+        private void Finish()
+        {
+            var user = WebAPI.CurrentUser;
+            if (user == null)
+            {
+                return;
+            }
+
+            var singleRowSelected = Analyses.DataController?.Selection.Count == 1;
+            if (!singleRowSelected) return;
+
+            var selection = Analyses.DataController.Selection;
+            var ae = new AnalysisEventArgs();
+            var rowIndex = selection.GetSelectedRows()[0];
+            ae.Analysis = Analyses.GetRow(rowIndex);
+            WebAPI.ToggleAnalysisUserProgress((Guid) ae.Analysis.ID);
+
+            LoadGrid();
+        }
+
         #region Interface
 
         private void TransitionToLogin(Size screenSize)
@@ -408,14 +428,39 @@ namespace SmartDots.View
             var singleRowSelected = Analyses.DataController?.Selection.Count == 1;
             ButtonWorkOnline.IsEnabled = false;
             ButtonFolder.IsEnabled = false;
+            ButtonFinished.IsEnabled = false;
             //ButtonPrepareOffline.IsEnabled = Analyses.SelectedCells.All(x => ((AnalysisRowObject)x).IsAvailableOffline); //TODO
             //ButtonWorkOffline.IsEnabled = singleRowSelected;
 
             if (!singleRowSelected) return;
             ButtonFolder.IsEnabled = true;
-            if (JsonConvert.DeserializeObject<dynamic>(Analyses.SelectedItem.ToString()).Folder != null)
-            {
+            var item = JsonConvert.DeserializeObject<dynamic>(Analyses.SelectedItem.ToString());
+            //if (item.Folder != null)
+            //{
                 ButtonWorkOnline.IsEnabled = true;
+            //}
+            //if (item.Folder != null)
+            //{
+            ButtonWorkOnline.IsEnabled = true;
+            //}
+            
+            if (item.UserProgress != null)
+            {
+                var finishedAliases = new List<string>();
+                finishedAliases.Add("complete");
+                finishedAliases.Add("completed");
+                finishedAliases.Add("finished");
+                finishedAliases.Add("done");
+                finishedAliases.Add("ready");
+                ButtonFinished.IsEnabled = true;
+                if (finishedAliases.Contains(((string) (item.UserProgress.ToString())).ToLower()))
+                {
+                    ButtonFinished.Label = "Reopen";
+                }
+                else
+                {
+                    ButtonFinished.Label = "Finish";
+                }
             }
         }
 
@@ -573,6 +618,11 @@ namespace SmartDots.View
         private void ButtonReload_Click(object sender, RoutedEventArgs e)
         {
             LoadGrid();
+        }
+
+        private void ButtonFinish_Click(object sender, RoutedEventArgs e)
+        {
+            Finish();
         }
 
         private void Field_KeyDown(object sender, KeyEventArgs e)

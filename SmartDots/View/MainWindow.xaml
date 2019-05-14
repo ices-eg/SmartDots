@@ -66,8 +66,8 @@
             <TextBlock Text="{Binding HeaderInfo}" FontWeight="DemiBold" Margin="20,0,0,5" Foreground="White" FontSize="20" VerticalAlignment="Bottom" />
             <!--<TextBlock Text="{Binding Subtitle}" FontWeight="DemiBold" Margin="10,0,0,5" Foreground="WhiteSmoke" FontSize="18" VerticalAlignment="Bottom" />-->
 
-            <StackPanel Width="100" Margin="0,0,20,0" HorizontalAlignment="Right" Orientation="Horizontal">
-
+            <StackPanel Width="135" Margin="0,0,20,0" HorizontalAlignment="Right" Orientation="Horizontal">
+                <TextBlock Margin="0,6,15,0" FontSize="18"><Hyperlink Click="HelpHyperlink_Click" WindowChrome.IsHitTestVisibleInChrome="True" Foreground="{StaticResource BrushSmartFishFairBlue2}">?</Hyperlink></TextBlock>
                 <userControls:WindowButton x:Name="Minimize" SnapsToDevicePixels="True" Click="Minimize_Click">
                     <Image Source="/Resources/Minimize.png" Style="{StaticResource WindowsButtonImage}"></Image>
                 </userControls:WindowButton>

@@ -23,20 +23,23 @@ namespace SmartDots.Model
         public Nullable<System.Guid> ParameterID { get; set; }
         public System.Guid FileID { get; set; }
         public Nullable<System.Guid> QualityID { get; set; }
-        public int Result { get; set; }
+        public int? Result { get; set; }
         public System.DateTime DateCreation { get; set; }
         public Nullable<System.Guid> LabTechnicianID { get; set; }
         public bool IsApproved { get; set; }
         public bool IsReadOnly { get; set; }
         public bool IsFixed { get; set; }
-        public Image FixedIcon
-        {
-            get
-            {
-                if (IsFixed) return new Bitmap(Application.GetResourceStream(new Uri("Resources/pin-16.png", UriKind.RelativeOrAbsolute)).Stream);
-                return null;
-            }
-        }
+        //public Image FixedIcon
+        //{
+        //    get
+        //    {
+        //        if (IsFixed) return new Bitmap(Application.GetResourceStream(new Uri("Resources/pin-16.png", UriKind.RelativeOrAbsolute)).Stream);
+        //        return null;
+        //    }
+        //}
+
+        public string Nucleus { get; set; }
+        public string Edge { get; set; }
 
         public string Comment { get; set; }
         public bool IsChanged { get; set; }
@@ -53,6 +56,8 @@ namespace SmartDots.Model
         }
 
         public List<Quality> Qualities { get; set; }
+        public List<DtoAnnotationProperty> DynamicProperties { get; set; }
+
 
         public string QualityGuid
         {
@@ -99,7 +104,7 @@ namespace SmartDots.Model
         //    return CombinedLines.Any(combinedLine => combinedLine.Dots.Any());
         //}
 
-        public void SetAge(int age)
+        public void SetAge(int? age)
         {
             Result = age;
             PropertyChangedEventHandler handler = PropertyChanged;
@@ -107,6 +112,31 @@ namespace SmartDots.Model
             {
                 handler(this, new PropertyChangedEventArgs("Result"));
             }
+        }
+
+        public void CalculateAge()
+        {
+            
+            if (HasAqNoAge())
+            {
+                SetAge(null);
+                return;
+            }
+            int age = 0;
+            foreach (
+                CombinedLine combinedLine in CombinedLines)
+            {
+                if (combinedLine.Dots.Count > age)
+                {
+                    age = combinedLine.Dots.Count;
+                }
+            }
+            SetAge(age);
+        }
+
+        public bool HasAqNoAge()
+        {
+            return Quality != null && Quality.Code.ToLower().Contains("aq3") && Quality.Code.ToLower().Contains("noage");
         }
 
         //public bool IsValidOutcome()

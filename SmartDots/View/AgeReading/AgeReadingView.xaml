@@ -56,7 +56,7 @@
                             <ContentControl Content="{Binding AgeReadingFileView}"></ContentControl>
                         </dxdo:LayoutPanel>
                         <dxdo:LayoutGroup ItemWidth="Auto" ItemHeight="0.5*" Orientation="Horizontal" Grid.Row="2">
-                        <dxdo:LayoutPanel x:Name="Adjustments" ItemHeight="155" Caption="Adjustments" AllowDock="True" AllowMaximize="False" AllowSizing="False" CloseCommand="{Binding CloseToolsetPanelCommand}" AllowHide="False" AllowMove="True" >
+                        <dxdo:LayoutPanel x:Name="Adjustments" ItemHeight="155" Caption="Adjustments" AllowDock="True" AllowMaximize="False" AllowSizing="True" CloseCommand="{Binding CloseToolsetPanelCommand}" AllowHide="False" AllowMove="True" >
                                 <StackPanel Orientation="Vertical" Margin="10,0,10,0" Height="115" HorizontalAlignment="Stretch">
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
                                         <Label Content="Brightness" HorizontalAlignment="Stretch" Padding="0,5"/>

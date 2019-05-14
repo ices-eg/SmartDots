@@ -14,6 +14,8 @@
         public bool OpenSocket { get; set; }
         public string EventAlias { get; set; }
         public string SampleAlias { get; set; }
+        public bool CanMarkEventAsCompleted { get; set; }
+        public bool AllowMultipleApprovements { get; set; }
         public float MinRequiredVersion { get; set; }
     }
 }

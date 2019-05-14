@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.WindowsUI;
 
@@ -13,7 +16,7 @@ namespace SmartDots.Helpers
     public static class Helper
     {
 
-        public static float Version { get; } = 1.6f;
+        public static float Version { get; } = 2.0f;
         
         public static void ShowWinUIMessageBox(string message, string caption, MessageBoxButton msgBoxButton, MessageBoxImage img, Exception e = null)
         {
@@ -94,6 +97,20 @@ namespace SmartDots.Helpers
         public static void DoAsync(Action action)
         {
             new System.Threading.Tasks.Task(action).Start();
+        }
+
+        public static Size MeasureString(TextBlock tb)
+        {
+            var formattedText = new FormattedText(
+                tb.Text,
+                CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(tb.FontFamily, tb.FontStyle, tb.FontWeight, tb.FontStretch),
+                tb.FontSize,
+                Brushes.Black,
+                new NumberSubstitution());
+
+            return new Size(formattedText.Width, formattedText.Height);
         }
 
         public static string WindowsSecurityConnectionString;

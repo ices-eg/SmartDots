@@ -185,6 +185,40 @@
                 </dxb:PopupMenu.Items>
             </dxb:PopupMenu>
 
+            <userControls:SDButton Glyph="../../Resources/tape-measure-2-32.png" x:Name="MeasureButton" IsEnabled="True" ButtonToolTip="Measure tool" />
+            <dxb:PopupMenu x:Name="MeasureContextMenu">
+                <dxb:PopupMenu.Items>
+                    <dxb:BarItemMenuHeader Content="Measure Settings"/>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Color" EditValue="{Binding MeasureColor, Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:PopupColorEditSettings ChipSize="Large" />
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Width" EditValue="{Binding MeasureLineWidth, Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:SpinEditSettings MaxValue="6" MinValue="1" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Font size" EditValue="{Binding MeasureFontSize, Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:SpinEditSettings MaxValue="24" MinValue="6" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                </dxb:PopupMenu.Items>
+            </dxb:PopupMenu>
+
+
+            <StackPanel Width="28" Height="33" Margin="0" dxdove:DockPane.HitTestType="Header"/>
+
+            <ToggleButton x:Name="btnShowLine" IsEnabled="True" IsChecked="{Binding HideLines}" ToolTip="Hide Lines" >
+                <Image Source="../../Resources/ShowLines.png" Width="22" Height="22"/>
+                <!--<i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="ToggleLines"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>-->
+            </ToggleButton>
+
             <StackPanel Width="2000" Margin="0" Height="33" Background="{StaticResource BrushSmartFishFairBlue2}" dxdove:DockPane.HitTestType="Header"></StackPanel>
         </StackPanel>
 
@@ -215,6 +249,22 @@
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <Canvas x:Name="ScaleCanvas">
+                                            </Canvas>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding MeasureShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="MeasureShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas x:Name="MeasureCanvas">
+                                            </Canvas>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding TextShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="TextShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas x:Name="TextCanvas">
                                             </Canvas>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>

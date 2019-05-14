@@ -32,7 +32,7 @@ namespace SmartDots
         {
             try
             {
-                string[] activationData = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
+                string[] activationData = AppDomain.CurrentDomain.SetupInformation?.ActivationArguments?.ActivationData;
                 if (activationData != null && !activationData[0].StartsWith("file"))
                 {
                     Args = activationData;

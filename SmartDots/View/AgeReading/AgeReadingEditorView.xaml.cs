@@ -36,6 +36,9 @@ namespace SmartDots.View
             ContextMeasureAutomatic.ItemClick += (sender, args) => ageReadingEditorViewModel.AutoMeasureScale(true);
             ContextMeasureManual.ItemClick += (sender, args) => ageReadingEditorViewModel.ManualMeasureScale();
             ContextMeasureDelete.ItemClick += (sender, args) => ageReadingEditorViewModel.DeleteMeasureScale();
+
+            MeasureButton.PrimaryButtonClick += (sender, args) => ageReadingEditorViewModel.MeasureTool();
+            MeasureButton.ContextButtonClick += (sender, args) => MeasureContextMenu.ShowPopup(MeasureButton);
         }
 
         private void DeleteBtn_Checked(object sender, RoutedEventArgs e)

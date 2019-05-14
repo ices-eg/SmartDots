@@ -222,16 +222,34 @@ namespace SmartDots.Model
 
         public void CalculateDotIndices()
         {
-            if(Points == null) RecalculatePoints();
-            var linepoints = Dots.Select(d => Points.Find(x => x.Location == d.Location)).OrderBy(x => x.Index).ToList();
-            for (int i = 0; i < linepoints.Count; i++)
+            if (Points == null) RecalculatePoints();
+            List<LinePoint> linepoints = new List<LinePoint>();
+            try
             {
-                var dot = Dots.FirstOrDefault(x => x.Location == linepoints[i].Location);
-                if (dot != null) dot.DotIndex = i + 1;
+                linepoints = Dots.Select(d => Points.Find(x => x.Location == d.Location)).OrderBy(x => x.Index).ToList();
+                if (linepoints.Count != Dots.Count)
+                {
+                    //snap dots to the closest location on the line
+                    foreach (var dot in Dots)
+                    {
+                        dot.Location = GetClosestPoint(dot.Location).Location;
+                    }
+                    linepoints = Dots.Select(d => Points.Find(x => x.Location == d.Location)).OrderBy(x => x.Index).ToList();
+                }
+                for (int i = 0; i < linepoints.Count; i++)
+                {
+                    var dot = Dots.FirstOrDefault(x => x.Location == linepoints[i].Location);
+                    if (dot != null) dot.DotIndex = i + 1;
+                }
+                List<int> indices = Dots.Select(d => Points.Find(x => x.Location == d.Location)).ToList().Select(lp => Points.FindIndex(x => x.Location == lp.Location)).ToList();
+                indices.Sort();
+                DotIndex = indices;
             }
-            List<int> indices = Dots.Select(d => Points.Find(x => x.Location == d.Location)).ToList().Select(lp => Points.FindIndex(x => x.Location == lp.Location)).ToList();
-            indices.Sort();
-            DotIndex = indices;
+            catch (Exception e)
+            {
+                //not possible to calculate
+            }
+            
         }
     }
     [Serializable]

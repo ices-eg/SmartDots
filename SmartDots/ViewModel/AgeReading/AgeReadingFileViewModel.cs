@@ -16,6 +16,8 @@ using SmartDots.View;
 using File = SmartDots.Model.File;
 using MessageBox = System.Windows.MessageBox;
 using System.Net;
+using System.Windows.Controls;
+using Line = System.Windows.Shapes.Line;
 
 namespace SmartDots.ViewModel
 {
@@ -68,6 +70,8 @@ namespace SmartDots.ViewModel
                 {
                     AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes = selectedFile.BoundOutcomes ??
                                                                                  new ObservableCollection<Annotation>();
+                    AgeReadingViewModel.AgeReadingEditorViewModel.OriginalMeasureShapes = new ObservableCollection<Line>();
+                    AgeReadingViewModel.AgeReadingEditorViewModel.TextShapes = new ObservableCollection<TextBlock>();
                     AgeReadingViewModel.AgeReadingView.BrightnessSlider.EditValue = 0;
                     AgeReadingViewModel.AgeReadingEditorViewModel.Brightness = 0;
                     AgeReadingViewModel.AgeReadingView.ContrastSlider.EditValue = 0;

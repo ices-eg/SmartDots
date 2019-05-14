@@ -11,5 +11,7 @@ namespace SmartDots.Model
         public List<DtoAnalysisParameter> AnalysisParameters { get; set; }
         public string HeaderInfo { get; set; }
         public bool UserCanPin { get; set; }
+        public bool ShowNucleusColumn { get; set; }
+        public bool ShowEdgeColumn { get; set; }
     }
 }

@@ -102,6 +102,7 @@ namespace SmartDots.ViewModel
             SmartDotsControl.AgeReadingViewModel.AgeReadingFileViewModel.CanAttachDetachSampleVisibility = WebAPI.Settings.CanAttachDetachSample ? Visibility.Visible : Visibility.Collapsed;
             //SmartDotsControl.AgeReadingViewModel.AgeReadingFileViewModel.CanBrowseFolderVisibility = WebAPI.Settings.CanBrowseFolder ? Visibility.Visible : Visibility.Collapsed;
             ServerSelectionView.ButtonFolder.Visibility = WebAPI.Settings.CanBrowseFolder ? Visibility.Visible : Visibility.Collapsed;
+            ServerSelectionView.ButtonFinished.Visibility = WebAPI.Settings.CanMarkEventAsCompleted ? Visibility.Visible : Visibility.Collapsed;
             SmartDotsControl.AgeReadingViewModel.AgeReadingFileViewModel.UseSampleStatus = WebAPI.Settings.UseSampleStatus;
             SmartDotsControl.AgeReadingViewModel.AgeReadingAnnotationViewModel.CanApproveAnnotation = WebAPI.Settings.CanApproveAnnotation;
             SmartDotsControl.AgeReadingViewModel.EditAnnotationDialogViewModel.CanApproveAnnotation = WebAPI.Settings.CanApproveAnnotation ? Visibility.Visible : Visibility.Collapsed;
