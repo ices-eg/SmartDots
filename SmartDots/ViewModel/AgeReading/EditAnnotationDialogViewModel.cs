@@ -253,7 +253,7 @@ namespace SmartDots.ViewModel
             //update the annotation in the annotationlist
             AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ParameterID = AnalysisParameter?.ID;
             AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.QualityID = Quality?.ID;
-            AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.Quality = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.FirstOrDefault(x => x.ID == Quality.ID);
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.Quality = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.FirstOrDefault(x => x.ID == Quality?.ID);
 
             AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.Edge = Edge.Value;
             AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.Nucleus = Nucleus.Value;
