@@ -28,7 +28,7 @@ You can try out the features of SmartDots in a demo environment.
 
 ### Login with the following settings:
 
-Web API: https://webapi.smartfisheries.be/api/demo
+Web API: https://<span></span>webapi.smartfisheries.be/api/demo
 
 Security: User credentials
 
