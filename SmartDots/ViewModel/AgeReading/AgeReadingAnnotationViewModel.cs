@@ -581,7 +581,8 @@ namespace SmartDots.ViewModel
                         an.QualityID = (Guid?)e.OldValue;
                         
                         AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
-                        AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.Focus();
+                        AgeReadingViewModel.AgeReadingAnnotationView.AnnotationList.CancelRowEdit();
+                        //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.Focus();
                         return;
                     }
                 }
