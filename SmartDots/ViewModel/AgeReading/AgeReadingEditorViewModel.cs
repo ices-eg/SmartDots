@@ -1746,6 +1746,7 @@ namespace SmartDots.ViewModel
         private void DrawDot(MouseButtonEventArgs e)
         {
             if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation == null) return;
+            if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.HasAq3()) return;
             if (!CanDrawDot) return;
             if (!AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any()) return;
             Tuple<LinePoint, double> closestPoint =

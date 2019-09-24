@@ -559,6 +559,7 @@ namespace SmartDots.ViewModel
             Save();
             AgeReadingAnnotationViewModel.WorkingAnnotation = null;
             AgeReadingView.MainWindowViewModel.SetActiveControl(AgeReadingView.MainWindowViewModel.ServerSelectionView);
+            AgeReadingView.MainWindowViewModel.ServerSelectionView.LoadGrid();
             AgeReadingView.MainWindowViewModel.HeaderInfo = WebAPI.Settings.EventAlias + " overview";
             AgeReadingView.Opacity = 0;
             AgeReadingView.WinFormBrightness.Visibility = Visibility.Hidden;

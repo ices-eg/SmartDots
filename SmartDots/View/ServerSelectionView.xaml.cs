@@ -248,7 +248,7 @@ namespace SmartDots.View
             return dtoUser;
         }
 
-        private void LoadGrid()
+        public void LoadGrid()
         {
             var user = WebAPI.CurrentUser;
             if (user == null)
