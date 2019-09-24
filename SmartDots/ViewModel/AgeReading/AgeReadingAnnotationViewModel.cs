@@ -573,7 +573,7 @@ namespace SmartDots.ViewModel
                 if (aq3 != null && (Guid)e.Value == aq3.ID)
                 {
                     WinUIMessageBoxService messageBox = new WinUIMessageBoxService();
-                    var result = messageBox.ShowMessage("Changing the Readability Quality to AQ3 will remove all Dots for this Annotation, are you sure you wish to continue?", "Warning", MessageButton.YesNo, MessageIcon.Warning, MessageResult.No);
+                    var result = messageBox.ShowMessage("Changing the readability quality to AQ3 will remove all dots for this annotation, are you sure you wish to continue?", "Warning", MessageButton.YesNo, MessageIcon.Warning, MessageResult.No);
 
                     if (result == MessageResult.No)
                     {

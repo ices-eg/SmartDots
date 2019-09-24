@@ -92,9 +92,11 @@ namespace SmartDots.View
             }
         }
 
-        public void CloseBtn_Click(object sender, RoutedEventArgs e)
+        
+
+        public void Manual_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.HandleClosing();
+            System.Diagnostics.Process.Start("http://ices.dk/publications/library/Pages/default.aspx#k=smartdots%20handbook");
         }
 
         public void Minimize_Click(object sender, RoutedEventArgs e)
@@ -112,14 +114,15 @@ namespace SmartDots.View
             WindowState = WindowState.Normal;
         }
 
+        public void CloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.HandleClosing();
+        }
+
         private void Hyperlink_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             System.Diagnostics.Process.Start(e.Uri.AbsoluteUri);
         }
 
-        private void HelpHyperlink_Click(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("http://ices.dk/publications/library/Pages/default.aspx#k=smartdots%20handbook");
-        }
     }
 }

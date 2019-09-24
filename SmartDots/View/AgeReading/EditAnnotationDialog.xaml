@@ -72,7 +72,7 @@
 
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem  Margin="76,-30,0,0" Visibility="{Binding Aq3WarningVisibility}" Height="34">
-                    <TextBlock Text="Warning: Changing the Readability Quality to AQ3 will remove all Dots of the Annotation!" FontSize="11" Foreground="Red" Margin="0,12,0,0"></TextBlock>
+                    <TextBlock Text="Warning: Changing the readability quality to AQ3 will remove all dots of the annotation!" FontSize="11" Foreground="Red" Margin="0,12,0,0"></TextBlock>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Approved" Margin="0,0,0,15" Visibility="{Binding CanApproveAnnotation}">
                     <dxe:CheckEdit EditValue="{Binding IsApproved}" IsEnabled="{Binding CanApprove}"></dxe:CheckEdit>

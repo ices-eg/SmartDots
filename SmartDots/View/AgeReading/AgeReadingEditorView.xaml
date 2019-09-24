@@ -210,7 +210,7 @@
 
             <StackPanel Width="28" Height="33" Margin="0" dxdove:DockPane.HitTestType="Header"/>
 
-            <ToggleButton x:Name="btnShowLine" IsEnabled="True" IsChecked="{Binding HideLines}" ToolTip="Hide Lines" >
+            <ToggleButton x:Name="btnShowLine" IsEnabled="True" IsChecked="{Binding HideLines}" ToolTip="Hide lines" >
                 <Image Source="../../Resources/ShowLines.png" Width="22" Height="22"/>
                 <!--<i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">

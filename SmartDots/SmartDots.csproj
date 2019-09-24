@@ -319,6 +319,7 @@
     <Resource Include="Resources\thumbsup.png" />
     <Resource Include="Resources\tape-measure-2-32.png" />
     <Resource Include="Resources\check.png" />
+    <Resource Include="Resources\question.png" />
     <Content Include="tessdata\eng.cube.bigrams">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

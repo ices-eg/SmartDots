@@ -241,7 +241,7 @@ namespace SmartDots.ViewModel
                 var dtoAnalysis = WebAPI.GetAnalysis(analysisid);
                 if (!dtoAnalysis.Succeeded)
                 {
-                    Helper.ShowWinUIMessageBox("Error loading Analysis from the Web API\n" + dtoAnalysis.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Helper.ShowWinUIMessageBox("Error loading analysis from the Web API\n" + dtoAnalysis.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }
 
