@@ -244,6 +244,7 @@ namespace SmartDots.Model
                 List<int> indices = Dots.Select(d => Points.Find(x => x.Location == d.Location)).ToList().Select(lp => Points.FindIndex(x => x.Location == lp.Location)).ToList();
                 indices.Sort();
                 DotIndex = indices;
+                Dots = Dots.OrderBy(x => x.DotIndex).ToList();
             }
             catch (Exception e)
             {

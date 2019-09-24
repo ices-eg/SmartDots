@@ -164,6 +164,8 @@ public static class AsynchronousSocketListener
                                 AgeReadingViewModel.SaveAnnotations();
                                 AgeReadingViewModel.AgeReadingView.MainWindowViewModel.Connect(content);
                                 AgeReadingViewModel.WaitState = false;
+                                Application.Current.MainWindow.Activate();
+                                Application.Current.MainWindow.WindowState = WindowState.Maximized;
 
 
                                 //var ss = ctx.SampleSets.FirstOrDefault(x => x.ID == AgeReadingViewModel.Analysis.SampleSetID);

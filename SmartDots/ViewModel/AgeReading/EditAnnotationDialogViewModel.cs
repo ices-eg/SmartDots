@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using DevExpress.Xpf.Editors;
 using SmartDots.Helpers;
 using SmartDots.Model;
 
@@ -25,6 +26,8 @@ namespace SmartDots.ViewModel
         private bool showEdgeColumn;
         private int height = 420;
         private Visibility canApproveAnnotation;
+        private Visibility aq3WarningVisibility;
+        
 
         public EditAnnotationDialogViewModel()
         {
@@ -32,6 +35,7 @@ namespace SmartDots.ViewModel
             VisibilityStates.Add(new VisibilityState() { Value = "Opaque", Visibility = "Opaque" });
             VisibilityStates.Add(new VisibilityState() { Value = "Translucent", Visibility = "Translucent" });
             VisibilityStates.Add(new VisibilityState() { Value = null, Visibility = "NA" });
+            Aq3WarningVisibility = Visibility.Collapsed;
         }
 
         public Annotation Annotation
@@ -240,12 +244,39 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public Visibility Aq3WarningVisibility
+        {
+            get { return aq3WarningVisibility; }
+            set
+            {
+                aq3WarningVisibility = value;
+                RaisePropertyChanged("Aq3WarningVisibility");
+            }
+        }
+
+        
+
         public void CalculateHeight()
         {
             int h = 420;
             if (showNucleusColumn) h += 64;
             if (showEdgeColumn) h += 64;
+            if (Aq3WarningVisibility == Visibility.Visible) h += 34;
             Height = h;
+        }
+
+        public void QualityList_EditValueChanging(object sender, EditValueChangingEventArgs e)
+        {
+            var aq3 = Qualities.FirstOrDefault(x => x.Code.ToLower().Trim().Equals("aq3"));
+            if (aq3 != null && (Guid)((Quality)e.NewValue).ID == aq3.ID)
+            {
+                Aq3WarningVisibility = Visibility.Visible;
+            }
+            else
+            {
+                Aq3WarningVisibility = Visibility.Collapsed;
+            }
+            CalculateHeight();
         }
 
         public void Save()

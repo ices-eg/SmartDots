@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Windows;
+using System.Drawing;
+using Point = System.Windows.Point;
 
 namespace SmartDots.Model
 {
@@ -29,6 +30,15 @@ namespace SmartDots.Model
                 Y = (int)value.Y;
             }
         }
+
+        public Color SystemColor
+        {
+            get
+            {
+                return ColorTranslator.FromHtml(Color);
+            }
+        }
+
 
         public CombinedLine ParentCombinedLine { get; set; }
     }

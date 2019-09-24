@@ -46,10 +46,6 @@ namespace SmartDots.ViewModel
         public AgeReadingView SmartDotsControl { get; private set; }
         public ServerSelectionView ServerSelectionView { get; private set; }
 
-        public static string WindowsSecurityConnectionString;
-        public static string SecurityConnectionString;
-        public static string SmartDotConnectionString;
-
         public event PropertyChangedEventHandler PropertyChanged;
 
 

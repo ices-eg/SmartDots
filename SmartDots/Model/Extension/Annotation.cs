@@ -56,7 +56,7 @@ namespace SmartDots.Model
         }
 
         public List<Quality> Qualities { get; set; }
-        public List<DtoAnnotationProperty> DynamicProperties { get; set; }
+        //public List<DtoAnnotationProperty> DynamicProperties { get; set; }
 
 
         public string QualityGuid
@@ -117,7 +117,7 @@ namespace SmartDots.Model
         public void CalculateAge()
         {
             
-            if (HasAqNoAge())
+            if (HasAq3())
             {
                 SetAge(null);
                 return;
@@ -134,9 +134,9 @@ namespace SmartDots.Model
             SetAge(age);
         }
 
-        public bool HasAqNoAge()
+        public bool HasAq3()
         {
-            return Quality != null && Quality.Code.ToLower().Contains("aq3") && Quality.Code.ToLower().Contains("noage");
+            return Quality != null && Quality.Code.ToLower().Trim().Equals("aq3");
         }
 
         //public bool IsValidOutcome()

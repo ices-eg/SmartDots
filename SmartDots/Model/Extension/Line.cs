@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
+using System.Drawing;
+using Point = System.Windows.Point;
 
 namespace SmartDots.Model
 {
@@ -51,6 +52,14 @@ namespace SmartDots.Model
                 }
             }
             return points;
+        }
+
+        public Color SystemColor
+        {
+            get
+            {
+                return ColorTranslator.FromHtml(Color);
+            }
         }
     }
 }

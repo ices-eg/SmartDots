@@ -57,14 +57,14 @@ namespace AgeReading.Graph
         public void Create()
         {
             InitializeComponent();
-            BackColor = Color.FromArgb(235, 235, 235);
+            BackColor = Color.FromArgb(255, 255, 255);
 
             //graphViewer.SetPlan(plan);
 
             m_MouseLocationTracker = graphViewer.CreateTracker(Color.Green);
             m_Hint = graphViewer.CreateFloatingHint();
             graphViewer.SetPlan(plan);
-            graphViewer.SetCombinedLine(control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine);
+            graphViewer.SetAnnotation(control.AgeReadingViewModel.AgeReadingAnnotationViewModel?.WorkingAnnotation);
         }
 
         public int Plan
@@ -93,10 +93,33 @@ namespace AgeReading.Graph
             }
 
 
-            //Ensure that we use a unique color for the graph
-            //Color graphColor = graphColorProvider1.AllocateColor();
+            //use the color of the line
 
             Color graphColor = Color.FromArgb(0, 114, 198);
+            try
+            {
+                if (control.AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null &&
+                    control.AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any() &&
+                    control.AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Lines.Any())
+                    {
+                        graphColor = control.AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Lines[0].SystemColor;
+                    }
+                
+                var brightness = (graphColor.R * 0.299f + graphColor.G * 0.587f + graphColor.B * 0.114f) / 256f; 
+                if (brightness > 0.5)
+                {
+                    graphViewer.BackColor = Color.FromArgb(20,20,20);
+                }
+                else
+                {
+                    graphViewer.BackColor = Color.FromArgb(255, 255, 255);
+                }
+
+            }
+            catch (Exception e)
+            {
+                graphColor = Color.FromArgb(0, 114, 198);
+            }
 
             //Set hint based on the function description
 
@@ -196,7 +219,7 @@ namespace AgeReading.Graph
                     control.AgeReadingViewModel.AgeReadingEditorView.Tracker.SetLeft(x * control.AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor - 16);
                     control.AgeReadingViewModel.AgeReadingEditorView.Tracker.SetTop(y * control.AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor - 16);
 
-                    if(plan != 3) control.AgeReadingViewModel.AgeReadingEditorView.Tracker.Visibility = Visibility.Visible;
+                    if (plan != 3) control.AgeReadingViewModel.AgeReadingEditorView.Tracker.Visibility = Visibility.Visible;
 
                     m_Hint.Hidden = true;
                     if (m_HighlightedPoint != null)
@@ -277,10 +300,10 @@ namespace AgeReading.Graph
 
         private void graphViewer_MouseDown(InteractiveGraphViewer sender, GraphMouseEventArgs e)
         {
-            
 
-                if (control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine != null && control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Lines.Count > 0 && Plan != 3)
-                {
+
+            if (control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine != null && control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Lines.Count > 0 && Plan != 3)
+            {
                 if ((ModifierKeys & Keys.Control) != Keys.None)
                 {
                     graphViewer.PreviewRectangle.X1 = e.DataX;
@@ -294,17 +317,17 @@ namespace AgeReading.Graph
                 //    graphViewer.CreateOrCloseFullscreenClone();
                 //}
 
-                if (control.AgeReadingViewModel.AgeReadingSampleViewModel.Sample == null || control.AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly ) return;
+                if (control.AgeReadingViewModel.AgeReadingSampleViewModel.Sample == null || control.AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return;
                 if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.None && control.AgeReadingViewModel.AgeReadingEditorViewModel.Mode == EditorModeEnum.DrawDot)
                 {
                     if (control.AgeReadingViewModel.AgeReadingEditorViewModel.CanDrawDot)
                     {
                         Dot d = new Dot()
                         {
-                            ID =  Guid.NewGuid(),
+                            ID = Guid.NewGuid(),
                             X = control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Points[(int)m_MouseLocationTracker.X].X,
-                            Y =control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Points[(int)m_MouseLocationTracker.X].Y,
-                            Width = (int) control.AgeReadingViewModel.AgeReadingEditorViewModel.DotWidth,
+                            Y = control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Points[(int)m_MouseLocationTracker.X].Y,
+                            Width = (int)control.AgeReadingViewModel.AgeReadingEditorViewModel.DotWidth,
                             Color = control.AgeReadingViewModel.AgeReadingEditorViewModel.DotColor.ToString(),
                             ParentCombinedLine = control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine,
                             AnnotationID = control.AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ID,
@@ -317,7 +340,7 @@ namespace AgeReading.Graph
                         //box.canvas.Shapes.Clear();
                         graphViewer.Invalidate();
                     }
-                    
+
                 }
             }
         }

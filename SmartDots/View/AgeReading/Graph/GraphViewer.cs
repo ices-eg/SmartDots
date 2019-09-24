@@ -13,6 +13,7 @@ namespace AgeReading.Graph
     public partial class GraphViewer : ScaledViewerBase
     {
         const int kPointMarkerSize = 10;
+        private Annotation a;
         private CombinedLine l;
         private int plan = 1;
 
@@ -21,9 +22,17 @@ namespace AgeReading.Graph
             InitializeComponent();
         }
 
-        public void SetCombinedLine(CombinedLine l)
+        public void SetAnnotation(Annotation a)
         {
-            this.l = l;
+            this.a = a;
+            if (a?.CombinedLines == null || !a.CombinedLines.Any())
+            {
+                this.l = null;
+            }
+            else
+            {
+                this.l = a?.CombinedLines[0];
+            }
         }
 
         public List<DisplayedGraph> _Graphs = new List<DisplayedGraph>();
@@ -517,26 +526,28 @@ namespace AgeReading.Graph
                 Pen pen = new Pen(gr.Color, lineWidth);
                 e.Graphics.DrawPath(pen, gr.RebuildPath());
 
-                if (l != null)
+                if (l != null && !a.HasAq3())
                 {
-                    foreach (KeyValuePair<double, double> kv in gr.Graph.SortedPoints)
+                    foreach (KeyValuePair<double, double> kv in gr.Graph.SortedPoints.Where(x => l.DotIndex.Contains((int)x.Key)))
                     {
                         try
                         {
                             //Graph dots
                             //Pen pointMarkerPen = Pens.Black;
                             int x = MapX(kv.Key, true), y = MapY(kv.Value, true);
-
+                            var index = l.DotIndex.IndexOf((int)kv.Key);
+                            if(index < 0 )continue;
+                            var dot = l.Dots[index];
                             if (plan == 3)
                             {
-                                e.Graphics.DrawEllipse(new Pen(Color.Red, 2), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, kPointMarkerSize, kPointMarkerSize);
+                                e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
                             }
                             else if (l.DotIndex.Contains((int)kv.Key))
                             {
-                                e.Graphics.DrawEllipse(new Pen(Color.Red, 2), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, kPointMarkerSize, kPointMarkerSize);
+                                e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
                             //
                         }

@@ -313,7 +313,7 @@ namespace SmartDots.ViewModel
                     }
 
                     var dots = new List<DtoDot>();
-                    if (outcome.CombinedLines.Any() && !outcome.HasAqNoAge())
+                    if (outcome.CombinedLines.Any() && !outcome.HasAq3())
                     {
                         foreach (var dot in outcome.CombinedLines[0].Dots)
                         {

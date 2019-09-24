@@ -510,6 +510,23 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\AgeReading\Graph\curvePanel.resx">
       <DependentUpon>curvePanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\AgeReading\Graph\GraphViewer.resx">
+      <DependentUpon>GraphViewer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\AgeReading\Graph\InteractiveGraphViewer.resx">
+      <DependentUpon>InteractiveGraphViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\AgeReading\Graph\LegendControl.resx">
+      <DependentUpon>LegendControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\AgeReading\Graph\LegendLabel.resx">
+      <DependentUpon>LegendLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\AgeReading\Graph\ScaledViewerBase.resx">
+      <DependentUpon>ScaledViewerBase.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Portable\SmartDots.zip" />

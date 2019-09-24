@@ -216,12 +216,11 @@ namespace SmartDots.ViewModel
             set
             {
                 activeCombinedLine = value;
-
                 activeCombinedLine?.CalculateDotIndices();
-                AgeReadingViewModel.AgeReadingView.BrightnessGraph.graphViewer.SetCombinedLine(value);
-                AgeReadingViewModel.AgeReadingView.RednessGraph.graphViewer.SetCombinedLine(value);
-                AgeReadingViewModel.AgeReadingView.GrowthGraph.graphViewer.SetCombinedLine(value);
                 RaisePropertyChanged("ActiveCombinedLine");
+                AgeReadingViewModel.AgeReadingView.BrightnessGraph.graphViewer.SetAnnotation(AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation);
+                AgeReadingViewModel.AgeReadingView.RednessGraph.graphViewer.SetAnnotation(AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation);
+                AgeReadingViewModel.AgeReadingView.GrowthGraph.graphViewer.SetAnnotation(AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation);
             }
         }
 
@@ -525,6 +524,7 @@ namespace SmartDots.ViewModel
                 return AgeReadingViewModel?.AgeReadingAnnotationViewModel?.SelectedAnnotations.Count == 1
                        && ActiveCombinedLine != null
                        && Mode != EditorModeEnum.MakingLine
+                       && AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null
                        && !AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsFixed
                        && !AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly
                        &&
@@ -542,6 +542,7 @@ namespace SmartDots.ViewModel
                        (AgeReadingViewModel?.AgeReadingAnnotationViewModel?.SelectedAnnotations.Count < 2
                        && ActiveCombinedLine != null
                        && Mode != EditorModeEnum.MakingLine
+                       && AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null
                        && !AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsFixed
                        && !AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly
                        &&
@@ -615,7 +616,7 @@ namespace SmartDots.ViewModel
         {
             var annotation = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation;
             if (annotation == null) return;
-            if (annotation.HasAqNoAge())
+            if (annotation.HasAq3())
             {
                 AgeReadingViewModel.AgeReadingAnnotationViewModel.SetAge(null);
                 return;
@@ -1013,7 +1014,7 @@ namespace SmartDots.ViewModel
                         lines.Add(line);
                     }
 
-                    if (!annotation.HasAqNoAge())
+                    if (!annotation.HasAq3())
                     {
                         foreach (Dot d in cl.Dots)
                         {
@@ -1877,6 +1878,7 @@ namespace SmartDots.ViewModel
             try
             {
                 if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null &&
+                    !AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.HasAq3() &&
                 AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any())
                 {
                     Tuple<Dot, double> closestDot = new Tuple<Dot, double>(new Dot(), 100);

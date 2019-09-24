@@ -34,7 +34,7 @@ namespace SmartDots.Helpers
             e.Command = cmd;
             e.Object = obj;
             e.Error = ex;
-            Helper.Log("log.txt","Web API connection error", ex);
+            Helper.Log("errors.txt","Web API connection error", ex);
             OnError?.Invoke(null, e);
         }
 
@@ -44,6 +44,7 @@ namespace SmartDots.Helpers
             try
             {
                 if (string.IsNullOrWhiteSpace(connStr)) throw new Exception("No API provided.");
+                connStr = connStr.Trim();
                 if (!connStr.EndsWith("/")) connStr += "/";
 
                 Reset();
@@ -133,7 +134,7 @@ namespace SmartDots.Helpers
             {
                 //return Task.Run(() => PerformCallAsync<t>(path)).Result;
                 var temp = Task.Run(() => PerformCallAsync<t>(path)).Result;
-                Helper.Log("webapi.txt", path + Environment.NewLine + JsonConvert.SerializeObject(temp));
+                //Helper.Log("webapi.txt", path + Environment.NewLine + JsonConvert.SerializeObject(temp));
                 return temp;
             }
             catch (Exception ex)
@@ -148,7 +149,7 @@ namespace SmartDots.Helpers
             try
             {
                 var response = client.PostAsJsonAsync(path, obj).Result;
-                Helper.Log("webapi.txt", path + Environment.NewLine + JsonConvert.SerializeObject(response));
+                //Helper.Log("webapi.txt", path + Environment.NewLine + JsonConvert.SerializeObject(response));
                 if (response.IsSuccessStatusCode)
                 {
                     var apiPost = response.Content.ReadAsAsync<WebApiResult>().Result;

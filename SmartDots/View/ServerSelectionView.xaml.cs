@@ -230,14 +230,13 @@ namespace SmartDots.View
 
                 case AuthUser:
                     auth.DtoAuthenticationMethod = DtoAuthenticationMethod.Basic;
-                    auth.Username = c.UserName;
-                    auth.Password = c.Password;
+                    auth.Username = c.UserName?.Trim();
+                    auth.Password = c.Password?.Trim();
                     break;
 
                 case AuthToken:
-                    //TODO
                     auth.DtoAuthenticationMethod = DtoAuthenticationMethod.Token;
-                    auth.Username = c.UserName;
+                    auth.Username = c.UserName?.Trim();
                     break;
             }
 
