@@ -13,8 +13,8 @@ namespace AgeReading.Graph
     public partial class GraphViewer : ScaledViewerBase
     {
         const int kPointMarkerSize = 10;
-        private Annotation a;
-        private CombinedLine l;
+        private List<Annotation> annotations;
+        //private CombinedLine l;
         private int plan = 1;
 
         public GraphViewer()
@@ -22,17 +22,17 @@ namespace AgeReading.Graph
             InitializeComponent();
         }
 
-        public void SetAnnotation(Annotation a)
+        public void SetAnnotations(List<Annotation> a)
         {
-            this.a = a;
-            if (a?.CombinedLines == null || !a.CombinedLines.Any())
-            {
-                this.l = null;
-            }
-            else
-            {
-                this.l = a?.CombinedLines[0];
-            }
+            annotations = a;
+            //if (a?.CombinedLines == null || !a.CombinedLines.Any())
+            //{
+            //    this.l = null;
+            //}
+            //else
+            //{
+            //    this.l = a?.CombinedLines[0];
+            //}
         }
 
         public List<DisplayedGraph> _Graphs = new List<DisplayedGraph>();
@@ -315,9 +315,9 @@ namespace AgeReading.Graph
                 for (int i = 0; i < _Graph.SortedPoints.Count; i++)
                 {
                     KeyValuePair<double, double> kv = _Graph.GetPointByIndex(i);
-                    double distX = (X - kv.Key)/maxDistX;
-                    double distY = (Y - kv.Value)/maxDistY;
-                    double dist = distX*distX + distY*distY;
+                    double distX = (X - kv.Key) / maxDistX;
+                    double distY = (Y - kv.Value) / maxDistY;
+                    double dist = distX * distX + distY * distY;
 
                     if (dist < bestDist)
                     {
@@ -363,7 +363,7 @@ namespace AgeReading.Graph
                     else
                         nearestRefPoint = i;
 
-                    return kv0.Value + ((X - kv0.Key)*dy/dx);
+                    return kv0.Value + ((X - kv0.Key) * dy / dx);
                 }
                 return double.NaN;
             }
@@ -446,7 +446,7 @@ namespace AgeReading.Graph
         public int MapAndSquareDistance(double X1, double X2, double Y1, double Y2)
         {
             int dX = MapX(X1, true) - MapX(X2, true), dY = MapY(Y1, true) - MapY(Y2, true);
-            return dX*dX + dY*dY;
+            return dX * dX + dY * dY;
         }
 
         public InterpolatedPoint FindNearestGraphPoint(double x, double y, bool ignoreHiddenGraphs,
@@ -485,7 +485,7 @@ namespace AgeReading.Graph
             }
             nonTransformedBounds = GraphBounds.CreateInitial();
             transformedBounds = GraphBounds.CreateInitial();
-            foreach (DisplayedGraph gr in _Graphs)
+            foreach (DisplayedGraph gr in _Graphs.Where(x => x.Graph != null))
             {
                 foreach (KeyValuePair<double, double> kv in gr.Graph.SortedPoints)
                 {
@@ -516,7 +516,7 @@ namespace AgeReading.Graph
         {
             base.OnPaint(e);
             e.Graphics.SetClip(DataRectangle);
-            foreach (DisplayedGraph gr in _Graphs)
+            foreach (DisplayedGraph gr in _Graphs.Where(x => x.Graph != null))
             {
                 if (gr.Hidden)
                     continue;
@@ -526,35 +526,62 @@ namespace AgeReading.Graph
                 Pen pen = new Pen(gr.Color, lineWidth);
                 e.Graphics.DrawPath(pen, gr.RebuildPath());
 
-                if (l != null && !a.HasAq3())
+                if(gr.Graph.Annotation != null)
                 {
-                    foreach (KeyValuePair<double, double> kv in gr.Graph.SortedPoints.Where(x => l.DotIndex.Contains((int)x.Key)))
+                    if (plan == 3)
                     {
-                        try
+                        foreach (KeyValuePair<double, double> kv in gr.Graph.SortedPoints.Skip(1)/*.Where(x => l.DotIndex.Contains((int)x.Value))*/)
                         {
-                            //Graph dots
-                            //Pen pointMarkerPen = Pens.Black;
-                            int x = MapX(kv.Key, true), y = MapY(kv.Value, true);
-                            var index = l.DotIndex.IndexOf((int)kv.Key);
-                            if(index < 0 )continue;
-                            var dot = l.Dots[index];
-                            if (plan == 3)
+                            try
                             {
-                                e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
-                            }
-                            else if (l.DotIndex.Contains((int)kv.Key))
-                            {
-                                e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            //
-                        }
+                                //Graph dots
+                                //Pen pointMarkerPen = Pens.Black;
+                                int x = MapX(kv.Key, true), y = MapY(kv.Value, true);
+                                var index = (int)kv.Key;
+                                if (index < 1) continue;
+                                var dot = gr.Graph.Annotation?.CombinedLines[0]?.Dots[index-1];
 
+                                e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
+                                //else if (l.DotIndex.Contains((int)kv.Value))
+                                //{
+                                //    e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
+                                //}
+                            }
+                            catch (Exception ex)
+                            {
+                                //
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (KeyValuePair<double, double> kv in gr.Graph.SortedPoints.Where(x => gr.Graph.Annotation.CombinedLines[0].DotIndex.Contains((int)x.Key)))
+                        {
+                            try
+                            {
+                                //Graph dots
+                                //Pen pointMarkerPen = Pens.Black;
+                                int x = MapX(kv.Key, true), y = MapY(kv.Value, true);
+                                var index = gr.Graph.Annotation.CombinedLines[0].DotIndex.IndexOf((int)kv.Key);
+                                if (index < 0) continue;
+                                var dot = gr.Graph.Annotation?.CombinedLines[0]?.Dots[index];
+                                if (plan == 3)
+                                {
+                                    e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
+                                }
+                                else if (gr.Graph.Annotation.CombinedLines[0].DotIndex.Contains((int)kv.Key))
+                                {
+                                    e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                //
+                            }
+
+                        }
                     }
                 }
-                
             }
             e.Graphics.ResetClip();
         }

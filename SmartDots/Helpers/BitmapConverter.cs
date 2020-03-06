@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Accord.Imaging;
+using Accord.Imaging.Filters;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -6,9 +8,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
-using AForge.Imaging;
-using AForge.Imaging.Filters;
-using AForge.Math;
 
 namespace SmartDots.Helpers
 {
@@ -206,39 +205,73 @@ namespace SmartDots.Helpers
             //}
         }
 
-        public static Bitmap PreProcessForScaleDetection(BitmapImage bi, int threshold)
+        //public static Bitmap PreProcessForScaleDetection(BitmapImage bi, int threshold)
+        //{
+        //    try
+        //    {
+        //        var temp = BitmapImage2Bitmap(bi);
+        //        temp.Save("step1.jpg");
+
+        //        //Bitmap newImage = ColorToGrayscale(temp);
+        //        Grayscale grayscaleFilter = new Grayscale(0.2125, 0.7154, 0.0721);
+        //        // apply the filter
+        //        Bitmap newImage = grayscaleFilter.Apply(temp);
+        //        //Bitmap newImage = ColorToGrayscale(temp);
+        //        newImage.Save("step2.jpg");
+
+        //        float averageBrightness = AverageBrightness(temp);
+
+        //        if (averageBrightness > 0.5)
+        //        {
+        //            Invert filter = new Invert();
+        //            filter.ApplyInPlace(newImage);
+        //            newImage.Save("step3.jpg");
+        //            newImage.Save("newImage.jpg");
+        //        }
+
+        //        Threshold filter2 = new Threshold(threshold);
+        //        // apply the filter
+        //        //filter2.ApplyInPlace(newImage);
+        //        //newImage.Save("step4.jpg");
+
+        //        for (int i = 0; i <= 255; i+=5)
+        //        {
+        //            filter2.ThresholdValue = i;
+        //            var test = filter2.Apply(newImage);
+        //            test.Save("step4-" + filter2.ThresholdValue + ".jpg");
+        //        }
+
+                
+
+
+
+        //        //newImage.Save("bw.jpg");
+        //        return newImage;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return null;
+        //    }
+        //}
+        public static Dictionary<Color, int> HistoGram(Bitmap bm)
         {
-            try
+            // Store the histogram in a dictionary          
+            Dictionary<Color, int> histo = new Dictionary<Color, int>();
+            for (int x = 0; x < bm.Width; x++)
             {
-                var temp = BitmapImage2Bitmap(bi);
-                //temp.Save("step1.jpg");
-
-                Bitmap newImage = ColorToGrayscale(temp);
-                //newImage.Save("step2.jpg");
-
-                float averageBrightness = AverageBrightness(temp);
-
-                if (averageBrightness > 0.5)
+                for (int y = 0; y < bm.Height; y++)
                 {
-
-                    Invert filter = new Invert();
-                    filter.ApplyInPlace(newImage);
-                    //newImage.Save("step3.jpg");
-                    //newImage.Save("newImage.jpg");
+                    // Get pixel color 
+                    Color c = bm.GetPixel(x, y);
+                    // If it exists in our 'histogram' increment the corresponding value, or add new
+                    if (histo.ContainsKey(c))
+                        histo[c] = histo[c] + 1;
+                    else
+                        histo.Add(c, 1);
                 }
-                // create filter
-                Threshold filter2 = new Threshold(threshold);
-                // apply the filter
-                filter2.ApplyInPlace(newImage);
-                //newImage.Save("step4.jpg");
-                //newImage.Save("bw.jpg");
-                return newImage;
             }
-            catch (Exception e)
-            {
-                return null;
-            }
-            
+
+            return histo;
         }
     }
 }

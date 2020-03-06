@@ -64,7 +64,7 @@ namespace AgeReading.Graph
             m_MouseLocationTracker = graphViewer.CreateTracker(Color.Green);
             m_Hint = graphViewer.CreateFloatingHint();
             graphViewer.SetPlan(plan);
-            graphViewer.SetAnnotation(control.AgeReadingViewModel.AgeReadingAnnotationViewModel?.WorkingAnnotation);
+            graphViewer.SetAnnotations(control.AgeReadingViewModel.AgeReadingAnnotationViewModel?.SelectedAnnotations);
         }
 
         public int Plan
@@ -75,69 +75,62 @@ namespace AgeReading.Graph
 
         public void MakeGraph()
         {
+            var annotationsWithValues = new List<Tuple<Annotation, List<decimal>>>();
             graphViewer.ResetGraphs();
             switch (plan)
             {
                 case 1:
-                    graph = Graph.IterateCombinedLine(CalculateLineBrightness());
+                    annotationsWithValues = CalculateLineBrightness();
                     break;
                 case 2:
-                    graph = Graph.IterateCombinedLine(CalculateLineReddness());
+                    annotationsWithValues = CalculateLineReddness();
                     break;
                 case 3:
-                    graph = Graph.IterateCombinedLine(CalculateLineGrowth());
+                    annotationsWithValues = CalculateLineGrowth();
                     break;
-                default:
-                    graph = Graph.IterateCombinedLine(CalculateLineBrightness());
-                    break;
+
             }
 
+            foreach (var keyvaluepair in annotationsWithValues)
+            {
+                if (keyvaluepair.Item1.CombinedLines.Any() &&
+                    keyvaluepair.Item1.CombinedLines[0].Lines.Any())
+                {
+                    var g = Graph.IterateCombinedLine(keyvaluepair.Item2);
+                    g.Annotation = keyvaluepair.Item1;
+                    var displayedGraph = graphViewer.AddGraph(g, keyvaluepair.Item1.CombinedLines[0].Lines[0].SystemColor, 3);
+                    displayedGraph.DefaultPointMarkingStyle = GraphViewer.DisplayedGraph.PointMarkingStyle.Circle;
+                }
+                
+            }
 
             //use the color of the line
-
             Color graphColor = Color.FromArgb(0, 114, 198);
-            try
-            {
-                if (control.AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null &&
-                    control.AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any() &&
-                    control.AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Lines.Any())
-                    {
-                        graphColor = control.AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Lines[0].SystemColor;
-                    }
-                
-                var brightness = (graphColor.R * 0.299f + graphColor.G * 0.587f + graphColor.B * 0.114f) / 256f; 
-                if (brightness > 0.5)
-                {
-                    graphViewer.BackColor = Color.FromArgb(20,20,20);
-                }
-                else
-                {
-                    graphViewer.BackColor = Color.FromArgb(255, 255, 255);
-                }
 
-            }
-            catch (Exception e)
+            if(annotationsWithValues.Count == 1 && annotationsWithValues[0].Item1.CombinedLines[0].Lines.Any())
             {
-                graphColor = Color.FromArgb(0, 114, 198);
+                graphColor = annotationsWithValues[0].Item1.CombinedLines[0].Lines[0].SystemColor;
             }
 
-            //Set hint based on the function description
+            var brightness = (graphColor.R * 0.299f + graphColor.G * 0.587f + graphColor.B * 0.114f) / 256f;
+            if (brightness > 0.5)
+            {
+                graphViewer.BackColor = Color.FromArgb(20, 20, 20);
+            }
+            else
+            {
+                graphViewer.BackColor = Color.FromArgb(255, 255, 255);
+            }
 
-            //Add the graph (collection of (X,Y) points) to the viewer
-            var displayedGraph = graphViewer.AddGraph(graph, graphColor, 3);
-
-            displayedGraph.DefaultPointMarkingStyle = GraphViewer.DisplayedGraph.PointMarkingStyle.Circle;
             graphViewer.Invalidate();
-        }
 
+        }
 
 
         GraphViewer.DisplayedGraph.DisplayedPoint m_HighlightedPoint;
 
         private void graphViewer_MouseMove(InteractiveGraphViewer sender, GraphMouseEventArgs e)
         {
-            //What you need to do is store the position of the last point received, and draw an ellipse at every point between the last and the new one.
-
             //if (m_MouseLocationTracker.X != null)
             //{
             //    for (int i = (int)m_MouseLocationTracker.X; i < e.DataX; i++)
@@ -148,13 +141,22 @@ namespace AgeReading.Graph
 
             //    }
             //}
-            if (control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine != null)
+
+            if (graphViewer.PreviewRectangle.Visible)
             {
-                if (control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Lines.Count > 0)
+                graphViewer.PreviewRectangle.X2 = e.DataX;
+                graphViewer.PreviewRectangle.Y2 = e.DataY;
+            }
+
+
+            if (control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine != null || plan == 3)
+            {
+                m_MouseLocationTracker.X = e.DataX;
+                m_MouseLocationTracker.Y = e.DataY;
+                m_MouseLocationTracker.Hidden = false;
+                if (plan != 3 && control.AgeReadingViewModel.AgeReadingEditorViewModel?.ActiveCombinedLine?.Lines?.Count > 0)
                 {
-                    m_MouseLocationTracker.X = e.DataX;
-                    m_MouseLocationTracker.Y = e.DataY;
-                    m_MouseLocationTracker.Hidden = false;
+                    
 
                     if (m_MouseLocationTracker.X > control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Points.Count)
                     {
@@ -169,8 +171,6 @@ namespace AgeReading.Graph
                     {
                         x = (int)(control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Points[Math.Abs((int)m_MouseLocationTracker.X)].X /**  control.AgeReadingViewModel.AgeReadingEditorViewModel.ZoomPercentage*/);
                         y = (int)(control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Points[Math.Abs((int)m_MouseLocationTracker.X)].Y /** control.AgeReadingViewModel.AgeReadingEditorViewModel.ZoomPercentage*/);
-
-
                     }
                     else
                     {
@@ -207,10 +207,10 @@ namespace AgeReading.Graph
 
                             int index = (int)(index1 + (index2 - index1) * interpolation);
 
-                            x = (int)(control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Points[index].X * (int)control.AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomPercentage);
-                            y = (int)(control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Points[index].Y * (int)control.AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomPercentage);
+                            x = control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Points[index].X * (int)control.AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
+                            y = control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine.Points[index].Y * (int)control.AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
 
                         }
@@ -229,7 +229,7 @@ namespace AgeReading.Graph
 
                     int distanceSquare;
                     var point = graphViewer.FindNearestGraphPoint(e.DataX, e.DataY, false, out distanceSquare);
-                    if (point != null && distanceSquare <= 400)
+                    if (point != null)
                     {
                         m_HighlightedPoint = point.NearestReferencePoint;
                         point.NearestReferencePoint.MarkerStyle = GraphViewer.DisplayedGraph.PointMarkingStyle.Square;
@@ -247,50 +247,63 @@ namespace AgeReading.Graph
                                     m_Hint.Show(e, string.Format("{1}Redness = {0:f2}", m_HighlightedPoint.Y, point.Graph.Hint));
                                     break;
                                 }
-                            case 3:
-                                {
-                                    m_Hint.Show(e, string.Format("{1}Age = {0:f0}", m_HighlightedPoint.X, point.Graph.Hint));
-                                    break;
-                                }
+                            //case 3:
+                            //    {
+                            //        m_Hint.Show(e, string.Format("{1}Age = {0:f0}", m_HighlightedPoint.X, point.Graph.Hint));
+                            //        break;
+                            //    }
 
                         }
                     }
-                    else
+                    //else
+                    //{
+                    //    if (point != null)
+                    //    {
+                    //        m_Hint.FillColor = Color.FromArgb(200, Color.LightBlue);
+                    //        switch (plan)
+                    //        {
+                    //            case 1:
+                    //                {
+                    //                    m_Hint.Show(e, string.Format("{1}Brightness (interpolated) = {0:f2}", point.Y, point.Graph.Hint));
+                    //                    break;
+                    //                }
+                    //            case 2:
+                    //                {
+                    //                    m_Hint.Show(e, string.Format("{1}Redness (interpolated) = {0:f2}", point.Y, point.Graph.Hint));
+                    //                    break;
+                    //                }
+                    //        }
+                    //    }
+                    //}
+                    
+                }
+                else if(plan == 3) // plan == 3
+                {
+                    if(graphViewer.DisplayedGraphs.Count() > 1)
                     {
-                        if (point != null)
-                        {
-                            m_Hint.FillColor = Color.FromArgb(200, Color.LightBlue);
-                            switch (plan)
-                            {
-                                case 1:
-                                    {
-                                        m_Hint.Show(e, string.Format("{1}Brightness (interpolated) = {0:f2}", point.Y, point.Graph.Hint));
-                                        break;
-                                    }
-                                case 2:
-                                    {
-                                        m_Hint.Show(e, string.Format("{1}Redness (interpolated) = {0:f2}", point.Y, point.Graph.Hint));
-                                        break;
-                                    }
-                                case 3:
-                                    {
-                                        m_Hint.Show(e, string.Format("{1}Age (interpolated) = {0:f0}", point.X, point.Graph.Hint));
-                                        break;
-                                    }
-                            }
-                        }
+                        return;
                     }
-                    if (graphViewer.PreviewRectangle.Visible)
+                    m_Hint.Hidden = true;
+                    int distanceSquare;
+                    var point = graphViewer.FindNearestGraphPoint(e.DataX, e.DataY, false, out distanceSquare);
+
+                    if (point != null)
                     {
-                        graphViewer.PreviewRectangle.X2 = e.DataX;
-                        graphViewer.PreviewRectangle.Y2 = e.DataY;
+                        m_Hint.FillColor = Color.FromArgb(200, Color.LightGreen);
+                        point.NearestReferencePoint.MarkerStyle = GraphViewer.DisplayedGraph.PointMarkingStyle.Square;
+                        GraphViewer.DisplayedGraph.DisplayedPoint p = graphViewer.DisplayedGraphs.FirstOrDefault().FindPoint(e.DataX, e.DataY,25);
+
+                        m_Hint.FillColor = Color.FromArgb(200, Color.LightGreen);
+                        if(p != null)
+                        {
+                            m_Hint.Show(e, string.Format("{1}Age = {0:f0}", p.X, point.Graph?.Hint));
+
+                        }
                     }
                 }
+
+                
             }
-
-
-
-
         }
 
         private void graphViewer_MouseClick(InteractiveGraphViewer sender, GraphMouseEventArgs e)
@@ -331,7 +344,8 @@ namespace AgeReading.Graph
                             Color = control.AgeReadingViewModel.AgeReadingEditorViewModel.DotColor.ToString(),
                             ParentCombinedLine = control.AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine,
                             AnnotationID = control.AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ID,
-                            DotShape = control.AgeReadingViewModel.AgeReadingEditorViewModel.DotShape
+                            DotShape = control.AgeReadingViewModel.AgeReadingEditorViewModel.DotShape,
+                            DotType = control.AgeReadingViewModel.AgeReadingEditorViewModel.DotType
                         };
                         control.AgeReadingViewModel.AgeReadingEditorViewModel.AddDot(d.ParentCombinedLine, d);
                         control.AgeReadingViewModel.AgeReadingEditorViewModel.UndoRedo.InsertInUnDoRedoForAddDot(d, d.ParentCombinedLine, control.AgeReadingViewModel.AgeReadingEditorViewModel);
@@ -361,7 +375,6 @@ namespace AgeReading.Graph
             {
                 graphViewer.ForceCustomBounds = false;
             }
-
         }
 
         private void graphViewer_MouseLeave(object sender, EventArgs e)
@@ -373,17 +386,17 @@ namespace AgeReading.Graph
             control.AgeReadingViewModel.AgeReadingEditorView.Tracker.Visibility = Visibility.Hidden;
         }
 
-        private List<decimal> CalculateLineBrightness()
+        private List<Tuple<Annotation, List<decimal>>> CalculateLineBrightness()
         {
             return control.AgeReadingViewModel.AgeReadingEditorViewModel.LineBrightness;
         }
 
-        private List<decimal> CalculateLineReddness()
+        private List<Tuple<Annotation, List<decimal>>> CalculateLineReddness()
         {
             return control.AgeReadingViewModel.AgeReadingEditorViewModel.LineRedness;
         }
 
-        private List<decimal> CalculateLineGrowth()
+        private List<Tuple<Annotation, List<decimal>>> CalculateLineGrowth()
         {
             return control.AgeReadingViewModel.AgeReadingEditorViewModel.LineGrowth;
         }

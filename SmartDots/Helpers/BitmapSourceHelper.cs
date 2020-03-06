@@ -5,6 +5,14 @@ namespace SmartDots.Helpers
 {
     public static class BitmapSourceHelper
     {
+        public struct PixelColor
+        {
+            public byte Blue;
+            public byte Green;
+            public byte Red;
+            public byte Alpha;
+        }
+
 #if UNSAFE
   public unsafe static void CopyPixels(this BitmapSource source, PixelColor[,] pixels, int stride, int offset)
   {
@@ -16,7 +24,7 @@ namespace SmartDots.Helpers
         stride);
   }
 #else
-        public static void CopyPixels(this BitmapSource source, AgeReadingEditorViewModel.PixelColor[,] pixels, int stride, int offset)
+        public static void CopyPixels(this BitmapSource source, PixelColor[,] pixels, int stride, int offset)
         {
             var height = source.PixelHeight;
             var width = source.PixelWidth;
@@ -26,7 +34,7 @@ namespace SmartDots.Helpers
             int x0 = offset - width * y0;
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
-                    pixels[x + x0, y + y0] = new AgeReadingEditorViewModel.PixelColor
+                    pixels[x + x0, y + y0] = new PixelColor
                     {
                         Blue = pixelBytes[(y * width + x) * 4 + 0],
                         Green = pixelBytes[(y * width + x) * 4 + 1],

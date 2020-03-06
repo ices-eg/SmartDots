@@ -34,6 +34,11 @@ namespace SmartDots.ViewModel
         private bool canApproveAnnotation;
         private bool showNucleusColumn;
         private bool showEdgeColumn;
+        private string newAnnotationTooltip;
+        private string editAnnotationTooltip;
+        private string deleteAnnotationTooltip;
+        private string pinAnnotationTooltip;
+        private string approveAnnotationTooltip;
 
         public ObservableCollection<Annotation> Outcomes
         {
@@ -50,7 +55,7 @@ namespace SmartDots.ViewModel
                     annotation.Quality = Qualities.FirstOrDefault(x => x.ID == annotation.QualityID);
                     annotation.CalculateAge();
                 }
-                AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = value.Count;
+                AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = value.Count(x => !x.IsFixed);
                 RefreshActions();
                 AgeReadingViewModel.AgeReadingEditorViewModel.UpdateButtons();
             }
@@ -133,16 +138,92 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public string NewAnnotationTooltip
+        {
+            get { return newAnnotationTooltip; }
+            set
+            {
+                newAnnotationTooltip = value;
+                RaisePropertyChanged("NewAnnotationTooltip");
+            }
+        }
+
+        public string EditAnnotationTooltip
+        {
+            get { return editAnnotationTooltip; }
+            set
+            {
+                editAnnotationTooltip = value;
+                RaisePropertyChanged("EditAnnotationTooltip");
+            }
+        }
+
+        public string DeleteAnnotationTooltip
+        {
+            get { return deleteAnnotationTooltip; }
+            set
+            {
+                deleteAnnotationTooltip = value;
+                RaisePropertyChanged("DeleteAnnotationTooltip");
+            }
+        }
+
+        public string PinAnnotationTooltip
+        {
+            get { return pinAnnotationTooltip; }
+            set
+            {
+                pinAnnotationTooltip = value;
+                RaisePropertyChanged("PinAnnotationTooltip");
+            }
+        }
+
+        public string ApproveAnnotationTooltip
+        {
+            get { return approveAnnotationTooltip; }
+            set
+            {
+                approveAnnotationTooltip = value;
+                RaisePropertyChanged("ApproveAnnotationTooltip");
+            }
+        }
+
         public bool CanCreate
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection)) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return false;
-                if (AgeReadingViewModel.AgeReadingSampleViewModel.Sample == null && !WebAPI.Settings.AnnotateWithoutSample) return false;
-                if (SelectedAnnotations.Any()) return false;
-                return WorkingAnnotation == null;
+                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                {
+                    NewAnnotationTooltip = "No active connection";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null)
+                {
+                    NewAnnotationTooltip = "No file selected";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly)
+                {
+                    NewAnnotationTooltip = "The selected file is read-only";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingSampleViewModel.Sample == null && !WebAPI.Settings.AnnotateWithoutSample)
+                {
+                    NewAnnotationTooltip = "Cannot create an Annotation when no Sample is linked";
+                    return false;
+                }
+                if (SelectedAnnotations.Any())
+                {
+                    NewAnnotationTooltip = "In order to create an Annotation, make sure that no Annotations are selected";
+                    return false;
+                }
+                if (WorkingAnnotation != null)
+                {
+                    NewAnnotationTooltip = "Still working on an Annotation, make sure that no Annotations are selected";
+                }
+
+                NewAnnotationTooltip = "Create new Annotation";
+                return true;
             }
         }
 
@@ -150,10 +231,39 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection)) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return false;
-                return WorkingAnnotation != null && !WorkingAnnotation.IsReadOnly && !WorkingAnnotation.IsFixed;
+                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                {
+                    EditAnnotationTooltip = "No active connection";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null)
+                {
+                    EditAnnotationTooltip = "No file selected";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly)
+                {
+                    EditAnnotationTooltip = "The selected file is read-only";
+                    return false;
+                }
+                if (WorkingAnnotation == null)
+                {
+                    EditAnnotationTooltip = "In order to edit an Annotation, make sure that 1 is selected";
+                    return false;
+                }
+                if (WorkingAnnotation.IsReadOnly)
+                {
+                    EditAnnotationTooltip = "The selected Annotation is read-only";
+                    return false;
+                }
+                if (WorkingAnnotation.IsFixed)
+                {
+                    EditAnnotationTooltip = "The selected Annotation is a fixed reading line";
+                    return false;
+                }
+
+                EditAnnotationTooltip = "Edit Annotation";
+                return true;
             }
         }
 
@@ -161,32 +271,117 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection)) return false;
-                if (!SelectedAnnotations.Any()) return false;
-                if (SelectedAnnotations.Any(x => x.IsFixed)) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return false;
-                return !SelectedAnnotations.Any(x => x.IsReadOnly) /*&& !SelectedAnnotations.Any(x => x.IsFixed)*/;
+                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                {
+                    DeleteAnnotationTooltip = "No active connection";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null)
+                {
+                    DeleteAnnotationTooltip = "No file selected";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly)
+                {
+                    DeleteAnnotationTooltip = "The selected file is read-only";
+                    return false;
+                }
+                if (!SelectedAnnotations.Any())
+                {
+                    DeleteAnnotationTooltip = "No Annotations selected";
+                    return false;
+                }
+                if (SelectedAnnotations.Any(x => x.IsFixed))
+                {
+                    DeleteAnnotationTooltip = "The selection contains a fixed reading line";
+                    return false;
+                }
+                if (SelectedAnnotations.Any(x => x.IsReadOnly))
+                {
+                    DeleteAnnotationTooltip = "The selection contains read-only Annotation(s)";
+                    return false;
+                }
+                DeleteAnnotationTooltip = "Delete Annotation(s)";
+                return true;
             }
         }
 
         public bool CanTogglePin
         {
-            get { return CanPin || CanUnpin; }
+            get
+            {
+                if (WorkingAnnotation != null && !workingAnnotation.IsFixed)
+                {
+                    if (CanPin)
+                    {
+                        PinAnnotationTooltip = "Make fixed reading line";
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (CanUnpin)
+                    {
+                        PinAnnotationTooltip = "Undo fixed reading line";
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
 
         public bool CanPin
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection)) return false;
-                if (!AgeReadingViewModel.Analysis.UserCanPin) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return false;
-                if (WorkingAnnotation == null) return false;
-                if (!WorkingAnnotation.CombinedLines.Any() || !WorkingAnnotation.CombinedLines[0].Lines.Any()) return false;
-                if (WorkingAnnotation.CombinedLines[0].Dots.Any()) return false;
-                return !WorkingAnnotation.IsFixed;
+                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                {
+                    PinAnnotationTooltip = "No active connection";
+                    return false;
+                }
+                if (!AgeReadingViewModel.Analysis.UserCanPin)
+                {
+                    PinAnnotationTooltip = "No permission to make fixed reading lines";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null)
+                {
+                    PinAnnotationTooltip = "No file selected";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly)
+                {
+                    PinAnnotationTooltip = "The selected file is read-only";
+                    return false;
+                }
+                if (WorkingAnnotation == null)
+                {
+                    PinAnnotationTooltip = "It is only possible to create a fixed reading line when there is 1 Annotation selected";
+                    return false;
+                };
+                if (!WorkingAnnotation.CombinedLines.Any() || !WorkingAnnotation.CombinedLines[0].Lines.Any())
+                {
+                    PinAnnotationTooltip = "In order to create a fixed reading line, you have to create a line first";
+                    return false;
+                }
+                if (WorkingAnnotation.CombinedLines[0].Dots.Any())
+                {
+                    PinAnnotationTooltip = "In order to create a fixed reading line, you have to remove all dots first";
+                    return false;
+                }
+                if (WorkingAnnotation.IsFixed)
+                {
+                    PinAnnotationTooltip = "This is already a fixed reading line";
+                    return false;
+                }
+                if (WorkingAnnotation.IsFixed)
+                {
+                    PinAnnotationTooltip = "An approved Annotation cannot be made into a fixed reading line";
+                    return false;
+                }
+                PinAnnotationTooltip = "Make fixed reading line";
+                return true;
             }
         }
 
@@ -208,32 +403,119 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection)) return false;
-                if (!AgeReadingViewModel.Analysis.UserCanPin) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return false;
-                if (WorkingAnnotation == null) return false;
-                return WorkingAnnotation.IsFixed;
+                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                {
+                    PinAnnotationTooltip = "No active connection";
+                    return false;
+                }
+                if (!AgeReadingViewModel.Analysis.UserCanPin)
+                {
+                    PinAnnotationTooltip = "No permission to make fixed reading lines";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null)
+                {
+                    PinAnnotationTooltip = "No file selected";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly)
+                {
+                    PinAnnotationTooltip = "The selected file is read-only";
+                    return false;
+                }
+                if (WorkingAnnotation == null)
+                {
+                    PinAnnotationTooltip = "It is only possible to create a fixed reading line when there is 1 Annotation selected";
+                    return false;
+                };
+                if (!WorkingAnnotation.IsFixed)
+                {
+                    PinAnnotationTooltip = "This is not a fixed reading line";
+                    return false;
+                }
+                PinAnnotationTooltip = "Undo fixed reading line";
+                return true;
             }
 
         }
 
         public bool CanToggleApprove
         {
-            get { return CanApprove || CanDisApprove; }
+            get
+            {
+                if (WorkingAnnotation != null && !workingAnnotation.IsApproved)
+                {
+                    if (CanApprove)
+                    {
+                        ApproveAnnotationTooltip = "Approve Annotation";
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (CanDisApprove)
+                    {
+                        ApproveAnnotationTooltip = "Unapprove Annotation";
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
 
         public bool CanApprove
         {
             get
             {
-                //if(WorkOffline) return false; //todo yann
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection)) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return false;
-                if (WorkingAnnotation?.QualityID != Qualities.FirstOrDefault(x => x.Code == "AQ1").ID && WebAPI.Settings.RequireAq1ForApproval) return false;
-                if (WorkingAnnotation?.ParameterID == null && WebAPI.Settings.RequireParamForApproval) return false;
-                return WorkingAnnotation != null && !WorkingAnnotation.IsApproved;
+                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                {
+                    ApproveAnnotationTooltip = "No active connection";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null)
+                {
+                    ApproveAnnotationTooltip = "No file selected";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly)
+                {
+                    ApproveAnnotationTooltip = "The selected file is read-only";
+                    return false;
+                }
+                if (WorkingAnnotation == null)
+                {
+                    ApproveAnnotationTooltip = "It is only possible to approve when there is 1 Annotation selected";
+                    return false;
+                };
+                if (WorkingAnnotation.IsReadOnly)
+                {
+                    ApproveAnnotationTooltip = "The selected Annotation is read-only";
+                    return false;
+                };
+                if (WorkingAnnotation.IsApproved)
+                {
+                    ApproveAnnotationTooltip = "The selected Annotation is already approved";
+                    return false;
+                }
+                if (WorkingAnnotation.IsFixed)
+                {
+                    ApproveAnnotationTooltip = "Cannot approve a fixed reading line";
+                    return false;
+                }
+                if (WorkingAnnotation?.QualityID != Qualities.FirstOrDefault(x => x.Code.ToUpper() == "AQ1").ID && WebAPI.Settings.RequireAq1ForApproval)
+                {
+                    ApproveAnnotationTooltip = "A quality code AQ1 is needed to approve the Annotation";
+                    return false;
+                };
+                if (WorkingAnnotation?.ParameterID == null && WebAPI.Settings.RequireParamForApproval)
+                {
+                    ApproveAnnotationTooltip = "A parameter is needed to approve the Annotation";
+                    return false;
+                };
+                
+                ApproveAnnotationTooltip = "Approve Annotation";
+                return true;
             }
 
         }
@@ -242,11 +524,39 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection)) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null) return false;
-                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return false;
-                if (WorkingAnnotation == null) return false;
-                return WorkingAnnotation.IsApproved;
+                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                {
+                    ApproveAnnotationTooltip = "No active connection";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile == null)
+                {
+                    ApproveAnnotationTooltip = "No file selected";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly)
+                {
+                    ApproveAnnotationTooltip = "The selected file is read-only";
+                    return false;
+                }
+                if (WorkingAnnotation == null)
+                {
+                    ApproveAnnotationTooltip = "It is only possible to unapprove when there is 1 Annotation selected";
+                    return false;
+                };
+                if (WorkingAnnotation.IsReadOnly)
+                {
+                    ApproveAnnotationTooltip = "The selected Annotation is read-only";
+                    return false;
+                };
+                if (!WorkingAnnotation.IsApproved)
+                {
+                    ApproveAnnotationTooltip = "The selected Annotation is not approved";
+                    return false;
+                }
+
+                ApproveAnnotationTooltip = "Unapprove Annotation";
+                return true;
             }
 
         }
@@ -448,7 +758,7 @@ namespace SmartDots.ViewModel
                 AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.Focusable = false;
                 WorkingAnnotation = an;
 
-                AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = Outcomes.Count;
+                AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = Outcomes.Count(x => !x.IsFixed);
                 AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.FetchProps();
                 AgeReadingViewModel.AgeReadingFileViewModel.Refresh();
 
@@ -486,7 +796,7 @@ namespace SmartDots.ViewModel
                 {
                     Outcomes.Remove(outcome);
                 }
-                AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = Outcomes.Count;
+                AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = Outcomes.Count(x => !x.IsFixed);
 
                 AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.FetchProps();
                 //AgeReadingViewModel.AgeReadingFileView.FileGrid.RefreshData();
@@ -579,7 +889,7 @@ namespace SmartDots.ViewModel
                     {
                         e.Handled = false;
                         an.QualityID = (Guid?)e.OldValue;
-                        
+
                         AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
                         AgeReadingViewModel.AgeReadingAnnotationView.AnnotationList.CancelRowEdit();
                         //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.Focus();
@@ -716,6 +1026,10 @@ namespace SmartDots.ViewModel
             WorkingAnnotation.IsApproved = false;
 
             WorkingAnnotation.IsChanged = true;
+
+            AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = Outcomes.Count(x => !x.IsFixed);
+            AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.FetchProps();
+            AgeReadingViewModel.AgeReadingFileViewModel.Refresh();
 
             AgeReadingViewModel.AgeReadingEditorViewModel.UpdateButtons();
             AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();

@@ -139,6 +139,7 @@ namespace SmartDots.Model
         {
             List<decimal> indices = new List<decimal>();
             indices.Add(0);
+            CalculateDotIndices();
             indices.AddRange(DotIndex.Select(i => (decimal) i));
             return indices;
         }

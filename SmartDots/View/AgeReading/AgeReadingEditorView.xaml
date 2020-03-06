@@ -82,8 +82,7 @@
 
         <StackPanel x:Name="EditorStackPanel"  DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
                     Orientation="Horizontal" Background="{StaticResource BrushSmartFishFairBlue2}">
-            <userControls:SDButton x:Name="LineButton" Glyph="../../Resources/edit-6-32.png" ButtonToolTip="Draw line" 
-                                   IsToggleButton="True" IsEnabled="{Binding CanDrawLine}" IsPressed="True"/>
+            <userControls:SDButton x:Name="LineButton" Glyph="../../Resources/edit-6-32.png" ButtonToolTip="Draw line" IsToggleButton="True" IsEnabled="{Binding CanDrawLine}" IsPressed="True"/>
             <dxb:PopupMenu x:Name="LineMenu">
                 <dxb:PopupMenu.Items>
                     <dxb:BarItemMenuHeader Content="Line Settings"/>

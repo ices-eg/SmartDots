@@ -42,11 +42,14 @@ namespace SmartDots.View
             AgeReadingViewModel.LoadLayout("Layout.xml");
             AgeReadingViewModel.MakeGraph();
 
+            btnFileSettings.Click += (sender, args) => AgeReadingViewModel.AgeReadingFileViewModel.FileSettings();
+
+
             ////this order is important
             //Show();
             //WindowState = WindowState.Maximized;
 
-            
+
         }
 
         //private void DockLayoutManager_OnDockOperationCompleted(object sender, DockOperationCompletedEventArgs e)

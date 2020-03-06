@@ -10,6 +10,7 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
              mc:Ignorable="d" 
              dx:ThemeManager.ThemeName="Office2016White"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -23,40 +24,93 @@
             </Rectangle>
         </DataTemplate>
     </UserControl.Resources>
-    
+
     <UserControl.DataContext>
         <viewModel:AgeReadingFileViewModel/>
     </UserControl.DataContext>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <dxg:GridControl Grid.Row="0" ItemsSource="{Binding Files}" VerticalAlignment="Stretch" FontSize="11" x:Name="FileGrid">
-            <dxg:GridControl.View>
-                <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="FileList" RowMinHeight="22" IsColumnChooserVisible="False">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="BeforeLayoutRefresh">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="FileList_BeforeLayoutRefresh"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="FocusedRowChanged">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="FileList_FocusedRowChanged"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </dxg:TableView>
-            </dxg:GridControl.View>
-            <dxg:GridControl.Columns>
-                <dxg:GridColumn FieldName="Status" Header="@" ToolTip="Sample status" Width="16" CellTemplate="{StaticResource StatusColumn}" AllowEditing="False" AllowSorting="True" SortMode="Custom" Visible="{Binding UseSampleStatus}" VisibleIndex="0" />
-                <dxg:GridColumn FieldName="Display" Header="File" ToolTip="Filename" AllowEditing="False" />
-                <dxg:GridColumn FieldName="SampleNumber" Header="{Binding SampleNumberAlias}" ToolTip="{Binding SampleNumberAlias}" AllowEditing="False" Width="60"  />
-                <dxg:GridColumn FieldName="AnnotationCount" Header="#Annotations" ToolTip="Number of annotations" AllowEditing="False"  Width="60" />
-                <dxg:GridColumn FieldName="Scale" AllowEditing="False" Header="Scale (px/mm)" Width="80" >
-                    <dxg:GridColumn.EditSettings>
-                        <dxe:TextEditSettings MaskType="Numeric" Mask="n3"/>
-                    </dxg:GridColumn.EditSettings>
-                </dxg:GridColumn>
-                <!--<dxg:GridColumn FieldName="Otolith2Condition" SortIndex="0" AllowEditing="True">
+    <DockPanel>
+        <dxdo:DockLayoutManager EnableWin32Compatibility="True" FloatingMode="Desktop">
+            <dxdo:DockLayoutManager.FloatGroups>
+                <dxdo:FloatGroup FloatSize="300,120" FloatLocation="250,100" AllowDock="False" AllowDrop="False" AllowClose="False" AllowContextMenu="False" AllowDockToCurrentItem="False" AllowExpand="False" AllowHide="False" AllowSizing="False" AllowMaximize="False" AllowMinimize="False" >
+                    <dxdo:LayoutPanel x:Name="FileSettingsPanel" Caption="File settings" AllowClose="False" AllowMaximize="False" AllowMinimize="False" Visibility="Collapsed" >
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="44" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Show Next/Previous navigation buttons" Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="0" Margin="0,7,0,3"></TextBlock>
+
+                            <dxe:CheckEdit Name="ShowNavBtns" Grid.Column="6" HorizontalAlignment="Center"></dxe:CheckEdit>
+
+
+                            <!--<Button IsEnabled="{Binding IsScaleDrawn}" Content="Clear Line"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,7,3,3" Height="30" Padding="0">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="ClearScaleLine"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>-->
+                            <Button IsEnabled="True" Content="Save"  Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="-30,7,30,3" Height="30" Padding="0">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="SaveSettings"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                            <Button Content="Cancel"  Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Margin="3,7,0,3" Height="30" Padding="0">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="CancelSettings"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                        </Grid>
+
+                    </dxdo:LayoutPanel>
+                </dxdo:FloatGroup>
+            </dxdo:DockLayoutManager.FloatGroups>
+        </dxdo:DockLayoutManager>
+
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <dxg:GridControl Grid.Row="0" ItemsSource="{Binding Files}" VerticalAlignment="Stretch" FontSize="11" x:Name="FileGrid">
+                <dxg:GridControl.View>
+                    <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="FileList" RowMinHeight="22" IsColumnChooserVisible="False">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="BeforeLayoutRefresh">
+                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="FileList_BeforeLayoutRefresh"/>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="FocusedRowChanged">
+                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="FileList_FocusedRowChanged"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </dxg:TableView>
+                </dxg:GridControl.View>
+                <dxg:GridControl.Columns>
+                    <dxg:GridColumn FieldName="Status" Header="@" ToolTip="Sample status" Width="16" CellTemplate="{StaticResource StatusColumn}" AllowEditing="False" AllowSorting="True" SortMode="Custom" Visible="{Binding UseSampleStatus}" VisibleIndex="0" />
+                    <dxg:GridColumn FieldName="Display" Header="File" ToolTip="Filename" AllowEditing="False" />
+                    <dxg:GridColumn FieldName="SampleNumber" Header="{Binding SampleNumberAlias}" ToolTip="{Binding SampleNumberAlias}" AllowEditing="False" Width="60"  />
+                    <dxg:GridColumn FieldName="AnnotationCount" Header="#Annotations" ToolTip="Number of annotations" AllowEditing="False"  Width="60" />
+                    <dxg:GridColumn FieldName="Scale" AllowEditing="False" Header="Scale (px/mm)" Width="80" >
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:TextEditSettings MaskType="Numeric" Mask="n3"/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <!--<dxg:GridColumn FieldName="Otolith2Condition" SortIndex="0" AllowEditing="True">
                     <dxg:GridColumn.EditSettings>
                         <dxg:LookUpEditSettings Name="SampleState" DisplayMember="Code" ValueMember="ID" ItemsSource="{Binding States, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PopupMinWidth="300" AutoPopulateColumns="False">
                             <dxg:LookUpEditSettings.PopupContentTemplate>
@@ -75,25 +129,25 @@
                         </dxg:LookUpEditSettings>
                     </dxg:GridColumn.EditSettings>
                     -->
-                <!--<dxe:LookUpEditSettingsBase Name="SampleState" 
+                    <!--<dxe:LookUpEditSettingsBase Name="SampleState" 
                                 DisplayMember="Code"
                                 IsTextEditable="False"
                                 ItemsSource="{Binding States}"
                                 PopupMinWidth="300"
                                 />
                     </dxg:GridColumn.EditSettings>-->
-                <!--
+                    <!--
                 </dxg:GridColumn>-->
-            </dxg:GridControl.Columns>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="CustomColumnSort">
-                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnCustomColumnSort"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </dxg:GridControl>
-        <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Background="#ccc" Height="33" Visibility="{Binding ToolbarVisibility}">
-            <StackPanel x:Name="AnnotationsOperations" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Background="#ccc" Margin="1">
-                <!--<Button Style="{StaticResource SDButtonBase}" x:Name="btnFolder" Height="27" Width="28" Padding="2" Margin="2" ToolTip="Browse" HorizontalAlignment="Center" Visibility="{Binding CanBrowseFolderVisibility}">
+                </dxg:GridControl.Columns>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="CustomColumnSort">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnCustomColumnSort"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </dxg:GridControl>
+            <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Background="#ccc" Height="33" Visibility="{Binding ToolbarVisibility}">
+                <DockPanel x:Name="AnnotationsOperations" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="#ccc" Margin="1" >
+                    <!--<Button Style="{StaticResource SDButtonBase}" x:Name="btnFolder" Height="27" Width="28" Padding="2" Margin="2" ToolTip="Browse" HorizontalAlignment="Center" Visibility="{Binding CanBrowseFolderVisibility}">
                     <Image Source="../../Resources/folder-3-32.png" Width="22" Height="22"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
@@ -101,25 +155,41 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>-->
-                <Button Style="{StaticResource SDButtonBase}" x:Name="btnAttach" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Attach Sample" IsEnabled="{Binding NeedsSampleLink}" Visibility="{Binding CanAttachVisibility}">
-                    <Image Source="../../Resources/Connect.png" Width="22" Height="22"/>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="Attach"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-                <Button Style="{StaticResource SDButtonBase}" x:Name="btnDetach" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Detach Sample" IsEnabled="{Binding CanDetach}"  Visibility="{Binding CanDetachVisibility}">
-                    <Image Source="../../Resources/Disconnect.png" Width="22" Height="22"/>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnDetach_Click"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
+                    <Button Style="{StaticResource SDButtonBase}" x:Name="btnPrevious" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Left" ToolTip="Previous File"  Visibility="{Binding ShowNavButtons}">
+                        <Image Source="../../Resources/back.png" Width="22" Height="22"/>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnPrevious_Click"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    <Button Style="{StaticResource SDButtonBase}" x:Name="btnAttach" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Attach Sample" IsEnabled="{Binding NeedsSampleLink}" Visibility="{Binding CanAttachVisibility}">
+                        <Image Source="../../Resources/Connect.png" Width="22" Height="22"/>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="Attach"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    <Button Style="{StaticResource SDButtonBase}" x:Name="btnDetach" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Detach Sample" IsEnabled="{Binding CanDetach}"  Visibility="{Binding CanDetachVisibility}">
+                        <Image Source="../../Resources/Disconnect.png" Width="22" Height="22"/>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnDetach_Click"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    <Button Style="{StaticResource SDButtonBase}" x:Name="btnNext" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Next File"  Visibility="{Binding ShowNavButtons}">
+                        <Image Source="../../Resources/next.png" Width="22" Height="22"/>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnNext_Click"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                </DockPanel>
             </StackPanel>
-        </StackPanel>
-    </Grid>
-        
-        
+        </Grid>
+    </DockPanel>
+
 </UserControl>

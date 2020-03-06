@@ -70,7 +70,7 @@
             <dxg:GridControl.View >
                 <dxg:TableView x:Name="AnalysesView" ShowGroupPanel="False" RowDoubleClick="WorkOnline_Click"
                                AllowEditing="False" AllowSorting="True" AllowGrouping="False" AllowColumnMoving="False"
-                               AllowColumnFiltering="False" AllowMoveColumnToDropArea="False" IsColumnMenuEnabled="False" NavigationStyle="Row" />
+                               AllowColumnFiltering="False" AllowMoveColumnToDropArea="False" IsColumnMenuEnabled="False" NavigationStyle="Row" ShowSearchPanelMode="Always" />
             </dxg:GridControl.View>
             <dxg:GridControl.Columns >
                 <!--<dxg:GridColumn ReadOnly="True" FieldName="Analysis" Header="Analysis" />

@@ -192,7 +192,7 @@
         </dxg:GridControl>
         <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Background="#ccc" Height="33">
             <StackPanel x:Name="FilesOperations" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Background="#ccc" Margin="1">
-                <Button Style="{StaticResource SDButtonBase}" x:Name="btnNewAnnotation" Height="27" Width="28" Padding="2" Margin="2" ToolTip="New Annotation" HorizontalAlignment="Center" IsEnabled="{Binding CanCreate}">
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnNewAnnotation" Height="27" Width="28" Padding="2" Margin="2" ToolTip="{Binding NewAnnotationTooltip}" HorizontalAlignment="Center" IsEnabled="{Binding CanCreate}" ToolTipService.ShowOnDisabled="True">
                     <Image Source="{Binding Path=ImageNew, Converter={StaticResource nullImageConverter}}" Width="22" Height="22"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
@@ -200,7 +200,7 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
-                <Button Style="{StaticResource SDButtonBase}" x:Name="btnEditAnnotation" Height="27" Width="28" Padding="2" Margin="2" ToolTip="Edit Annotation" HorizontalAlignment="Center" IsEnabled="{Binding CanEdit}">
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnEditAnnotation" Height="27" Width="28" Padding="2" Margin="2" ToolTip="{Binding EditAnnotationTooltip}" HorizontalAlignment="Center" IsEnabled="{Binding CanEdit}" ToolTipService.ShowOnDisabled="True">
                     <Image Source="{Binding Path=ImageEdit, Converter={StaticResource nullImageConverter}}" Width="22" Height="22"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
@@ -208,7 +208,7 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
-                <Button Style="{StaticResource SDButtonBase}" x:Name="btnDeleteAnnotations" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Delete Annotations" IsEnabled="{Binding CanDelete}">
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnDeleteAnnotations" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="{Binding DeleteAnnotationTooltip}" IsEnabled="{Binding CanDelete}" ToolTipService.ShowOnDisabled="True">
                     <Image Source="{Binding Path=ImageDelete, Converter={StaticResource nullImageConverter}}" Width="22" Height="22"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
@@ -218,7 +218,7 @@
                 </Button>
                 <StackPanel Width="28" Height="33" Margin="0"  ></StackPanel>
 
-                <Button Style="{StaticResource SDButtonBase}" x:Name="btnPinAnnotation" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Toggle fixed reading line" IsEnabled="{Binding CanTogglePin}">
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnPinAnnotation" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="{Binding PinAnnotationTooltip}" IsEnabled="{Binding CanTogglePin}" ToolTipService.ShowOnDisabled="True">
                     <Image Source="{Binding Path=ImagePin, Converter={StaticResource nullImageConverter}}" Width="22" Height="22"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
@@ -234,7 +234,7 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>-->
-                <Button Style="{StaticResource SDButtonBase}" x:Name="btnApproveAnnotation" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="Toggle Approve Annotation" IsEnabled="{Binding CanToggleApprove}">
+                <Button Style="{StaticResource SDButtonBase}" x:Name="btnApproveAnnotation" Height="27" Width="28" Padding="2" Margin="2" HorizontalAlignment="Center" ToolTip="{Binding ApproveAnnotationTooltip}" IsEnabled="{Binding CanToggleApprove}" ToolTipService.ShowOnDisabled="True">
                     <Image Source="{Binding Path=ImageApprove, Converter={StaticResource nullImageConverter}}" Width="22" Height="22"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">

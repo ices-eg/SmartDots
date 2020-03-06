@@ -14,15 +14,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using AForge.Imaging;
-using AForge.Imaging.Filters;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.WindowsUI;
 using SmartDots.Helpers;
 using SmartDots.Model;
-using Tesseract;
 using Color = System.Windows.Media.Color;
 using ColorConverter = System.Windows.Media.ColorConverter;
 using Image = System.Windows.Controls.Image;
@@ -218,9 +215,9 @@ namespace SmartDots.ViewModel
                 activeCombinedLine = value;
                 activeCombinedLine?.CalculateDotIndices();
                 RaisePropertyChanged("ActiveCombinedLine");
-                AgeReadingViewModel.AgeReadingView.BrightnessGraph.graphViewer.SetAnnotation(AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation);
-                AgeReadingViewModel.AgeReadingView.RednessGraph.graphViewer.SetAnnotation(AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation);
-                AgeReadingViewModel.AgeReadingView.GrowthGraph.graphViewer.SetAnnotation(AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation);
+                AgeReadingViewModel.AgeReadingView.BrightnessGraph.graphViewer.SetAnnotations(AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations);
+                AgeReadingViewModel.AgeReadingView.RednessGraph.graphViewer.SetAnnotations(AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations);
+                AgeReadingViewModel.AgeReadingView.GrowthGraph.graphViewer.SetAnnotations(AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations);
             }
         }
 
@@ -377,40 +374,51 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public List<decimal> LineBrightness
+        public List<Tuple<Annotation, List<decimal>>> LineBrightness
         {
             get
             {
-                List<decimal> values = new List<decimal>();
-                if (ActiveCombinedLine != null)
+                var img = BitmapConverter.BitmapImage2Bitmap(OtolithImage);
+                List<Tuple<Annotation, List<decimal>>> values = new List<Tuple<Annotation, List<decimal>>>();
+                foreach (var annotation in AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations)
                 {
-                    values = ActiveCombinedLine.GetLineBrightness(BitmapConverter.BitmapImage2Bitmap(OtolithImage));
+                    if (annotation.CombinedLines.Any())
+                    {
+                        values.Add(new Tuple<Annotation, List<decimal>>(annotation, annotation.CombinedLines.FirstOrDefault().GetLineBrightness(img)));
+                    }
                 }
                 return values;
             }
         }
 
-        public List<decimal> LineRedness
+        public List<Tuple<Annotation, List<decimal>>> LineRedness
         {
             get
             {
-                List<decimal> values = new List<decimal>();
-                if (ActiveCombinedLine != null)
+                var img = BitmapConverter.BitmapImage2Bitmap(OtolithImage);
+                List<Tuple<Annotation, List<decimal>>> values = new List<Tuple<Annotation, List<decimal>>>();
+                foreach (var annotation in AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations)
                 {
-                    values = ActiveCombinedLine.GetLineRedness(BitmapConverter.BitmapImage2Bitmap(OtolithImage));
+                    if (annotation.CombinedLines.Any())
+                    {
+                        values.Add(new Tuple<Annotation, List<decimal>>(annotation, annotation.CombinedLines.FirstOrDefault().GetLineRedness(img)));
+                    }
                 }
                 return values;
             }
         }
 
-        public List<decimal> LineGrowth
+        public List<Tuple<Annotation, List<decimal>>> LineGrowth
         {
             get
             {
-                List<decimal> values = new List<decimal>();
-                if (ActiveCombinedLine != null)
+                List<Tuple<Annotation, List<decimal>>> values = new List<Tuple<Annotation, List<decimal>>>();
+                foreach (var annotation in AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations)
                 {
-                    values = ActiveCombinedLine.CalculateLineGrowth();
+                    if (annotation.CombinedLines.Any())
+                    {
+                        values.Add(new Tuple<Annotation, List<decimal>>(annotation, annotation.CombinedLines.FirstOrDefault().CalculateLineGrowth()));
+                    }
                 }
                 return values;
             }
@@ -538,7 +546,7 @@ namespace SmartDots.ViewModel
             get
             {
                 return
-                       MeasureShapes.Any() || 
+                       MeasureShapes.Any() ||
                        (AgeReadingViewModel?.AgeReadingAnnotationViewModel?.SelectedAnnotations.Count < 2
                        && ActiveCombinedLine != null
                        && Mode != EditorModeEnum.MakingLine
@@ -641,51 +649,11 @@ namespace SmartDots.ViewModel
                 var oldvalue = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale;
                 AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = false;
 
+                PixelLength = await Task.Run(() => ScaleMeasureTool.Measure(OriginalImage, 128));
+                
 
-                PixelLength = await Task.Run(() => CalculatePixelLength(OriginalImage, 128));
-                if (PixelLength == 0) PixelLength = await Task.Run(() => CalculatePixelLength(OriginalImage, 20));
-                if (PixelLength == 0) PixelLength = await Task.Run(() => CalculatePixelLengthOld(OriginalImage));
+                if (PixelLength == 0) throw new Exception("Could not determine the scale");
 
-                string scaleText = await System.Threading.Tasks.Task.Run(() => FindScaleText());
-                scaleText = Regex.Replace(scaleText, " ", "");
-                if (scaleText.StartsWith(".")) scaleText = scaleText.Substring(1, scaleText.Length - 1);
-                if (scaleText.StartsWith(",")) scaleText = scaleText.Substring(1, scaleText.Length - 1);
-
-
-                double factor = 1;
-                int resultIndex = 0;
-                if (scaleText.Contains("mm"))
-                {
-                    resultIndex = scaleText.IndexOf("mm");
-                }
-                else if (scaleText.Contains("cm"))
-                {
-                    factor = 10;
-                    resultIndex = scaleText.IndexOf("cm");
-                }
-                else if (scaleText.Contains("µm"))
-                {
-                    factor = 0.001;
-                    resultIndex = scaleText.IndexOf("µm");
-                }
-                else if (scaleText.Contains("um"))
-                {
-                    factor = 0.001;
-                    resultIndex = scaleText.IndexOf("um");
-                }
-                else if (scaleText.Contains("m"))
-                {
-                    factor = 1;
-                    resultIndex = scaleText.IndexOf("m");
-                }
-
-                scaleText = scaleText.Substring(0, resultIndex);
-                decimal number = 0;
-
-                scaleText = scaleText.Replace(',', '.');
-                scaleText = new String(scaleText.Where(Char.IsDigit).ToArray());
-                number = decimal.Parse(scaleText, CultureInfo.InvariantCulture);
-                PixelLength = (decimal)(PixelLength / number / (decimal)factor);
                 var newvalue = PixelLength;
                 if (oldvalue != newvalue)
                 {
@@ -717,195 +685,6 @@ namespace SmartDots.ViewModel
 
 
             AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = true;
-        }
-
-        public PixelColor[,] GetPixels(BitmapSource source)
-        {
-
-            //Application.Current.Dispatcher.Invoke((Action)delegate {
-
-            if (source.Format != PixelFormats.Bgra32)
-                source = new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
-
-            int width = source.PixelWidth;
-            int height = source.PixelHeight;
-            PixelColor[,] result = new PixelColor[width, height];
-
-            BitmapSourceHelper.CopyPixels(source, result, width * 4, 0);
-
-
-            //});
-            return result;
-        }
-
-        public string FindScaleText()
-        {
-            var ocrtext = string.Empty;
-            try
-            {
-                using (var engine = new TesseractEngine("tessdata", "eng", EngineMode.TesseractOnly))
-                {
-
-                    engine.SetVariable("textord_min_xheight", 15);
-                    engine.SetVariable("textord_max_noise_size", 10);
-                    engine.SetVariable("tessedit_char_whitelist", "0123456789uµmc.,");
-
-                    Application.Current.Dispatcher.Invoke((Action)delegate
-                   {
-
-                       //Invert filter = new Invert();
-                       Bitmap bitmapimage = AForge.Imaging.Image.Clone(BitmapConverter.PreProcessForScaleDetection(OriginalImage, 128),
-                              System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                       //filter.ApplyInPlace(bitmapimage);
-                       using (var img = PixConverter.ToPix(bitmapimage))
-                       {
-                           using (
-                               var page = engine.Process(img,
-                                   new Tesseract.Rect(ScaleRectangle.X, ScaleRectangle.Y, ScaleRectangle.Width,
-                                       ScaleRectangle.Height), PageSegMode.SingleLine))
-                           {
-                               ocrtext = page.GetText();
-                           }
-                       }
-                   });
-                }
-            }
-            catch (Exception e)
-            {
-                //
-            }
-
-            return ocrtext;
-        }
-
-        public decimal CalculatePixelLengthOld(BitmapImage image)
-        {
-            var pixels = GetPixels(image);
-            decimal milimeterPixels = 0;
-            int x = 0, y = 0;
-            for (int i = 0; i < image.PixelHeight; i++)
-            {
-                for (int j = 0; j < image.PixelWidth; j++)
-                {
-                    if (pixels[j, i].Red >= 250 && pixels[j, i].Blue >= 250 && pixels[j, i].Green >= 250)
-                    {
-                        try
-                        {
-                            for (int k = 1; k < image.PixelHeight - j; k++)
-                            {
-                                if (j + k < image.PixelWidth &&
-                                    (pixels[j + k, i].Red >= 250 || pixels[j + k, i].Blue >= 250 ||
-                                     pixels[j + k, i].Green >= 250))
-                                {
-                                    if (k > milimeterPixels)
-                                    {
-                                        milimeterPixels = k;
-                                        x = j;
-                                        y = i;
-                                    }
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            //
-                        }
-                    }
-                }
-            }
-            try
-            {
-                if (milimeterPixels == 0) return 0;
-                var rect = new System.Drawing.Rectangle();
-                rect.X = x;
-                if (y < 70) rect.Y = 0;
-                else
-                {
-                    rect.Y = y - 70;
-                }
-                rect.Width = (int)milimeterPixels;
-                rect.Height = 68;
-                ScaleRectangle = rect;
-                return milimeterPixels;
-
-            }
-            catch (Exception e)
-            {
-                return 0;
-            }
-        }
-
-        public decimal CalculatePixelLength(BitmapImage image, int threshold)
-        {
-            decimal milimeterPixels = 0;
-            var newImage = BitmapConverter.PreProcessForScaleDetection(image, threshold);
-
-
-            // create an instance of blob counter algorithm
-            BlobCounterBase bc = new BlobCounter();
-            // set filtering options
-            bc.FilterBlobs = true;
-            bc.MinWidth = 40;
-            bc.MinHeight = 0;
-            bc.MaxHeight = 70;
-            bc.MaxWidth = newImage.Width / 3;
-            // set ordering options
-            bc.ObjectsOrder = ObjectsOrder.Size;
-            // process binary image
-            bc.ProcessImage(newImage);
-            //newImage.Save("step5.jpg");
-            List<Blob> blobs = bc.GetObjectsInformation().ToList();
-            blobs = blobs.Where(x => ((double)x.Rectangle.Width / (double)x.Rectangle.Height) > 3.7).OrderByDescending(x => x.Rectangle.Width / x.Rectangle.Height).ToList();
-            // extract the biggest blob
-            if (blobs.Count > 0)
-            {
-                milimeterPixels = blobs[0].Rectangle.Width;
-                try
-                {
-                    if (milimeterPixels == 0) return 0;
-                    var rect = new System.Drawing.Rectangle();
-                    rect.X = blobs[0].Rectangle.X;
-                    if (blobs[0].Rectangle.Y < 70) rect.Y = 0;
-                    else
-                    {
-                        rect.Y = blobs[0].Rectangle.Y - 70;
-                    }
-                    if (blobs[0].Rectangle.Y + 70 > newImage.Height)
-                    {
-
-                        rect.Height = 70 + newImage.Height - blobs[0].Rectangle.Y;
-                    }
-                    else
-                    {
-                        rect.Height = 140;
-                    }
-                    rect.Width = (int)milimeterPixels;
-                    if (rect.Y + rect.Height > newImage.Height) return 0;
-                    if (rect.X + rect.Width > newImage.Width) return 0;
-                    ScaleRectangle = rect;
-                    return milimeterPixels;
-                }
-                catch (Exception e)
-                {
-                    return 0;
-                }
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-        public struct PixelColor
-        {
-            public byte Blue;
-            public byte Green;
-            public byte Red;
-            public byte Alpha;
         }
 
         public void SaveUserPreferences()
@@ -2065,10 +1844,7 @@ namespace SmartDots.ViewModel
             {
                 try
                 {
-
                     GetPixelLength();
-
-
                 }
                 catch (Exception e)
                 {

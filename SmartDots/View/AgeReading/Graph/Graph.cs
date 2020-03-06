@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using SmartDots.Model;
 
 namespace AgeReading.Graph
 {
@@ -24,6 +25,8 @@ namespace AgeReading.Graph
             Data[x] = y;
             _SortedDataUpdatePending = true;
         }
+
+        public Annotation Annotation { get; set; }
 
         public List<KeyValuePair<double, double>> SortedPoints
         {

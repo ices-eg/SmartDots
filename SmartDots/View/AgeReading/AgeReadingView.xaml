@@ -12,9 +12,11 @@
         xmlns:graph="clr-namespace:AgeReading.Graph"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-        mc:Ignorable="d"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             mc:Ignorable="d"
         SnapsToDevicePixels="True"
         TextOptions.TextFormattingMode="Display"
+             UseLayoutRounding="True"
         Visibility="Visible">
     <!--        
         xmlns:SmartDots="clr-namespace:SmartDots"
@@ -52,8 +54,33 @@
                 
                 <dxdo:LayoutGroup Orientation="Horizontal" Padding="0" BorderThickness="0" Margin="0,5,0,0">
                     <dxdo:LayoutGroup Orientation="Vertical" ItemWidth="120*" x:Name="DockingPanels" Margin="2,0">
-                        <dxdo:LayoutPanel x:Name="OtolithPanel" Caption="Files" ItemWidth="Auto" ItemHeight="1*" AllowClose="False" AllowHide="False" AllowMove="True" MinWidth="100" >
-                            <ContentControl Content="{Binding AgeReadingFileView}"></ContentControl>
+                        <dxdo:LayoutPanel x:Name="OtolithPanel" Caption="Files" ItemWidth="Auto" ItemHeight="1*" AllowClose="False" AllowHide="False" AllowMove="True" MinWidth="100">
+                        <dxdo:LayoutPanel.ControlBoxContent>
+                            <DockPanel>
+                                <Button Style="{StaticResource SDButtonBase}" x:Name="btnFileSettings" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="File settings" IsEnabled="True">
+                                    <Image Source="../../Resources/settings-16.png" RenderOptions.BitmapScalingMode="HighQuality" Width="16" Height="16"/>
+                                    <i:Interaction.Triggers>
+                                        <!--<i:EventTrigger EventName="Click">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="DeleteAnnotation" />
+                                    </i:EventTrigger>-->
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <!--<userControls:SDButton x:Name="TestButton" Glyph="../../Resources/settings-16.png" ButtonToolTip="File options" IsToggleButton="True" IsEnabled="True" Width="24" Height="16" />
+                                <dxb:PopupMenu x:Name="MeasureContextMenu" HorizontalAlignment="Right" Width="20">
+                                    <dxb:PopupMenu.Items>
+                                        <dxb:BarItemMenuHeader Content="Measure Settings"/>
+                                        <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Show Next/Previous buttons" >
+                                            <dxb:BarEditItem.EditSettings>
+                                                <dxe:CheckEditSettings />
+                                            </dxb:BarEditItem.EditSettings>
+                                        </dxb:BarEditItem>
+                                    </dxb:PopupMenu.Items>
+                                </dxb:PopupMenu>-->
+                            </DockPanel>
+                            
+                            <!--<Image Source="../../Resources/settings-16.png" Width="16" Height="16" HorizontalAlignment="Right" />-->
+                        </dxdo:LayoutPanel.ControlBoxContent>
+                        <ContentControl Content="{Binding AgeReadingFileView}"></ContentControl>
                         </dxdo:LayoutPanel>
                         <dxdo:LayoutGroup ItemWidth="Auto" ItemHeight="0.5*" Orientation="Horizontal" Grid.Row="2">
                         <dxdo:LayoutPanel x:Name="Adjustments" ItemHeight="155" Caption="Adjustments" AllowDock="True" AllowMaximize="False" AllowSizing="True" CloseCommand="{Binding CloseToolsetPanelCommand}" AllowHide="False" AllowMove="True" >

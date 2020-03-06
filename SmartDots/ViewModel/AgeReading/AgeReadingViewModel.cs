@@ -174,6 +174,8 @@ namespace SmartDots.ViewModel
             set { firstLoad = value; }
         }
 
+        public string ImageSettings { get; set; } = "../../Resources/ok-32.png"; // Image that is used in the PanelControl Header
+
         public AgeReadingStatusbarView AgeReadingStatusbarView { get; set; }
         public AgeReadingStatusbarViewModel AgeReadingStatusbarViewModel { get; set; }
         public AgeReadingAnnotationView AgeReadingAnnotationView { get; set; }
@@ -447,6 +449,7 @@ namespace SmartDots.ViewModel
             AgeReadingView.RednessPanel.IsEnabled = enabled;
             AgeReadingView.GrowthPanel.IsEnabled = enabled;
             AgeReadingView.CollectionAppBar.IsEnabled = enabled;
+            AgeReadingView.btnFileSettings.IsEnabled = enabled;
             AgeReadingStatusbarView.imgZoomSlider.IsEnabled = enabled;
             AgeReadingStatusbarView.btn200Percent.IsEnabled = enabled;
             AgeReadingStatusbarView.btn150Percent.IsEnabled = enabled;

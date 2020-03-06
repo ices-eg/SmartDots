@@ -15,7 +15,10 @@
                     xmlns:themeKeys1="http://schemas.devexpress.com/winfx/2008/xaml/docking/themekeys"
                     xmlns:userControls="clr-namespace:SmartDots.View.UserControls"
                     xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
-                    xmlns:ve="http://schemas.devexpress.com/winfx/2008/xaml/docking/visualelements">
+                    xmlns:ve="http://schemas.devexpress.com/winfx/2008/xaml/docking/visualelements"
+                    xmlns:helpers="clr-namespace:SmartDots.Helpers">
+
+    <helpers:NullImageConverter x:Key="nullImageConverter"/>
 
     <system:Double x:Key="EditorFontSize">14</system:Double>
 

@@ -17,6 +17,7 @@
         MinWidth="640" MinHeight="480"
         Visibility="Visible"
         WindowState="Maximized"
+        UseLayoutRounding="True"
         dx:DXSplashScreen.SplashScreenType="{x:Type SmartDots:SmartdotsSplashScreen}"
         >
 

@@ -34,9 +34,15 @@ namespace SmartDots.ViewModel
         private bool loadingNextPicture;
         private bool useSampleStatus;
         private bool loadingfolder;
+        private bool showNavButtons;
         private string sampleNumberAlias;
         private Visibility canAttachDetachSampleVisibility;
         private Visibility toolbarVisibility;
+
+        public AgeReadingFileViewModel()
+        {
+            ShowNavButtons = Properties.Settings.Default.ShowFileNavButtons;
+        }
 
 
         public ObservableCollection<File> Files
@@ -195,11 +201,6 @@ namespace SmartDots.ViewModel
             set
             {
                 canAttachDetachSampleVisibility = value;
-                if (canAttachDetachSampleVisibility != Visibility.Visible) ToolbarVisibility = Visibility.Collapsed;
-                else
-                {
-                    ToolbarVisibility = Visibility.Visible;
-                }
                 RaisePropertyChanged("CanAttachDetachSampleVisibility");
             }
         }
@@ -258,6 +259,24 @@ namespace SmartDots.ViewModel
                 sampleNumberAlias = value;
                 RaisePropertyChanged("SampleNumberAlias");
             }
+        }
+
+        public bool ShowNavButtons
+        {
+            get { return showNavButtons; }
+            set
+            {
+                showNavButtons = value;
+                RaisePropertyChanged("ShowNavButtons");
+                RefreshToolbarVisibility();
+            }
+        }
+
+        public void RefreshToolbarVisibility()
+        {
+            ToolbarVisibility = Visibility.Collapsed;
+            if (canAttachDetachSampleVisibility == Visibility.Visible && (CanDetach || NeedsSampleLink)) ToolbarVisibility = Visibility.Visible;
+            if (ShowNavButtons) ToolbarVisibility = Visibility.Visible;
         }
 
         public void LoadImage(string imagepath)
@@ -512,7 +531,15 @@ namespace SmartDots.ViewModel
             AgeReadingViewModel.AgeReadingAnnotationViewModel.RefreshActions();
         }
 
-        
+        public void btnNext_Click(object sender, RoutedEventArgs e)
+        {
+            AgeReadingViewModel.AgeReadingFileView.FileList.MoveNextRow();
+        }
+
+        public void btnPrevious_Click(object sender, RoutedEventArgs e)
+        {
+            AgeReadingViewModel.AgeReadingFileView.FileList.MovePrevRow();
+        }
 
         public File GetFileWithAnnotationsAndSampleProperties(Guid fileid)
         {
@@ -642,6 +669,49 @@ namespace SmartDots.ViewModel
         public void Refresh()
         {
             CanDetach = SelectedFile?.SampleID != null && !AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes.Any();
+        }
+
+        
+
+        private void ToggleFileOptions(bool toggle)
+        {
+            AgeReadingViewModel.EnableUI(!toggle);
+            AgeReadingViewModel.AgeReadingEditorView.IsEnabled = !toggle;
+            AgeReadingViewModel.AgeReadingFileView.IsEnabled = true;
+            AgeReadingViewModel.AgeReadingFileView.FileGrid.IsEnabled = !toggle;
+            AgeReadingViewModel.AgeReadingFileView.AnnotationsOperations.IsEnabled = !toggle;
+            if (toggle)
+            {
+                AgeReadingViewModel.AgeReadingFileView.FileSettingsPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AgeReadingViewModel.AgeReadingFileView.FileSettingsPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        public void FileSettings()
+        {
+            AgeReadingViewModel.AgeReadingFileView.ShowNavBtns.EditValue = Properties.Settings.Default.ShowFileNavButtons;
+
+            ToggleFileOptions(true);
+        }
+
+        public void SaveSettings()
+        {
+            ToggleFileOptions(false);
+
+            // code for saving the usersetting
+            Properties.Settings.Default.ShowFileNavButtons = (bool) AgeReadingViewModel.AgeReadingFileView.ShowNavBtns.EditValue;
+            ShowNavButtons = (bool) AgeReadingViewModel.AgeReadingFileView.ShowNavBtns.EditValue;
+
+            Properties.Settings.Default.Save();
+            RefreshToolbarVisibility();
+        }
+
+        public void CancelSettings()
+        {
+            ToggleFileOptions(false);
         }
     }
 }
