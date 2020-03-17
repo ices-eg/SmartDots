@@ -646,11 +646,19 @@ namespace SmartDots.ViewModel
         {
             try
             {
+                var selectedFileId = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID;
                 var oldvalue = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale;
                 AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = false;
 
-                PixelLength = await Task.Run(() => ScaleMeasureTool.Measure(OriginalImage, 128));
-                
+                decimal temp = await Task.Run(() => ScaleMeasureTool.Measure(OriginalImage, 128));
+
+                if(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID != selectedFileId)
+                {
+                    AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = true;
+                    return;
+                }
+
+                PixelLength = temp;
 
                 if (PixelLength == 0) throw new Exception("Could not determine the scale");
 
