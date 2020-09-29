@@ -18,12 +18,14 @@ using MessageBox = System.Windows.MessageBox;
 using System.Net;
 using System.Windows.Controls;
 using Line = System.Windows.Shapes.Line;
+using DevExpress.Utils;
+using System.Dynamic;
 
 namespace SmartDots.ViewModel
 {
     public class AgeReadingFileViewModel : AgeReadingBaseViewModel
     {
-        private ObservableCollection<File> files;
+        private ObservableCollection<dynamic> dynamicFiles;
         private File selectedFile;
         private Folder currentFolder;
         private bool changingFile;
@@ -44,23 +46,25 @@ namespace SmartDots.ViewModel
             ShowNavButtons = Properties.Settings.Default.ShowFileNavButtons;
         }
 
+        public List<File> Files { get; set; }
 
-        public ObservableCollection<File> Files
+
+        public ObservableCollection<dynamic> DynamicFiles
         {
-            get { return files; }
+            get { return dynamicFiles; }
             set
             {
-                files = value;
-                if (files.Any())
+                dynamicFiles = value;
+                if (dynamicFiles.Any())
                 {
-                    if (SelectedFile?.ID != files[0]?.ID)
+                    if (SelectedFile?.ID != dynamicFiles[0]?.ID)
                     {
-                        SelectedFile = files[0];
+                        SelectedFile = Files.FirstOrDefault(x => x.ID == dynamicFiles[0].ID);
                         LoadNewFile();
                     }
                     
                 }
-                RaisePropertyChanged("Files");
+                RaisePropertyChanged("DynamicFiles");
             }
         }
 
@@ -158,6 +162,7 @@ namespace SmartDots.ViewModel
             {
                 LoadingFolder = true;
                 Files?.Clear();
+                DynamicFiles?.Clear();
                 currentFolder = value;
                 Helper.DoAsync(LoadImages);
                 AgeReadingViewModel.AgeReadingView.Opacity = 1;
@@ -464,7 +469,11 @@ namespace SmartDots.ViewModel
             }
 
             File file = SelectedFile;
-            if (AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row != null) file = AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row as File;
+            if (AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row != null)
+            {
+                var rowFile = Files.FirstOrDefault(x => x.ID == ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).ID);
+                file = rowFile;
+            }
             
             if (file != null )
             {
@@ -475,8 +484,9 @@ namespace SmartDots.ViewModel
                     file.Sample = temp.Sample;
                     file.AnnotationCount = temp.AnnotationCount;
                     file.IsReadOnly = temp.IsReadOnly;
+                    file.CanApprove = temp.CanApprove;
                     SelectedFile = file;
-                    SelectedFile.FetchProps();
+                    SelectedFile.FetchProps((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row);
                     UpdateList();
                 }
 
@@ -523,7 +533,10 @@ namespace SmartDots.ViewModel
             SelectedFile.SampleID = null;
             SelectedFile.Sample = null;
             SelectedFile.IsReadOnly = true;
-            SelectedFile.FetchProps();
+            ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).SampleID = null;
+            ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).Sample = null;
+            ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).IsReadOnly = true;
+            SelectedFile.FetchProps((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row);
 
             UpdateList();
             AgeReadingViewModel.AgeReadingSampleViewModel.Sample = null;
@@ -552,14 +565,19 @@ namespace SmartDots.ViewModel
             }
             var fileResult = (File) Helper.ConvertType(file.Result, typeof(File));
             fileResult.ConvertDbAnnotations(file.Result.Annotations.ToList());
+            
             try
             {
                 if (file.Result.Sample != null)
                 {
                     fileResult.Sample = (Sample)Helper.ConvertType(file.Result.Sample, typeof(Sample));
-
+                    dynamic dynFile = CreateDynamicFile(fileResult);
+                    AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row = dynFile;
+                    fileResult.FetchProps(AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row);
+                    UpdateList();
                 }
             }
+
             catch (Exception)
             {
             }
@@ -573,7 +591,8 @@ namespace SmartDots.ViewModel
                 AgeReadingViewModel.ShowWaitSplashScreen();
                 //todo check if real image
 
-                ObservableCollection<File> filelist = new ObservableCollection<File>();
+                ObservableCollection<dynamic> dynamicFiles = new ObservableCollection<dynamic>();
+                List<File> filelist = new List<File>();
 
                 List<string> fullImageNames = new List<string>();
 
@@ -618,6 +637,8 @@ namespace SmartDots.ViewModel
                 {
                     fullImageNames = ((List<DtoFile>) filesResult.Result).Select(x => x.Filename).ToList();
                 }
+
+                List<string> columnNames = new List<string>();
                 AgeReadingViewModel.AgeReadingFileView.FileGrid.Dispatcher.Invoke(() =>
                 {
                     foreach (string image in fullImageNames)
@@ -625,20 +646,63 @@ namespace SmartDots.ViewModel
                         var dtoFile = filesResult.Result.FirstOrDefault(x => x.Filename.ToLower() == image.ToLower());
                         if (dtoFile == null)
                         {
-                            //todo
+                            continue;
                         }
                         var file = (File)Helper.ConvertType(dtoFile, typeof(File));
+
+                        if(file.SampleProperties != null)
+                        {
+                            Dictionary<string, string> values = file.SampleProperties.ToObject<Dictionary<string, string>>();
+                            columnNames = values.Keys.ToList();
+                        }
+                        
                         if (dtoFile.Sample != null) file.Sample = (Sample)Helper.ConvertType(dtoFile.Sample, typeof(Sample));
                         if (file != null)
                         {
                             file.Filename = file.Filename;
                             int index = fullImageNames.IndexOf(image);
                             file.FullFileName = fullImageNames[index];
-                            file.FetchProps();
+                            file.FetchProps((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row);
                         }
+
+                        dynamic dynFile = CreateDynamicFile(file);
+                        
+                        dynamicFiles.Add(dynFile);
                         filelist.Add(file);
                     }
+
+                    List<GridColumn> colsToDelete = new List<GridColumn>();
+                    foreach (var column in AgeReadingViewModel.AgeReadingFileView.FileGrid.Columns.Where(x => x.Tag != null && x.Tag.ToString() == "Dynamic"))
+                    {
+                        colsToDelete.Add(column);
+                    }
+
+                    foreach (var column in colsToDelete)
+                    {
+                        AgeReadingViewModel.AgeReadingFileView.FileGrid.Columns.Remove(column);
+                    }
+
+                    List<GridColumn> columns = new List<GridColumn>();
+                    
+                    columns.AddRange(columnNames.Select(columnName => new GridColumn() { FieldName = columnName, AllowSorting = DefaultBoolean.True, Tag = "Dynamic", AllowEditing = DefaultBoolean.False }));
+                    foreach (var col in columns)
+                    {
+                        AgeReadingViewModel.AgeReadingFileView.FileGrid.Columns.Add(col);
+                    }
+
+                    //if (filelist.Any())
+                    //{
+                    //    List<GridColumn> columns = new List<GridColumn>();
+                    //    columns.AddRange(columnNames.Select(columnName => new GridColumn() { FieldName = columnName, AllowSorting = DefaultBoolean.True, Tag = "Dynamic" }));
+                    //    foreach (var column in columns)
+                    //    {
+                    //        AgeReadingViewModel.AgeReadingFileView.FileGrid.Columns.Add(column);
+                    //    }
+                    //}
+
+
                     Files = filelist;
+                    DynamicFiles = dynamicFiles;
                 });
             }
             catch (Exception e)
@@ -651,6 +715,38 @@ namespace SmartDots.ViewModel
                 AgeReadingViewModel.FirstLoad = false;
                 LoadingFolder = false;
             }
+        }
+
+        public dynamic CreateDynamicFile(File file)
+        {
+            dynamic dynFile = new ExpandoObject();
+            dynFile.ID = file.ID;
+            dynFile.Display = file.Display;
+            dynFile.Status = file.Status;
+            dynFile.SampleNumber = file.SampleNumber;
+            dynFile.AnnotationCount = file.AnnotationCount;
+            dynFile.Scale = file.Scale;
+            dynFile.Sample = new ExpandoObject();
+            if (file.Sample != null)
+            {
+                dynFile.Sample.StatusRank = file.Sample.StatusRank;
+                dynFile.Sample.StatusColor = file.Sample.StatusColor;
+                dynFile.Sample.StatusCode = file.Sample.StatusCode;
+            }
+
+            if (file.SampleProperties != null)
+            {
+                List<string> columnNames = new List<string>();
+                Dictionary<string, string> values = file.SampleProperties.ToObject<Dictionary<string, string>>();
+                columnNames = values.Keys.ToList();
+                foreach (var column in columnNames)
+                {
+                    ((IDictionary<String, Object>)dynFile)[column] = values[column];
+
+                }
+            }
+
+            return dynFile;
         }
 
         public void OnCustomColumnSort(object sender, CustomColumnSortEventArgs e)

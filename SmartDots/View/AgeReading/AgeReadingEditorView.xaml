@@ -23,7 +23,7 @@
     </UserControl.DataContext>
     <UserControl.Resources>
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter"></helpers:EnumToBooleanConverter>
-        
+
     </UserControl.Resources>
     <DockPanel>
         <dxdo:DockLayoutManager EnableWin32Compatibility="True" FloatingMode="Desktop">
@@ -136,6 +136,7 @@
                                 <dxe:ComboBoxEditSettings.Items>
                                     <dxe:ComboBoxEditItem Content="Seawater" />
                                     <dxe:ComboBoxEditItem Content="Freshwater" />
+                                    <dxe:ComboBoxEditItem Content="Non-counting mark" />
                                 </dxe:ComboBoxEditSettings.Items>
                             </dxe:ComboBoxEditSettings>
                         </dxb:BarEditItem.EditSettings>
@@ -227,7 +228,61 @@
                     <ScrollViewer Name="ScrollViewer" DockPanel.Dock="Right" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="Black">
                         <Viewbox  x:Name="Viewbox" Stretch="None" Width="{Binding Width}" Height="{Binding Height}" >
                             <Canvas Width="{Binding Width}" Height="{Binding Height}" Name="ParentCanvas" >
+                                <dxb:BarManager.DXContextMenu>
+                                    <dxb:PopupMenu Opening="PopupMenu_Opening" Name="EditDotContextMenu" Closed="EditDotContextMenu_Closed" Opened="EditDotContextMenu_Opened">
+                                        <dxb:PopupMenu.Items>
+                                            <dxb:BarEditItem Style="{StaticResource BarItem}" Name="EditDotColor" Content="Color" EditValue="{Binding ClosestDotColor,Mode=TwoWay}" IsEnabled="{Binding CanDrawDot}">
+                                                <dxb:BarEditItem.EditSettings>
+                                                    <dxe:PopupColorEditSettings ChipSize="Large" />
+                                                </dxb:BarEditItem.EditSettings>
+                                            </dxb:BarEditItem>
+                                            <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Width" Name="EditDotWidth" EditValue="{Binding ClosestDotWidth,Mode=TwoWay}" IsEnabled="{Binding CanDrawDot}">
+                                                <dxb:BarEditItem.EditSettings>
+                                                    <dxe:SpinEditSettings MaxValue="25" MinValue="2" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                                                </dxb:BarEditItem.EditSettings>
+                                            </dxb:BarEditItem>
+                                            <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Shape" Name="EditDotShape" EditValue="{Binding ClosestDotDotShape, Mode=TwoWay}" IsEnabled="{Binding CanDrawDot}">
+                                                <dxb:BarEditItem.EditSettings>
+                                                    <dxe:ComboBoxEditSettings IsTextEditable="False">
+                                                        <dxe:ComboBoxEditSettings.Items>
+                                                            <dxe:ComboBoxEditItem Content="Dot" />
+                                                            <dxe:ComboBoxEditItem Content="Cross" />
+                                                        </dxe:ComboBoxEditSettings.Items>
+                                                    </dxe:ComboBoxEditSettings>
+                                                </dxb:BarEditItem.EditSettings>
+                                            </dxb:BarEditItem>
+                                            <dxb:BarEditItem Style="{StaticResource BarItem}" Content="  Type" Name="EditDotType" EditValue="{Binding ClosestDotDotType, Mode=TwoWay}" IsEnabled="{Binding CanDrawDot}">
+                                                <!-- TODO: find proper way to give all labels the same width; is now charlength-based... -->
+                                                <dxb:BarEditItem.EditSettings>
+                                                    <dxe:ComboBoxEditSettings IsTextEditable="False">
+                                                        <dxe:ComboBoxEditSettings.Items>
+                                                            <dxe:ComboBoxEditItem Content="Seawater" />
+                                                            <dxe:ComboBoxEditItem Content="Freshwater" />
+                                                            <dxe:ComboBoxEditItem Content="Non-counting mark" />
+                                                        </dxe:ComboBoxEditSettings.Items>
+                                                    </dxe:ComboBoxEditSettings>
+                                                </dxb:BarEditItem.EditSettings>
+                                            </dxb:BarEditItem>
+                                            <dxb:BarItemSeparator />
+                                            <dxb:BarButtonItem Content="Delete" IsEnabled="{Binding CanDelete}" >
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="ItemClick">
+                                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="DeleteClosestDot"/>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </dxb:BarButtonItem>
+                                        </dxb:PopupMenu.Items>
+                                    </dxb:PopupMenu>
+                                </dxb:BarManager.DXContextMenu>
                                 <Image Source="{Binding OtolithImage}" Stretch="Uniform" Width="{Binding Width}" Height="{Binding Height}" />
+                                <ItemsControl ItemsSource="{Binding ScaleShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="ScaleShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas x:Name="ScaleCanvas">
+                                            </Canvas>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
                                 <ItemsControl ItemsSource="{Binding LineShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="LineShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -244,14 +299,15 @@
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                 </ItemsControl>
-                                <ItemsControl ItemsSource="{Binding ScaleShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="ScaleShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
+                                <ItemsControl ItemsSource="{Binding TopLevelLineShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="TopLevelLineShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <Canvas x:Name="ScaleCanvas">
+                                            <Canvas x:Name="TopLevelLineCanvas">
                                             </Canvas>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                 </ItemsControl>
+
                                 <ItemsControl ItemsSource="{Binding MeasureShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="MeasureShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>

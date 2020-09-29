@@ -355,8 +355,11 @@ namespace SmartDots.ViewModel
                     //selectedFile.AnnotationCount = file.AnnotationCount; this is not needed here
                     selectedFile.IsReadOnly = file.IsReadOnly;
                     selectedFile.Scale = file.Scale;
-                    selectedFile.FetchProps();
+                    selectedFile.FetchProps((dynamic)AgeReadingFileView.FileList.FocusedRowData.Row);
+                    var dynFile = AgeReadingFileViewModel.CreateDynamicFile(selectedFile);
+                    AgeReadingFileView.FileList.FocusedRowData.Row = dynFile;
                 }
+                
                 AgeReadingAnnotationViewModel.UpdateList();
                 AgeReadingFileViewModel.UpdateList();
 

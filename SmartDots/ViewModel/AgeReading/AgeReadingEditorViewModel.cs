@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
@@ -40,6 +41,7 @@ namespace SmartDots.ViewModel
         private int dotWidth;
         private List<Dot> originalDots = new List<Dot>();
         private ObservableCollection<Line> lineShapes = new ObservableCollection<Line>();
+        private ObservableCollection<Line> topLevelLineShapes = new ObservableCollection<Line>();
         private ObservableCollection<Line> scaleShapes = new ObservableCollection<Line>();
         private ObservableCollection<Shape> dotShapes = new ObservableCollection<Shape>();
         private ObservableCollection<Line> originalMeasureShapes = new ObservableCollection<Line>();
@@ -67,6 +69,7 @@ namespace SmartDots.ViewModel
         private UndoRedo undoRedo;
         private string dotType = "Seawater";
         private string dotShape = "Dot";
+        private Tuple<Dot, double> closestDot;
 
         public object LineColor
         {
@@ -165,6 +168,16 @@ namespace SmartDots.ViewModel
             {
                 lineShapes = value;
                 RaisePropertyChanged("LineShapes");
+            }
+        }
+
+        public ObservableCollection<Line> TopLevelLineShapes
+        {
+            get { return topLevelLineShapes; }
+            set
+            {
+                topLevelLineShapes = value;
+                RaisePropertyChanged("TopLevelLineShapes");
             }
         }
 
@@ -518,6 +531,7 @@ namespace SmartDots.ViewModel
                 return AgeReadingViewModel?.AgeReadingAnnotationViewModel?.SelectedAnnotations.Count < 2
                        && ActiveCombinedLine == null
                        && !AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes.Any(x => x.IsFixed)
+                       && AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile != null
                        && !AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly
                        &&
                        (AgeReadingViewModel?.AgeReadingSampleViewModel.Sample != null ||
@@ -534,6 +548,7 @@ namespace SmartDots.ViewModel
                        && Mode != EditorModeEnum.MakingLine
                        && AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null
                        && !AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsFixed
+                       && AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile != null
                        && !AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly
                        &&
                        (AgeReadingViewModel?.AgeReadingSampleViewModel.Sample != null ||
@@ -552,6 +567,7 @@ namespace SmartDots.ViewModel
                        && Mode != EditorModeEnum.MakingLine
                        && AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null
                        && !AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsFixed
+                       && AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile != null
                        && !AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly
                        &&
                        (AgeReadingViewModel?.AgeReadingSampleViewModel.Sample != null ||
@@ -589,6 +605,21 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public bool IsContextmenuVisible
+        {
+            get
+            {
+                if (ClosestDot != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public bool IsContextmenuOpen { get; set; }
+        
+
         public System.Drawing.Rectangle ScaleRectangle { get; private set; }
         public bool IsMeasuring { get; private set; }
         public List<Guid> MeasuredFileIDs { get; set; } = new List<Guid>();
@@ -601,6 +632,87 @@ namespace SmartDots.ViewModel
                 hideLines = value;
                 RefreshShapes();
                 RaisePropertyChanged("HideLines");
+            }
+        }
+
+        public Tuple<Dot, double> ClosestDot
+        {
+            get { return closestDot; }
+            set
+            {
+                closestDot = value;
+                RaisePropertyChanged("ClosestDotWidth");
+                RaisePropertyChanged("ClosestDotColor");
+                RaisePropertyChanged("ClosestDotDotShape");
+                RaisePropertyChanged("ClosestDotDotType");
+            }
+        }
+
+        public object ClosestDotWidth
+        {
+            get
+            {
+                if (ClosestDot == null) return 0;
+                return closestDot.Item1.Width;
+            }
+            set
+            {
+                ClosestDot.Item1.Width = int.Parse(value.ToString());
+                AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots.FirstOrDefault(x => x.Location == ClosestDot.Item1.Location)
+                    .Width = int.Parse(value.ToString());
+                RaisePropertyChanged("ClosestDotWidth");
+                RefreshShapes();
+            }
+        }
+
+        public object ClosestDotColor
+        {
+            get
+            {
+                if (ClosestDot == null) return "#000000";
+                return (Color)ColorConverter.ConvertFromString(closestDot.Item1.Color);
+            }
+            set
+            {
+                ClosestDot.Item1.Color = value.ToString();
+                AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots.FirstOrDefault(x => x.Location == ClosestDot.Item1.Location)
+                    .Color = value.ToString();
+                RaisePropertyChanged("ClosestDotColor");
+                RefreshShapes();
+            }
+        }
+
+        public string ClosestDotDotShape
+        {
+            get
+            {
+                if (ClosestDot == null) return "Dot";
+                return closestDot.Item1.DotShape;
+            }
+            set
+            {
+                ClosestDot.Item1.DotShape = value;
+                AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots.FirstOrDefault(x => x.Location == ClosestDot.Item1.Location)
+                    .DotShape = value;
+                RaisePropertyChanged("ClosestDotDotShape");
+                RefreshShapes();
+            }
+        }
+
+        public string ClosestDotDotType
+        {
+            get
+            {
+                if (ClosestDot == null) return "Seawater";
+                return closestDot.Item1.DotType;
+            }
+            set
+            {
+                ClosestDot.Item1.DotType = value;
+                AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots.FirstOrDefault(x => x.Location == ClosestDot.Item1.Location)
+                    .DotType = value;
+                RaisePropertyChanged("ClosestDotDotType");
+                RefreshShapes();
             }
         }
 
@@ -636,7 +748,7 @@ namespace SmartDots.ViewModel
             {
                 if (combinedLine.Dots.Count > age)
                 {
-                    age = combinedLine.Dots.Count;
+                    age = combinedLine.Dots.Count(x => x.DotType != "Non-counting mark");
                 }
             }
             AgeReadingViewModel.AgeReadingAnnotationViewModel.SetAge(age);
@@ -652,7 +764,7 @@ namespace SmartDots.ViewModel
 
                 decimal temp = await Task.Run(() => ScaleMeasureTool.Measure(OriginalImage, 128));
 
-                if(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID != selectedFileId)
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID != selectedFileId)
                 {
                     AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = true;
                     return;
@@ -666,6 +778,7 @@ namespace SmartDots.ViewModel
                 if (oldvalue != newvalue)
                 {
                     AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale = PixelLength;
+                    ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).Scale = PixelLength;
                     AgeReadingViewModel.AgeReadingFileView.FileGrid.RefreshData();
                     AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = true;
                     DtoFile dtofile =
@@ -722,6 +835,7 @@ namespace SmartDots.ViewModel
             RaisePropertyChanged("CanDrawLine");
             RaisePropertyChanged("CanDrawDot");
             RaisePropertyChanged("CanDelete");
+            RaisePropertyChanged("ContextmenuVisibility");
             AgeReadingViewModel.AgeReadingEditorView.LineButton.UpdateButtonBackground(
                 AgeReadingViewModel.AgeReadingEditorView.LineButton);
             AgeReadingViewModel.AgeReadingEditorView.DotButton.UpdateButtonBackground(
@@ -772,155 +886,216 @@ namespace SmartDots.ViewModel
 
         public void RefreshShapes(bool updategraphs = true)
         {
-            LineShapes = new ObservableCollection<Line>();
-            DotShapes = new ObservableCollection<Shape>();
-            float zoomfactor = AgeReadingViewModel == null
-                ? 0
-                : AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
-            ObservableCollection<Line> lines = new ObservableCollection<Line>();
-            ObservableCollection<Shape> dots = new ObservableCollection<Shape>();
-
-            foreach (var annotation in AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations)
+            AgeReadingViewModel.AgeReadingEditorView.Dispatcher.Invoke(() =>
             {
-                foreach (CombinedLine cl in annotation.CombinedLines)
+                LineShapes = new ObservableCollection<Line>();
+                TopLevelLineShapes = new ObservableCollection<Line>();
+                DotShapes = new ObservableCollection<Shape>();
+                float zoomfactor = AgeReadingViewModel == null
+                    ? 0
+                    : AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
+                ObservableCollection<Line> lines = new ObservableCollection<Line>();
+                ObservableCollection<Line> topLevelLines = new ObservableCollection<Line>();
+                ObservableCollection<Shape> dots = new ObservableCollection<Shape>();
+
+                foreach (var annotation in AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations)
                 {
-                    foreach (Model.Line l in cl.Lines)
+                    foreach (CombinedLine cl in annotation.CombinedLines)
                     {
-                        Line line = new Line()
+                        foreach (Model.Line l in cl.Lines)
                         {
-                            X1 = (float)l.X1 * zoomfactor,
-                            Y1 = (float)l.Y1 * zoomfactor,
-                            X2 = (float)l.X2 * zoomfactor,
-                            Y2 = (float)l.Y2 * zoomfactor,
-                            Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(l.Color)),
-                            StrokeThickness = (float)l.Width * zoomfactor,
-                            StrokeStartLineCap = PenLineCap.Round,
-                            StrokeEndLineCap = PenLineCap.Round
+                            Line line = new Line()
+                            {
+                                X1 = (float)l.X1 * zoomfactor,
+                                Y1 = (float)l.Y1 * zoomfactor,
+                                X2 = (float)l.X2 * zoomfactor,
+                                Y2 = (float)l.Y2 * zoomfactor,
+                                Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(l.Color)),
+                                StrokeThickness = (float)l.Width * zoomfactor,
+                                StrokeStartLineCap = PenLineCap.Round,
+                                StrokeEndLineCap = PenLineCap.Round
 
-                        };
-                        lines.Add(line);
-                    }
+                            };
+                            lines.Add(line);
+                        }
 
-                    if (!annotation.HasAq3())
-                    {
-                        foreach (Dot d in cl.Dots)
+                        if (!annotation.HasAq3())
                         {
-                            if (d.DotShape == "Cross")
+                            foreach (Dot d in cl.Dots)
                             {
-                                Shape c = new Cross()
+                                if (d.DotType == "Non-counting mark")
                                 {
-                                    Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(d.Color)),
-                                    Width = (float)d.Width * zoomfactor,
-                                    X = (float)d.X * zoomfactor,
-                                    Y = (float)d.Y * zoomfactor,
-                                };
-                                var line1 = ((Cross)c).Line1;
-                                line1.StrokeStartLineCap = PenLineCap.Round;
-                                line1.StrokeEndLineCap = PenLineCap.Round;
-                                line1.Tag = "Cross";
+                                    var radius = (float)d.Width;
+                                    var dotWidth = ((radius) * zoomfactor);
+                                    Shape l = new Ellipse()
+                                    {
+                                        Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF0000")),
+                                        Width = dotWidth,
+                                        Height = dotWidth, // not an error, they are the same
 
-                                var line2 = ((Cross)c).Line2;
-                                line2.StrokeStartLineCap = PenLineCap.Round;
-                                line2.StrokeEndLineCap = PenLineCap.Round;
-                                line2.Tag = "Cross";
+                                    };
+                                    var left = (float)d.X * zoomfactor - (radius) / 2 * zoomfactor;
+                                    var top = (float)d.Y * zoomfactor - (radius) / 2 * zoomfactor;
+                                    Canvas.SetLeft(l, left);
+                                    Canvas.SetTop(l, top);
+                                    dots.Add(l);
 
-                                lines.Add(line1);
-                                lines.Add(line2);
+                                    var line = new Line()
+                                    {
+                                        X1 = (float)(left + (dotWidth / 3)),
+                                        Y1 = (float)(top + (dotWidth / 3)),
+                                        X2 = (float)(left + (dotWidth / 3) * 2),
+                                        Y2 = (float)(top + (dotWidth / 3) * 2),
+                                        Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF")),
+                                        StrokeThickness = dotWidth / 8,
+                                        StrokeStartLineCap = PenLineCap.Square,
+                                        StrokeEndLineCap = PenLineCap.Square,
+                                        Tag = "Non-counting mark"
+                                    };
+
+                                    var line2 = new Line()
+                                    {
+                                        X1 = (float)(left + (dotWidth / 3)),
+                                        Y1 = (float)(top + (dotWidth / 3) * 2),
+                                        X2 = (float)(left + (dotWidth / 3) * 2),
+                                        Y2 = (float)(top + (dotWidth / 3)),
+                                        Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF")),
+                                        StrokeThickness = dotWidth / 8,
+                                        StrokeStartLineCap = PenLineCap.Square,
+                                        StrokeEndLineCap = PenLineCap.Square,
+                                        Tag = "Non-counting mark"
+                                    };
+
+                                    topLevelLines.Add(line);
+                                    topLevelLines.Add(line2);
+
+                                }
+                                else
+                                {
+                                    bool isOddDot = ((float)(annotation.CombinedLines.SelectMany(x => x.Dots).Count(x => x.Color == d.Color)) / (float)annotation.CombinedLines.SelectMany(x => x.Dots).Count()) < 0.34f;
+                                    SolidColorBrush brush;
+                                    if (AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations.Count == 1 || isOddDot || annotation.MultiUserColor == null) brush = (SolidColorBrush)(new BrushConverter().ConvertFrom(d.Color));
+                                    else brush = (SolidColorBrush)(new BrushConverter().ConvertFrom(annotation.MultiUserColor));
+
+                                    if (d.DotShape == "Cross")
+                                    {
+                                        Shape c = new Cross()
+                                        {
+                                            Fill = brush,
+                                            Width = (float)d.Width * zoomfactor,
+                                            X = (float)d.X * zoomfactor,
+                                            Y = (float)d.Y * zoomfactor,
+                                        };
+                                        var line1 = ((Cross)c).Line1;
+                                        line1.StrokeStartLineCap = PenLineCap.Round;
+                                        line1.StrokeEndLineCap = PenLineCap.Round;
+                                        line1.Tag = "Cross";
+
+                                        var line2 = ((Cross)c).Line2;
+                                        line2.StrokeStartLineCap = PenLineCap.Round;
+                                        line2.StrokeEndLineCap = PenLineCap.Round;
+                                        line2.Tag = "Cross";
+
+                                        lines.Add(line1);
+                                        lines.Add(line2);
+                                    }
+                                    else
+                                    {
+                                        Shape l = new Ellipse()
+                                        {
+                                            Fill = brush,
+                                            Width = (float)d.Width * zoomfactor,
+                                            Height = (float)d.Width * zoomfactor,
+                                            SnapsToDevicePixels = false
+
+                                        };
+                                        var left = (float)d.X * zoomfactor - (float)d.Width / 2 * zoomfactor;
+                                        var top = (float)d.Y * zoomfactor - (float)d.Width / 2 * zoomfactor;
+                                        Canvas.SetLeft(l, left);
+                                        Canvas.SetTop(l, top);
+                                        dots.Add(l);
+                                    }
+                                    if (d.DotType == "Freshwater")
+                                    {
+                                        var radius = (float)d.Width * 1.8;
+                                        Shape l = new Ellipse()
+                                        {
+                                            Stroke = brush,
+                                            Width = ((radius) * zoomfactor),
+                                            Height = ((radius) * zoomfactor),
+                                            StrokeThickness = (float)d.Width / 8 * zoomfactor,
+                                            StrokeDashArray = new DoubleCollection() { 3, 3 }
+
+                                        };
+                                        var left = (float)d.X * zoomfactor - (radius) / 2 * zoomfactor;
+                                        var top = (float)d.Y * zoomfactor - (radius) / 2 * zoomfactor;
+                                        Canvas.SetLeft(l, left);
+                                        Canvas.SetTop(l, top);
+                                        dots.Add(l);
+                                    }
+                                }
                             }
-                            else
+
+                        }
+
+                        if (Mode != EditorModeEnum.MakingLine && cl.Lines.Any())
+                        {
+                            var lastLine = cl.Lines.OrderBy(x => x.LineIndex).Last();
+                            var n = Math.Atan2(lastLine.Y1 - lastLine.Y2, lastLine.X2 - lastLine.X1) * 180 / Math.PI;
+                            Point point1 = new Point(lastLine.X2, lastLine.Y2);
+                            var cos = Math.Cos((n + 30) * (Math.PI / 180.0)) * 10;
+                            var sin = Math.Sin((n + 30) * (Math.PI / 180.0)) * 10;
+                            Point point2 = new Point(lastLine.X2 - cos, lastLine.Y2 + sin);
+                            cos = Math.Cos((n - 30) * (Math.PI / 180.0)) * 10;
+                            sin = Math.Sin((n - 30) * (Math.PI / 180.0)) * 10;
+                            Point point3 = new Point(lastLine.X2 - cos, lastLine.Y2 + sin);
+                            var line1 = new Line()
                             {
-                                Shape l = new Ellipse()
-                                {
-                                    Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(d.Color)),
-                                    Width = (float)d.Width * zoomfactor,
-                                    Height = (float)d.Width * zoomfactor,
-                                    SnapsToDevicePixels = false
-
-                                };
-                                var left = (float)d.X * zoomfactor - (float)d.Width / 2 * zoomfactor;
-                                var top = (float)d.Y * zoomfactor - (float)d.Width / 2 * zoomfactor;
-                                Canvas.SetLeft(l, left);
-                                Canvas.SetTop(l, top);
-                                dots.Add(l);
-                            }
-                            if (d.DotType == "Freshwater")
+                                X1 = (float)point1.X * zoomfactor,
+                                Y1 = (float)point1.Y * zoomfactor,
+                                X2 = (float)point2.X * zoomfactor,
+                                Y2 = (float)point2.Y * zoomfactor,
+                                Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(lastLine.Color)),
+                                StrokeThickness = (lastLine.Width * zoomfactor),
+                                StrokeStartLineCap = PenLineCap.Round,
+                                StrokeEndLineCap = PenLineCap.Round
+                            };
+                            var line2 = new Line()
                             {
-                                var radius = (float)d.Width * 1.8;
-                                Shape l = new Ellipse()
-                                {
-                                    Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(d.Color)),
-                                    Width = ((radius) * zoomfactor),
-                                    Height = ((radius) * zoomfactor),
-                                    StrokeThickness = (float)d.Width / 8 * zoomfactor,
-                                    StrokeDashArray = new DoubleCollection() { 3, 3 }
-
-                                };
-                                var left = (float)d.X * zoomfactor - (radius) / 2 * zoomfactor;
-                                var top = (float)d.Y * zoomfactor - (radius) / 2 * zoomfactor;
-                                Canvas.SetLeft(l, left);
-                                Canvas.SetTop(l, top);
-                                dots.Add(l);
-                            }
+                                X1 = (float)point1.X * zoomfactor,
+                                Y1 = (float)point1.Y * zoomfactor,
+                                X2 = (float)point3.X * zoomfactor,
+                                Y2 = (float)point3.Y * zoomfactor,
+                                Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(lastLine.Color)),
+                                StrokeThickness = (lastLine.Width * zoomfactor),
+                                StrokeStartLineCap = PenLineCap.Round,
+                                StrokeEndLineCap = PenLineCap.Round
+                            };
+                            lines.Add(line1);
+                            lines.Add(line2);
                         }
 
                     }
 
-                    if (Mode != EditorModeEnum.MakingLine && cl.Lines.Any())
-                    {
-                        var lastLine = cl.Lines.OrderBy(x => x.LineIndex).Last();
-                        var n = Math.Atan2(lastLine.Y1 - lastLine.Y2, lastLine.X2 - lastLine.X1) * 180 / Math.PI;
-                        Point point1 = new Point(lastLine.X2, lastLine.Y2);
-                        var cos = Math.Cos((n + 30) * (Math.PI / 180.0)) * 10;
-                        var sin = Math.Sin((n + 30) * (Math.PI / 180.0)) * 10;
-                        Point point2 = new Point(lastLine.X2 - cos, lastLine.Y2 + sin);
-                        cos = Math.Cos((n - 30) * (Math.PI / 180.0)) * 10;
-                        sin = Math.Sin((n - 30) * (Math.PI / 180.0)) * 10;
-                        Point point3 = new Point(lastLine.X2 - cos, lastLine.Y2 + sin);
-                        var line1 = new Line()
-                        {
-                            X1 = (float)point1.X * zoomfactor,
-                            Y1 = (float)point1.Y * zoomfactor,
-                            X2 = (float)point2.X * zoomfactor,
-                            Y2 = (float)point2.Y * zoomfactor,
-                            Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(lastLine.Color)),
-                            StrokeThickness = (lastLine.Width * zoomfactor),
-                            StrokeStartLineCap = PenLineCap.Round,
-                            StrokeEndLineCap = PenLineCap.Round
-                        };
-                        var line2 = new Line()
-                        {
-                            X1 = (float)point1.X * zoomfactor,
-                            Y1 = (float)point1.Y * zoomfactor,
-                            X2 = (float)point3.X * zoomfactor,
-                            Y2 = (float)point3.Y * zoomfactor,
-                            Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(lastLine.Color)),
-                            StrokeThickness = (lastLine.Width * zoomfactor),
-                            StrokeStartLineCap = PenLineCap.Round,
-                            StrokeEndLineCap = PenLineCap.Round
-                        };
-                        lines.Add(line1);
-                        lines.Add(line2);
-                    }
-
                 }
+                RefreshMeasures();
 
-            }
-            RefreshMeasures();
-
-            if (HideLines)
-            {
-                foreach (var line in lines.Where(x => x.Tag == null))
+                if (HideLines)
                 {
-                    line.StrokeThickness = 0;
+                    foreach (var line in lines.Where(x => x.Tag == null))
+                    {
+                        line.StrokeThickness = 0;
+                    }
                 }
-            }
 
-            LineShapes = lines;
-            DotShapes = dots;
-            ScaleShapes = ScaleShapes;
+                LineShapes = lines;
+                TopLevelLineShapes = topLevelLines;
+                DotShapes = dots;
+                ScaleShapes = ScaleShapes;
 
-            if (updategraphs) AgeReadingViewModel.UpdateGraphs();
-            CalculateAge();
+                if (updategraphs) AgeReadingViewModel.UpdateGraphs();
+                CalculateAge();
+            });
         }
 
         public void RefreshMeasures(bool onlyLast = false)
@@ -1273,6 +1448,8 @@ namespace SmartDots.ViewModel
         {
             //here comes the code for drawing, dotting, deleting
 
+            if (IsContextmenuOpen) return;
+
             if (e.ChangedButton == MouseButton.Left)
             {
                 if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly && !(Mode == EditorModeEnum.DrawScale || Mode == EditorModeEnum.Measure || Mode == EditorModeEnum.MakingMeasure))
@@ -1333,6 +1510,17 @@ namespace SmartDots.ViewModel
                     case EditorModeEnum.MakingMeasure:
                         MakingMeasure(e);
                         break;
+                }
+
+                ClosestDot = null;
+
+                if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null
+                    && AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any()
+                    && AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots.Any())
+                {
+                    var allDots = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots;
+                    var closestDot = CalculateClosestDot(allDots, e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
+                    if (closestDot.Item2 <= 20) ClosestDot = closestDot;
                 }
             }
             else
@@ -1496,9 +1684,7 @@ namespace SmartDots.ViewModel
                             AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last()
                                 .Lines.Count -
                             1);
-                    if (
-                        !AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last()
-                            .Lines.Any())
+                    if (!AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last().Lines.Any())
                     {
                         AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Remove(
                             AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last());
@@ -1665,26 +1851,31 @@ namespace SmartDots.ViewModel
             var zoomfactor = AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
             try
             {
-                if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null &&
-                    !AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.HasAq3() &&
-                AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any())
-                {
-                    Tuple<Dot, double> closestDot = new Tuple<Dot, double>(new Dot(), 100);
+                //if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null &&
+                //    !AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.HasAq3() &&
+                //AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any())
+                //{
+                Tuple<Dot, double> closestDot = new Tuple<Dot, double>(new Dot(), 100);
 
-                    //Dichtste punt wordt berekend
-                    var allDots = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots;
-                    closestDot = CalculateClosestDot(allDots,
+                //Dichtste punt wordt berekend
+                //var allDots = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots;
+                var allDots = AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations
+                    .Where(x => !x.HasAq3() && x.CombinedLines.Any())
+                    .SelectMany(x => x.CombinedLines[0].Dots).ToList();
+                closestDot = CalculateClosestDot(allDots,
                         e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
-                    if (allDots.Count > 0 && closestDot.Item2 <= 20)
-                    {
-                        AgeReadingViewModel.AgeReadingStatusbarViewModel.Info =
-                            $"Age {closestDot.Item1.DotIndex} ({closestDot.Item1.DotType})";
-                    }
-                    else
-                    {
-                        AgeReadingViewModel.AgeReadingStatusbarViewModel.Info = "";
-                    }
+                if (allDots.Count > 0 && closestDot.Item2 <= 20)
+                {
+                    AgeReadingViewModel.AgeReadingStatusbarViewModel.Info =
+                        closestDot.Item1.DotType == "Non-counting mark" ? "Non-counting mark" : $"Age {closestDot.Item1.DotIndex} ({closestDot.Item1.DotType})";
+                    var annotation = AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations.FirstOrDefault(x => x.ID == closestDot.Item1.AnnotationID);
+                    AgeReadingViewModel.AgeReadingStatusbarViewModel.Info += $" - {annotation.LabTechnician}";
                 }
+                else
+                {
+                    AgeReadingViewModel.AgeReadingStatusbarViewModel.Info = "";
+                }
+                //}
 
                 if (Mode == EditorModeEnum.MakingLine && AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any())
                 {
@@ -1877,6 +2068,7 @@ namespace SmartDots.ViewModel
         public void DeleteMeasureScale()
         {
             AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale = null;
+            ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).Scale = null;
             AgeReadingViewModel.AgeReadingFileView.FileGrid.RefreshData();
             var dtofile = (DtoFile)Helper.ConvertType(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile, typeof(DtoFile));
             var deleteResult = WebAPI.UpdateFile(dtofile);
@@ -1906,6 +2098,7 @@ namespace SmartDots.ViewModel
             if (oldvalue != newvalue)
             {
                 AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale = PixelLength;
+                ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).Scale = PixelLength;
                 AgeReadingViewModel.AgeReadingFileView.FileGrid.RefreshData();
                 AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = true;
                 DtoFile dtofile = (DtoFile)Helper.ConvertType(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile, typeof(DtoFile));
@@ -1943,6 +2136,21 @@ namespace SmartDots.ViewModel
             Mode = EditorModeEnum.None;
             AgeReadingViewModel.EnableUI(true);
 
+        }
+
+        public void DeleteClosestDot(object sender, RoutedEventArgs e)
+        {
+            if (ClosestDot == null) return;
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots.Remove(
+                AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots.FirstOrDefault(x => x.Location == ClosestDot.Item1.Location)
+                );
+            UndoRedo.InsertInUnDoRedoForDeleteDot(ClosestDot.Item1, this);
+
+            //AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots.Remove(
+            //    AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots.FirstOrDefault(x => x.Location == ClosestDot.Item1.Location)
+            //    );
+            ClosestDot = null;
+            RefreshShapes();
         }
     }
 }

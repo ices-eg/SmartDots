@@ -271,7 +271,6 @@ namespace SmartDots.Helpers
                 rect.Width = (int)milimeterPixels;
                 //rect.Height = (int)image.PixelHeight / 7;
                 return rect;
-
             }
             catch (Exception e)
             {

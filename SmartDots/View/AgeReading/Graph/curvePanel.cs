@@ -98,7 +98,7 @@ namespace AgeReading.Graph
                 {
                     var g = Graph.IterateCombinedLine(keyvaluepair.Item2);
                     g.Annotation = keyvaluepair.Item1;
-                    var displayedGraph = graphViewer.AddGraph(g, keyvaluepair.Item1.CombinedLines[0].Lines[0].SystemColor, 3);
+                    var displayedGraph = graphViewer.AddGraph(g, keyvaluepair.Item1.CombinedLines[0].Lines[0].SystemColor, 2);
                     displayedGraph.DefaultPointMarkingStyle = GraphViewer.DisplayedGraph.PointMarkingStyle.Circle;
                 }
                 

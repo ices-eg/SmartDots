@@ -24,7 +24,7 @@ namespace SmartDots
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Helper.ShowWinUIMessageBox(e.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error, ((Exception)e.ExceptionObject).InnerException);
+            Helper.ShowWinUIMessageBox(e.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error, ((Exception)e.ExceptionObject));
             MessageBox.Show(((Exception)e.ExceptionObject).StackTrace);
         }
 

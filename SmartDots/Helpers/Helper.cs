@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -16,23 +18,25 @@ namespace SmartDots.Helpers
     public static class Helper
     {
 
-        public static float Version { get; } = 2.1f;
+        public static float Version { get; } = 2.2f;
         
         public static void ShowWinUIMessageBox(string message, string caption, MessageBoxButton msgBoxButton, MessageBoxImage img, Exception e = null)
         {
+            Log("errors.txt", message + e?.StackTrace, e);
+
             Application.Current.Dispatcher.Invoke((Action)delegate {
 
                 new WinUIMessageBoxService().Show(message, caption, msgBoxButton, img);
 
             });
 
-            Log("errors.txt", message, e);
         }
 
 
 
         public static void Log(string file, string message, Exception e= null)
         {
+#if DEBUG
             try
             {
                 using (StreamWriter writer = new StreamWriter(file, true))
@@ -46,6 +50,7 @@ namespace SmartDots.Helpers
             {
 
             }
+#endif
         }
 
         public static object ConvertType(object sourceObject, Type targetType)
@@ -83,6 +88,16 @@ namespace SmartDots.Helpers
             return obj;
         }
 
+        public static dynamic ToDynamic(this object value)
+        {
+            IDictionary<string, object> expando = new ExpandoObject();
+
+            foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(value.GetType()))
+                expando.Add(property.Name, property.GetValue(value));
+
+            return expando as ExpandoObject;
+        }
+
         public static T DeepCopy<T>(T item)
         {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -113,8 +128,20 @@ namespace SmartDots.Helpers
             return new Size(formattedText.Width, formattedText.Height);
         }
 
-        public static string WindowsSecurityConnectionString;
-        public static string SecurityConnectionString;
-        public static string SmartDotConnectionString;
+        public static List<string> MultiUserDotColors { get; } = new List<string>() { 
+            "#00FFFF",
+            "#FFFF00",
+            "#FF0000",
+            "#FF8000",
+            "#8000FF",
+            "#00FF00",
+            "#80FF00",
+            "#FF0080",
+            "#0080FF",
+            "#00FF80",
+            "#8080FF",
+            "#FF8080",
+            "#80FF80",
+        };
     }
 }

@@ -72,7 +72,9 @@ namespace SmartDots.ViewModel
             file.SampleNumber = tempfile.SampleNumber;
             file.IsReadOnly = tempfile.IsReadOnly;
             file.Scale = tempfile.Scale;
-            file.FetchProps();
+            var dynFile = AgeReadingViewModel.AgeReadingFileViewModel.CreateDynamicFile(file);
+            file.FetchProps((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row);
+            AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row = dynFile;
             AgeReadingViewModel.AgeReadingSampleViewModel.SetSample();
 
             AgeReadingViewModel.AgeReadingFileViewModel.UpdateList();

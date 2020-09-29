@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows;
 
 namespace SmartDots.Model
@@ -97,6 +98,22 @@ namespace SmartDots.Model
             }
         }
 
+        public string MultiUserColor { get; set; }
+
+        public Color SystemColor
+        {
+            get
+            {
+                if (MultiUserColor != null)
+                {
+                    return ColorTranslator.FromHtml(MultiUserColor);
+                }
+
+                return ColorTranslator.FromHtml("00FFFF");
+            }
+        }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         //public bool HasDots()
@@ -116,19 +133,18 @@ namespace SmartDots.Model
 
         public void CalculateAge()
         {
-            
+
             if (HasAq3())
             {
                 SetAge(null);
                 return;
             }
             int age = 0;
-            foreach (
-                CombinedLine combinedLine in CombinedLines)
+            foreach (CombinedLine combinedLine in CombinedLines)
             {
                 if (combinedLine.Dots.Count > age)
                 {
-                    age = combinedLine.Dots.Count;
+                    age = combinedLine.Dots.Count(x => x.DotType != "Non-counting mark");
                 }
             }
             SetAge(age);

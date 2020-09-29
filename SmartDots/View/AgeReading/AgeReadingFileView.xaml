@@ -87,7 +87,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <dxg:GridControl Grid.Row="0" ItemsSource="{Binding Files}" VerticalAlignment="Stretch" FontSize="11" x:Name="FileGrid">
+            <dxg:GridControl Grid.Row="0" ItemsSource="{Binding DynamicFiles}" VerticalAlignment="Stretch" FontSize="11" x:Name="FileGrid">
                 <dxg:GridControl.View>
                     <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="FileList" RowMinHeight="22" IsColumnChooserVisible="False">
                         <i:Interaction.Triggers>
@@ -107,7 +107,7 @@
                     <dxg:GridColumn FieldName="AnnotationCount" Header="#Annotations" ToolTip="Number of annotations" AllowEditing="False"  Width="60" />
                     <dxg:GridColumn FieldName="Scale" AllowEditing="False" Header="Scale (px/mm)" Width="80" >
                         <dxg:GridColumn.EditSettings>
-                            <dxe:TextEditSettings MaskType="Numeric" Mask="n3"/>
+                            <dxe:TextEditSettings MaskType="Numeric" Mask="d1"/>
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <!--<dxg:GridColumn FieldName="Otolith2Condition" SortIndex="0" AllowEditing="True">

@@ -15,6 +15,9 @@ namespace SmartDots.Model
         public virtual ICollection<DtoAnnotation> Annotations { get; set; }
         public virtual DtoSample Sample { get; set; }
         public decimal? Scale { get; set; }
+        public bool? CanApprove { get; set; } // only prevents approval when false
+        public dynamic SampleProperties { get; set; }
+
 
     }
 }

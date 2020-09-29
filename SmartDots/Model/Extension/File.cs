@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Dynamic;
 using System.Linq;
 using System.Windows.Media;
 using SmartDots.Helpers;
@@ -17,7 +18,7 @@ namespace SmartDots.Model
         }
 
         public System.Guid ID { get; set; }
-        public Nullable<System.Guid> FolderID { get; set; }
+        //public Nullable<System.Guid> FolderID { get; set; }
         public string Filename { get; set; }
 
         public string DisplayName { get; set; }
@@ -28,18 +29,16 @@ namespace SmartDots.Model
         public Nullable<System.Guid> SampleID { get; set; }
         public decimal? Scale { get; set; }
 
-        public bool GCRecord { get; set; }
-
+        //public bool GCRecord { get; set; }
         public virtual ICollection<Annotation> Outcomes { get; set; }
         public virtual Sample Sample { get; set; }
         public bool IsReadOnly { get; set; }
-
-
+        public bool? CanApprove { get; set; }
         public int AnnotationCount { get; set; }
-
         public string FullFileName { get; set; }
-
         public StatusIcon Status { get; set; }
+        public dynamic SampleProperties { get; set; }
+
 
 
         public ObservableCollection<Annotation> BoundOutcomes { get; set; }
@@ -95,12 +94,13 @@ namespace SmartDots.Model
             BoundOutcomes = result;
         }
 
-        public void FetchProps()
+        public void FetchProps(dynamic row)
         {
             if (WebAPI.Settings.UseSampleStatus)
             {
                 if (Sample != null) SampleID = Sample.Id;
                 Status = SampleID != null ? new StatusIcon((Color)ColorConverter.ConvertFromString(Sample?.StatusColor), Sample?.StatusCode, (int)Sample?.StatusRank) : new StatusIcon(Color.FromRgb(200, 200, 200), "No Sample Linked", 0);
+                if(row != null) row.Status = Status; 
             }
             
 

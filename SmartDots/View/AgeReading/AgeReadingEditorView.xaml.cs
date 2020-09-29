@@ -58,5 +58,23 @@ namespace SmartDots.View
             LineButton.IsPressed = false;
             ageReadingEditorViewModel.DrawDotBtn_Checked(sender, new RoutedEventArgs());
         }
+
+        private void PopupMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!ageReadingEditorViewModel.IsContextmenuVisible)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void EditDotContextMenu_Closed(object sender, System.EventArgs e)
+        {
+            AgeReadingEditorViewModel.IsContextmenuOpen = false;
+        }
+
+        private void EditDotContextMenu_Opened(object sender, System.EventArgs e)
+        {
+            AgeReadingEditorViewModel.IsContextmenuOpen = true;
+        }
     }
 }

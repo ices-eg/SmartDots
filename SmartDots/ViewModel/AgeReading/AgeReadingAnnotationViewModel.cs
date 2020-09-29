@@ -55,7 +55,11 @@ namespace SmartDots.ViewModel
                     annotation.Quality = Qualities.FirstOrDefault(x => x.ID == annotation.QualityID);
                     annotation.CalculateAge();
                 }
-                AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = value.Count(x => !x.IsFixed);
+                if(AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row != null)
+                {
+                    AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = value.Count(x => !x.IsFixed);
+                    ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).AnnotationCount = value.Count(x => !x.IsFixed);
+                }
                 RefreshActions();
                 AgeReadingViewModel.AgeReadingEditorViewModel.UpdateButtons();
             }
@@ -63,9 +67,15 @@ namespace SmartDots.ViewModel
 
         public List<Annotation> SelectedAnnotations
         {
-            get { return selectedAnnotations; }
+            get {
+                foreach (var annotation in selectedAnnotations.Where(x => string.IsNullOrEmpty(x.MultiUserColor)))
+                {
+                    annotation.MultiUserColor = Helper.MultiUserDotColors.FirstOrDefault(x => !annotations.Select(y => y.MultiUserColor).Contains(x));
+                }
+                return selectedAnnotations; }
             set
             {
+                
                 selectedAnnotations = value;
 
                 RefreshActions();
@@ -80,11 +90,14 @@ namespace SmartDots.ViewModel
             get { return workingAnnotation; }
             set
             {
-                workingAnnotation = value;
-                //AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine = null;
+                if(WorkingAnnotation != value)
+                {
+                    workingAnnotation = value;
 
-                RefreshActions();
-                AgeReadingViewModel.UpdateGraphs();
+                    RefreshActions();
+                    AgeReadingViewModel.UpdateGraphs();
+                }
+                
             }
         }
 
@@ -340,7 +353,7 @@ namespace SmartDots.ViewModel
                     PinAnnotationTooltip = "No active connection";
                     return false;
                 }
-                if (!AgeReadingViewModel.Analysis.UserCanPin)
+                if (AgeReadingViewModel.Analysis != null && !AgeReadingViewModel.Analysis.UserCanPin)
                 {
                     PinAnnotationTooltip = "No permission to make fixed reading lines";
                     return false;
@@ -408,7 +421,7 @@ namespace SmartDots.ViewModel
                     PinAnnotationTooltip = "No active connection";
                     return false;
                 }
-                if (!AgeReadingViewModel.Analysis.UserCanPin)
+                if (AgeReadingViewModel.Analysis != null && !AgeReadingViewModel.Analysis.UserCanPin)
                 {
                     PinAnnotationTooltip = "No permission to make fixed reading lines";
                     return false;
@@ -483,6 +496,11 @@ namespace SmartDots.ViewModel
                     ApproveAnnotationTooltip = "The selected file is read-only";
                     return false;
                 }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile?.CanApprove == false)
+                {
+                    ApproveAnnotationTooltip = "No permission to change approvals";
+                    return false;
+                }
                 if (WorkingAnnotation == null)
                 {
                     ApproveAnnotationTooltip = "It is only possible to approve when there is 1 Annotation selected";
@@ -537,6 +555,11 @@ namespace SmartDots.ViewModel
                 if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly)
                 {
                     ApproveAnnotationTooltip = "The selected file is read-only";
+                    return false;
+                }
+                if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.CanApprove == false)
+                {
+                    ApproveAnnotationTooltip = "No permission to change approvals";
                     return false;
                 }
                 if (WorkingAnnotation == null)
@@ -759,7 +782,8 @@ namespace SmartDots.ViewModel
                 WorkingAnnotation = an;
 
                 AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = Outcomes.Count(x => !x.IsFixed);
-                AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.FetchProps();
+                ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).AnnotationCount = Outcomes.Count(x => !x.IsFixed);
+                AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.FetchProps((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row);
                 AgeReadingViewModel.AgeReadingFileViewModel.Refresh();
 
             }
@@ -796,11 +820,41 @@ namespace SmartDots.ViewModel
                 {
                     Outcomes.Remove(outcome);
                 }
-                AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = Outcomes.Count(x => !x.IsFixed);
 
-                AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.FetchProps();
+                var selectedFile = AgeReadingViewModel.AgeReadingFileViewModel.Files.FirstOrDefault(x => x == AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile);
+
+                if (!Outcomes.Any(x => !x.IsFixed))
+                {
+                    var dbfile = WebAPI.GetFile(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID, false, true);
+                    if (!dbfile.Succeeded)
+                    {
+                        Helper.ShowWinUIMessageBox("Error loading File from Web API\n" + dbfile.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                    var file = (File)Helper.ConvertType(dbfile.Result, typeof(File));
+                    file.Sample = (Sample)Helper.ConvertType(dbfile.Result.Sample, typeof(Sample));
+                    if (selectedFile != null)
+                    {
+                        selectedFile.Sample = file.Sample;
+                        //selectedFile.AnnotationCount = file.AnnotationCount; this is not needed here
+                        selectedFile.IsReadOnly = file.IsReadOnly;
+                        selectedFile.Scale = file.Scale;
+
+                    }
+
+                    selectedFile.AnnotationCount = Outcomes.Count(x => !x.IsFixed);
+                    selectedFile.FetchProps((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row);
+                    ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).AnnotationCount = Outcomes.Count(x => !x.IsFixed);
+                    var dynFile = AgeReadingViewModel.AgeReadingFileViewModel.CreateDynamicFile(selectedFile);
+                    AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row = dynFile;
+                }
+
+                
                 //AgeReadingViewModel.AgeReadingFileView.FileGrid.RefreshData();
                 AgeReadingViewModel.AgeReadingFileViewModel.Refresh();
+                AgeReadingViewModel.AgeReadingFileViewModel.UpdateList();
+                UpdateList();
+
             }
             catch (Exception e)
             {
@@ -1028,7 +1082,8 @@ namespace SmartDots.ViewModel
             WorkingAnnotation.IsChanged = true;
 
             AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.AnnotationCount = Outcomes.Count(x => !x.IsFixed);
-            AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.FetchProps();
+            ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).AnnotationCount = Outcomes.Count(x => !x.IsFixed);
+            AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.FetchProps((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row);
             AgeReadingViewModel.AgeReadingFileViewModel.Refresh();
 
             AgeReadingViewModel.AgeReadingEditorViewModel.UpdateButtons();

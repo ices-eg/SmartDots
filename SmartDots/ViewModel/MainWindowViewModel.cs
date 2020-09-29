@@ -85,7 +85,7 @@ namespace SmartDots.ViewModel
 
         private void AnalysisSelected(object sender, AnalysisEventArgs e)
         {
-            if(SmartDotsControl.AgeReadingViewModel.LoadAnalysis(Guid.Parse(e.Analysis.ID.ToString()))) SetActiveControl(SmartDotsControl);
+            if (SmartDotsControl.AgeReadingViewModel.LoadAnalysis(Guid.Parse(e.Analysis.ID.ToString()))) SetActiveControl(SmartDotsControl);
 
         }
 

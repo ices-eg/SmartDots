@@ -523,10 +523,10 @@ namespace AgeReading.Graph
                 int lineWidth = gr.LineWidth;
                 if (_HighlightedGraph == gr)
                     lineWidth += 2;
-                Pen pen = new Pen(gr.Color, lineWidth);
+                System.Drawing.Pen pen = new System.Drawing.Pen(gr.Color, lineWidth);
                 e.Graphics.DrawPath(pen, gr.RebuildPath());
 
-                if(gr.Graph.Annotation != null)
+                if (gr.Graph.Annotation != null)
                 {
                     if (plan == 3)
                     {
@@ -539,9 +539,14 @@ namespace AgeReading.Graph
                                 int x = MapX(kv.Key, true), y = MapY(kv.Value, true);
                                 var index = (int)kv.Key;
                                 if (index < 1) continue;
-                                var dot = gr.Graph.Annotation?.CombinedLines[0]?.Dots[index-1];
+                                var dot = gr.Graph.Annotation?.CombinedLines[0]?.Dots[index - 1];
 
-                                e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
+                                bool isOddDot = ((float)(gr.Graph.Annotation.Dots.Count(d => d.Color == dot.Color)) / (float)gr.Graph.Annotation.Dots.Count) < 0.34f;
+                                SolidBrush brush;
+                                if (isOddDot || gr.Graph.Annotation.MultiUserColor == null || _Graphs.Count == 1) brush = new SolidBrush(dot.SystemColor);
+                                else brush = new SolidBrush(gr.Graph.Annotation.SystemColor);
+
+                                e.Graphics.FillEllipse(brush, x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
                                 //else if (l.DotIndex.Contains((int)kv.Value))
                                 //{
                                 //    e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
@@ -565,14 +570,19 @@ namespace AgeReading.Graph
                                 var index = gr.Graph.Annotation.CombinedLines[0].DotIndex.IndexOf((int)kv.Key);
                                 if (index < 0) continue;
                                 var dot = gr.Graph.Annotation?.CombinedLines[0]?.Dots[index];
-                                if (plan == 3)
-                                {
-                                    e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
-                                }
-                                else if (gr.Graph.Annotation.CombinedLines[0].DotIndex.Contains((int)kv.Key))
-                                {
-                                    e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
-                                }
+                                //if (plan == 3)
+                                //{
+                                //    e.Graphics.FillEllipse(new SolidBrush(dot.SystemColor), x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
+                                //}
+                                //else if (gr.Graph.Annotation.CombinedLines[0].DotIndex.Contains((int)kv.Key))
+                                //{
+
+                                bool isOddDot = ((float)(gr.Graph.Annotation.Dots.Count(d => d.Color == dot.Color)) / (float)gr.Graph.Annotation.Dots.Count) < 0.34f;
+                                SolidBrush brush;
+                                if (_Graphs.Count == 1 || isOddDot || gr.Graph.Annotation.MultiUserColor == null || _Graphs.Count == 1) brush = new SolidBrush(dot.SystemColor);
+                                else brush = new SolidBrush(gr.Graph.Annotation.SystemColor);
+                                e.Graphics.FillEllipse(brush, x - kPointMarkerSize / 2, y - kPointMarkerSize / 2, dot.Width, dot.Width);
+                                //}
                             }
                             catch (Exception ex)
                             {

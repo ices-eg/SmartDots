@@ -519,6 +519,7 @@ namespace SmartDots.View
 
         private void Disconnect_Click(object sender, RoutedEventArgs e)
         {
+            MainWindowViewModel.SmartDotsControl.AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes = new ObservableCollection<Model.Annotation>();
             IsLoggedIn = false;
             Background = (SolidColorBrush)Application.Current.TryFindResource("BrushSmartFishDarkBlue") ?? Brushes.White;
 
