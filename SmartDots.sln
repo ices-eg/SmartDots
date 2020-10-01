@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDots", "SmartDots\SmartDots.csproj", "{7DC47E47-F29D-4BAE-86C0-152877EC5011}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICES.SmartDots.WebAPI", "ICES.SmartDots.WebAPI\ICES.SmartDots.WebAPI.csproj", "{F1C501EA-AF2C-41BB-A7A3-080D58EB534D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{7DC47E47-F29D-4BAE-86C0-152877EC5011}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7DC47E47-F29D-4BAE-86C0-152877EC5011}.Release|x86.ActiveCfg = Release|x86
 		{7DC47E47-F29D-4BAE-86C0-152877EC5011}.Release|x86.Build.0 = Release|x86
+		{F1C501EA-AF2C-41BB-A7A3-080D58EB534D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1C501EA-AF2C-41BB-A7A3-080D58EB534D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1C501EA-AF2C-41BB-A7A3-080D58EB534D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F1C501EA-AF2C-41BB-A7A3-080D58EB534D}.Debug|x86.Build.0 = Debug|Any CPU
+		{F1C501EA-AF2C-41BB-A7A3-080D58EB534D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1C501EA-AF2C-41BB-A7A3-080D58EB534D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1C501EA-AF2C-41BB-A7A3-080D58EB534D}.Release|x86.ActiveCfg = Release|Any CPU
+		{F1C501EA-AF2C-41BB-A7A3-080D58EB534D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
