@@ -6,6 +6,7 @@
         public bool CanBrowseFolder { get; set; } 
         public bool UseSampleStatus { get; set; } 
         public bool CanApproveAnnotation { get; set; } 
+        public bool RequireAqForApproval { get; set; }
         public bool RequireAq1ForApproval { get; set; }
         public bool RequireParamForApproval { get; set; }
         public bool AutoMeasureScale { get; set; }
@@ -16,6 +17,7 @@
         public string SampleAlias { get; set; }
         public bool CanMarkEventAsCompleted { get; set; }
         public bool AllowMultipleApprovements { get; set; }
+        public bool IgnoreMultiUserColor { get; set; }
         public float MinRequiredVersion { get; set; }
     }
 }

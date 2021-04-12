@@ -578,8 +578,9 @@ namespace SmartDots.ViewModel
                 }
             }
 
-            catch (Exception)
+            catch (Exception e)
             {
+
             }
             return fileResult;
         }

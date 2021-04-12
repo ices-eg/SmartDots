@@ -70,7 +70,7 @@ namespace SmartDots.ViewModel
             get {
                 foreach (var annotation in selectedAnnotations.Where(x => string.IsNullOrEmpty(x.MultiUserColor)))
                 {
-                    annotation.MultiUserColor = Helper.MultiUserDotColors.FirstOrDefault(x => !annotations.Select(y => y.MultiUserColor).Contains(x));
+                    annotation.MultiUserColor = WebAPI.Settings.IgnoreMultiUserColor ? null : Helper.MultiUserDotColors.FirstOrDefault(x => !annotations.Select(y => y.MultiUserColor).Contains(x)); //todo ignore multiUser setting
                 }
                 return selectedAnnotations; }
             set
@@ -521,6 +521,11 @@ namespace SmartDots.ViewModel
                     ApproveAnnotationTooltip = "Cannot approve a fixed reading line";
                     return false;
                 }
+                if (WorkingAnnotation?.QualityID == null && WebAPI.Settings.RequireAqForApproval)
+                {
+                    ApproveAnnotationTooltip = "A quality code (AQ) is needed to approve the Annotation";
+                    return false;
+                };
                 if (WorkingAnnotation?.QualityID != Qualities.FirstOrDefault(x => x.Code.ToUpper() == "AQ1").ID && WebAPI.Settings.RequireAq1ForApproval)
                 {
                     ApproveAnnotationTooltip = "A quality code AQ1 is needed to approve the Annotation";

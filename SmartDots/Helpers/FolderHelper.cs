@@ -7,11 +7,7 @@ namespace SmartDots.Helpers
     {
         [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.U4)]
-        static extern int WNetGetUniversalName(
-    string lpLocalPath,
-    [MarshalAs(UnmanagedType.U4)] int dwInfoLevel,
-    IntPtr lpBuffer,
-    [MarshalAs(UnmanagedType.U4)] ref int lpBufferSize);
+        static extern int WNetGetUniversalName(string lpLocalPath, [MarshalAs(UnmanagedType.U4)] int dwInfoLevel, IntPtr lpBuffer, [MarshalAs(UnmanagedType.U4)] ref int lpBufferSize);
         /// <summary>
         ///   Gets the UNC path for the path passed in.
         /// </summary>

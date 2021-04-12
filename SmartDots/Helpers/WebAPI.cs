@@ -70,6 +70,7 @@ namespace SmartDots.Helpers
 
         private static WebApiResult<t> ParseResult<t>(string unparsedResult)
         {
+            Helper.LogWebAPIResult(unparsedResult);
             if (string.IsNullOrWhiteSpace(unparsedResult)) return new WebApiResult<t>();
 
             dynamic result = null;

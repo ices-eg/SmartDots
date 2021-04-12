@@ -30,19 +30,19 @@
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
+    <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>https://raw.githubusercontent.com/ices-eg/SmartDots/master/SmartDots/publish/</InstallUrl>
     <UpdateUrl>https://raw.githubusercontent.com/ices-eg/SmartDots/master/SmartDots/publish/</UpdateUrl>
     <ProductName>SmartDots</ProductName>
     <PublisherName>ILVO</PublisherName>
-    <MinimumRequiredVersion>1.3.0.44</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.2.0.4</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>3</ApplicationRevision>
-    <ApplicationVersion>2.2.0.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>2.3.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -71,7 +71,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>BE54879E91B7B4EE3E52EA87B1CD61754E2FE65D</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>CD39D121CEBB04ABC5594F92D8B777AB0D62CF80</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>
@@ -81,7 +81,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>smartdots icon.ico</ApplicationIcon>

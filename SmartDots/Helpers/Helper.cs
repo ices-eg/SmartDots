@@ -18,7 +18,7 @@ namespace SmartDots.Helpers
     public static class Helper
     {
 
-        public static float Version { get; } = 2.2f;
+        public static float Version { get; } = 2.3f;
         
         public static void ShowWinUIMessageBox(string message, string caption, MessageBoxButton msgBoxButton, MessageBoxImage img, Exception e = null)
         {
@@ -44,6 +44,23 @@ namespace SmartDots.Helpers
                     writer.WriteLine(DateTime.Now + Environment.NewLine + "Computer: " + Environment.MachineName + Environment.NewLine +
                                      "User: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString() + Environment.NewLine +
                                      message + Environment.NewLine + e?.InnerException?.ToString() + Environment.NewLine);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+#endif
+        }
+
+        public static void LogWebAPIResult(string result)
+        {
+#if DEBUG
+            try
+            {
+                using (StreamWriter writer = new StreamWriter("webapi.txt", true))
+                {
+                    writer.WriteLine(result + Environment.NewLine + Environment.NewLine);
                 }
             }
             catch (Exception)
