@@ -17,7 +17,7 @@ https://github.com/ices-eg/SmartDots/raw/master/SmartDots/publish/setup.exe
 Use this option when you are experiencing firewall/antivirus issues. This version will not have these issues, however it will also not check for updates. When you want to update to the latest version, you will have to download it again.
 
 You can download the portable version here:
-https://github.com/ices-eg/SmartDots/raw/master/SmartDots/Portable/SmartDots2.2.zip
+https://github.com/ices-eg/SmartDots/raw/master/SmartDots/Portable/SmartDots2.3.zip
 
 1) Download the .zip-file
 2) Unzip to a location of choice
