@@ -7,6 +7,11 @@
         xmlns:userControls="clr-namespace:SmartDots.View.UserControls"
         xmlns:SmartDots="clr-namespace:SmartDots"
         xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
         mc:Ignorable="d"
         ResizeMode="CanResizeWithGrip"
         SnapsToDevicePixels="True"
@@ -43,7 +48,10 @@
         </WindowChrome>
     </WindowChrome.WindowChrome>
 
+
+
     <Grid x:Name="ModalDialogParent">
+
 
         <Grid.RenderTransform>
             <TransformGroup>
@@ -64,18 +72,43 @@
                    Visibility="{Binding HeaderLogoIsVisible, Converter={StaticResource boolToVisibilityConverter}}"/>
             <Image Source="/Resources/sloping15x35.png" Visibility="{Binding HeaderLogoIsVisible, Converter={StaticResource boolToVisibilityConverter}}"/>
 
-            <TextBlock Text="{Binding HeaderInfo}" FontWeight="DemiBold" Margin="20,0,0,5" Foreground="White" FontSize="20" VerticalAlignment="Bottom" />
+            <Image Source="/Resources/arrow-94-32.png" WindowChrome.IsHitTestVisibleInChrome="True" Width="24" Height="24" Margin="10,0,0,0" Visibility="{Binding HeaderBackBtnIsVisible, Converter={StaticResource boolToVisibilityConverter}}" Cursor="Hand">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="GoBack"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Image>
+            <TextBlock Text="{Binding HeaderModule}" x:Name="HeaderModuleText" FontWeight="Bold" Margin="0,0,0,5" Foreground="White" FontSize="20" VerticalAlignment="Bottom" />
+            <TextBlock Text="{Binding HeaderInfo}" FontWeight="DemiBold" Margin="00,0,0,5" Foreground="White" FontSize="20" VerticalAlignment="Bottom" />
             <!--<TextBlock Text="{Binding Subtitle}" FontWeight="DemiBold" Margin="10,0,0,5" Foreground="WhiteSmoke" FontSize="18" VerticalAlignment="Bottom" />-->
 
-            <StackPanel Width="155" Margin="0" HorizontalAlignment="Right" Orientation="Horizontal">
-               
-                <userControls:WindowButton x:Name="Manual" SnapsToDevicePixels="True" Click="Manual_Click" Margin="0,0,20,0">
+            <StackPanel Width="260" Margin="0" HorizontalAlignment="Right" Orientation="Horizontal">
+                <userControls:DropDownWindowButton x:Name="SettingsButton" WindowChrome.IsHitTestVisibleInChrome="True" SnapsToDevicePixels="True" Margin="0,0,15,0" Content="Settings" Foreground="White" FontWeight="Bold" FontSize="20" MouseDown="SettingsButton_MouseDown" Cursor="Hand" ></userControls:DropDownWindowButton>
+                <userControls:DropDownWindowButton x:Name="HelpButton" WindowChrome.IsHitTestVisibleInChrome="True" SnapsToDevicePixels="True" Margin="0,0,20,0" Content="Help" Foreground="White" FontWeight="Bold" FontSize="20" MouseDown="HelpButton_MouseDown" Cursor="Hand" ></userControls:DropDownWindowButton>
+                <dxb:PopupMenu x:Name="HelpContextMenu">
+                    <dxb:PopupMenu.Items>
+                        <!--<dxb:BarItemMenuHeader Content="Measure Scale"/>-->
+                        <dxb:BarButtonItem x:Name="GitHub" Content="GitHub"/>
+                        <dxb:BarButtonItem x:Name="IcesSharePoint" Content="ICES SmartDots Sharepoint"/>
+                        <dxb:BarButtonItem x:Name="IcesUserHandbooks" Content="ICES SmartDots user handbooks"/>
+                        <dxb:BarButtonItem x:Name="IcesTrainingVideos" Content="ICES SmartDots training videos"/>
+                        <dxb:BarButtonItem x:Name="About" Content="About"/>
+                    </dxb:PopupMenu.Items>
+                </dxb:PopupMenu>
+                <dxb:PopupMenu x:Name="SettingsContextMenu">
+                    <dxb:PopupMenu.Items>
+                        <!--<dxb:BarItemMenuHeader Content="Measure Scale"/>-->
+                        <dxb:BarButtonItem x:Name="ResetLayout" Content="Restore layout"/>
+                    </dxb:PopupMenu.Items>
+                </dxb:PopupMenu>
+
+                <!--<userControls:WindowButton x:Name="Manual" SnapsToDevicePixels="True" Click="Manual_Click" Margin="0,0,20,0">
                     <Image Source="/Resources/question.png" Style="{StaticResource WindowsButtonImage}" RenderOptions.BitmapScalingMode="HighQuality"></Image>
-                </userControls:WindowButton>
+                </userControls:WindowButton>-->
                 <userControls:WindowButton x:Name="Minimize" SnapsToDevicePixels="True" Click="Minimize_Click">
                     <Image Source="/Resources/Minimize.png" Style="{StaticResource WindowsButtonImage}"></Image>
                 </userControls:WindowButton>
-
                 <userControls:WindowButton x:Name="Maximize" Click="Maximize_Click">
                     <Image Source="/Resources/Maximize.png" Style="{StaticResource WindowsButtonImage}"></Image>
                 </userControls:WindowButton>
@@ -89,7 +122,15 @@
                 </userControls:WindowButton>
 
             </StackPanel>
+
         </DockPanel>
+
+        <!--<dxdo:DockLayoutManager Grid.Row="1" EnableWin32Compatibility="True" FloatingMode="Desktop">
+            <dxdo:DockLayoutManager.FloatGroups>-->
+
+
+
+
         <ItemsControl Grid.Row="1" x:Name="WindowContents" ItemsSource="{Binding ContentControls}" VerticalAlignment="Stretch">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -97,5 +138,7 @@
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
+
     </Grid>
 </Window>
+

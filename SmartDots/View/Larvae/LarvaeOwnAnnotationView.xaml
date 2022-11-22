@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="SmartDots.View.LarvaeOwnAnnotationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:viewModel="clr-namespace:SmartDots.ViewModel"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             mc:Ignorable="d" dx:ThemeManager.ThemeName="Office2016White"
+             d:DesignHeight="300" d:DesignWidth="400">
+    
+    <UserControl.DataContext>
+        <viewModel:LarvaeOwnAnnotationViewModel/>
+    </UserControl.DataContext>
+
+
+<ScrollViewer VerticalScrollBarVisibility="Auto" >
+        <Grid Name="Grid" Margin="10,5,10,5" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="7*" />
+            </Grid.ColumnDefinitions>
+            <!--<Grid.RowDefinitions>
+                <RowDefinition Height="24" />
+                <RowDefinition Height="24" />
+                <RowDefinition Height="24" />
+                <RowDefinition Height="72" />
+            </Grid.RowDefinitions>-->
+            <dxg:LookUpEdit Grid.Column="1" AllowNullInput="True" NullValueButtonPlacement="Popup" x:Name="LarvaeSexesLookup" Background="{StaticResource BrushSmartFishYellow}" Padding="0,-2,0,0" Margin="0,2,0,2" EditValue="{Binding LarvaeSex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding LarvaeSexes, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding LarvaeSex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Code" IsEnabled="{Binding CanEdit, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <dxg:LookUpEdit.PopupContentTemplate>
+                    <ControlTemplate >
+                        <dxg:GridControl x:Name="PART_GridControl">
+                            <dxg:GridControl.View>
+                                <dxg:TableView AutoWidth="True" RowMinHeight="32"/>
+                            </dxg:GridControl.View>
+                            <dxg:GridColumn FieldName="Code" Width="20*"/>
+                            <dxg:GridColumn FieldName="Description" Width="80*" />
+                        </dxg:GridControl>
+                    </ControlTemplate>
+                </dxg:LookUpEdit.PopupContentTemplate>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="EditValueChanged">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="LarvaeLookup_EditValueChanged"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </dxg:LookUpEdit>
+            <dxg:LookUpEdit Grid.Column="1" AllowNullInput="True" NullValueButtonPlacement="Popup" x:Name="MaturitiesLookup" Background="{StaticResource BrushSmartFishYellow}" Padding="0,-2,0,0" Margin="0,2,0,2" EditValue="{Binding Larvae, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding Maturities, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding Larvae, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Code" IsEnabled="{Binding CanEdit, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <dxg:LookUpEdit.PopupContentTemplate>
+                    <ControlTemplate >
+                        <dxg:GridControl x:Name="PART_GridControl">
+                            <dxg:GridControl.View>
+                                <dxg:TableView AutoWidth="True" RowMinHeight="32"/>
+                            </dxg:GridControl.View>
+                            <dxg:GridColumn FieldName="Code" Width="20*"/>
+                            <dxg:GridColumn FieldName="Description" Width="80*" />
+                        </dxg:GridControl>
+                    </ControlTemplate>
+                </dxg:LookUpEdit.PopupContentTemplate>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="EditValueChanged">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="LarvaeLookup_EditValueChanged"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </dxg:LookUpEdit>
+            <dxg:LookUpEdit Grid.Column="1" AllowNullInput="True" NullValueButtonPlacement="Popup" x:Name="LarvaeQualitiesLookup" Background="{StaticResource BrushSmartFishYellow}" Padding="0,-2,0,0" Margin="0,2,0,2" EditValue="{Binding LarvaeQuality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding LarvaeQualities, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding LarvaeQuality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Code" IsEnabled="{Binding CanEdit, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <dxg:LookUpEdit.PopupContentTemplate>
+                    <ControlTemplate >
+                        <dxg:GridControl x:Name="PART_GridControl">
+                            <dxg:GridControl.View>
+                                <dxg:TableView AutoWidth="True" RowMinHeight="32"/>
+                            </dxg:GridControl.View>
+                            <dxg:GridColumn FieldName="Code" Width="20*"/>
+                            <dxg:GridColumn FieldName="Description" Width="80*" />
+                        </dxg:GridControl>
+                    </ControlTemplate>
+                </dxg:LookUpEdit.PopupContentTemplate>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="EditValueChanged">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="LarvaeLookup_EditValueChanged"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </dxg:LookUpEdit>
+            <dxe:TextEdit Grid.Column="1" x:Name="LarvaeComments" EditValue="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Background="{StaticResource BrushSmartFishYellow}" Height="68" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" IsEnabled="{Binding CanEdit, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+            </dxe:TextEdit>
+        </Grid>
+    </ScrollViewer>
+
+</UserControl>

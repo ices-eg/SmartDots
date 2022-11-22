@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Navigation;
+using DevExpress.Xpf;
 using SmartDots.Helpers;
 using SmartDots.ViewModel;
+using AboutWindow = SmartDots.View.UserControls.AboutWindow;
 
 namespace SmartDots.View
 {
@@ -25,7 +27,13 @@ namespace SmartDots.View
             SizeChanged += MainWindow_SizeChanged;
             Loaded += MainWindow_Loaded;
 
-
+            ResetLayout.ItemClick += (sender, args) => ViewModel.ResetLayout();
+            IcesSharePoint.ItemClick += (sender, args) => ViewModel.OpenIcesSharePoint();
+            IcesUserHandbooks.ItemClick += (sender, args) => ViewModel.OpenManualsLink();
+            IcesTrainingVideos.ItemClick += (sender, args) => ViewModel.OpenIcesTrainingVideos();
+            GitHub.ItemClick += (sender, args) => ViewModel.OpenGitHub();
+            About.ItemClick += (sender, args) => OpenAbout();
+            
             try
             {
                 //WaitState = true
@@ -62,6 +70,15 @@ namespace SmartDots.View
             }
         }
 
+        private void OpenAbout()
+        {
+            AboutWindow w = new AboutWindow(Helper.Version.ToString().Replace(",","."));
+            w.ShowDialog();
+            //Window win2 = new Window();
+            //win2.
+            //win2.Show();
+        }
+
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateControls();
@@ -92,12 +109,6 @@ namespace SmartDots.View
             }
         }
 
-        
-
-        public void Manual_Click(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("http://ices.dk/publications/library/Pages/default.aspx#k=smartdots%20handbook");
-        }
 
         public void Minimize_Click(object sender, RoutedEventArgs e)
         {
@@ -124,5 +135,14 @@ namespace SmartDots.View
             System.Diagnostics.Process.Start(e.Uri.AbsoluteUri);
         }
 
+        private void HelpButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            HelpContextMenu.ShowPopup(HelpButton);
+        }
+
+        private void SettingsButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            SettingsContextMenu.ShowPopup(SettingsButton);
+        }
     }
 }

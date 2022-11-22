@@ -63,26 +63,24 @@
                     <Label Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" x:Name="LabelConnecting" HorizontalAlignment="Center"/>
                 </Grid>
             </Border>
-            <Label Name="VersionLabel" Foreground="White" HorizontalAlignment="Right"></Label>
+            <Label Name="VersionLabel" Foreground="White" HorizontalAlignment="Right" FontSize="14"></Label>
         </StackPanel>
-        <dxg:GridControl Name="Analyses" Height="400" SelectionMode="Row" dx:ThemeManager.Theme="HybridApp" Margin="0,-32,0,0"
-                         common:VisibilityAnimation.AnimationType="Fade" SelectionChanged="GridAnalysis_OnSelectionChanged" StartSorting="Analyses_StartSorting" >
+        <dxg:GridControl Name="Analyses" Height="400" SelectionMode="Row" Margin="0,-32,0,0"
+                         common:VisibilityAnimation.AnimationType="Fade" SelectionChanged="GridAnalysis_OnSelectionChanged" StartSorting="Analyses_StartSorting">
             <dxg:GridControl.View >
-                <dxg:TableView x:Name="AnalysesView" ShowGroupPanel="False" RowDoubleClick="WorkOnline_Click"
+                <dxg:TableView x:Name="AnalysesView" ShowGroupPanel="False" RowDoubleClick="WorkOnline_Click" 
                                AllowEditing="False" AllowSorting="True" AllowGrouping="False" AllowColumnMoving="False"
-                               AllowColumnFiltering="False" AllowMoveColumnToDropArea="False" IsColumnMenuEnabled="False" NavigationStyle="Row" ShowSearchPanelMode="Always" />
+                               AllowColumnFiltering="True" ColumnFilterPopupMode="Excel" AllowMoveColumnToDropArea="False" IsColumnMenuEnabled="False" NavigationStyle="Row" ShowSearchPanelMode="Always" AllowBestFit="True" BestFitMode="AllRows" />
             </dxg:GridControl.View>
             <dxg:GridControl.Columns >
                 <!--<dxg:GridColumn ReadOnly="True" FieldName="Analysis" Header="Analysis" />
                 <dxg:GridColumn ReadOnly="True" FieldName="IsAvailableOffline" Header="Is Available Offline" />-->
             </dxg:GridControl.Columns>
-        </dxg:GridControl>
+            
+</dxg:GridControl>
 
-        <dxwui:AppBar Name="AnalysesActions" common:VisibilityAnimation.AnimationType="Fade" Alignment="Bottom" 
-                      Background="#293C45" dx:ThemeManager.Theme="HybridApp">
-            <dxwui:AppBarButton Glyph="/Resources/arrow-94-32.png" Label="Back" x:Name="ButtonDisconnect" Click="Disconnect_Click" />
-            <dxwui:AppBarSeparator/>
-            <dxwui:AppBarButton Glyph="/Resources/SmartLabIcon2-bw.png" Label="Age Reading" x:Name="ButtonWorkOnline" Click="WorkOnline_Click" />
+        <dxwui:AppBar Name="AnalysesActions" common:VisibilityAnimation.AnimationType="Fade" Alignment="Bottom" Background="#293C45" dx:ThemeManager.Theme="HybridApp">
+            <dxwui:AppBarButton Glyph="/Resources/SmartLabIcon2-bw.png" Label="Analyze" x:Name="ButtonWorkOnline" Click="WorkOnline_Click" />
             <dxwui:AppBarButton Glyph="/Resources/folder-3-32.png" Label="Edit Folder" x:Name="ButtonFolder" Click="Folder_Click" />
             <dxwui:AppBarButton Glyph="/Resources/refresh-2-32.png" Label="Reload" x:Name="ButtonReload" Click="ButtonReload_Click"/>
             <dxwui:AppBarButton Glyph="/Resources/check.png" Label="Finished" x:Name="ButtonFinished" Click="ButtonFinish_Click" />

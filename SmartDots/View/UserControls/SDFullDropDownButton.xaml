@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="SmartDots.View.UserControls.SDFullDropDownButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="clr-namespace:SmartDots.Helpers"
+             Margin="2" Height="28"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <helpers:NullImageConverter x:Key="nullImageConverter"/>
+    </UserControl.Resources>
+
+    <Border x:Name="ButtonBorder" BorderThickness="1" CornerRadius="3" Background="White">
+        <WrapPanel Orientation="Horizontal">
+            <Button Name="PrimaryButton" Width="26" Height="26" Padding="0">
+                <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="2.3 0 0 2.3">
+                            <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+                <Image Name="ButtonImage" Width="22" Height="22" Source="{Binding ElementName=SD, Path=Glyph, Converter={StaticResource nullImageConverter}}"/>
+            </Button>
+            
+            <Button Name="ContextButton" Width="17" Height="26" Padding="0" Margin="0 0 0 0" ToolTip="Click to expand">
+                <Button.Template>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="0 2.3 2.3 0">
+                        <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+                <Image Width="14" Height="22" Source="{StaticResource ContextButton}"/>
+            </Button>
+        </WrapPanel>
+    </Border>
+</UserControl>

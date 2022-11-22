@@ -42,8 +42,6 @@ namespace SmartDots.View
             AgeReadingViewModel.LoadLayout("Layout.xml");
             AgeReadingViewModel.MakeGraph();
 
-            btnFileSettings.Click += (sender, args) => AgeReadingViewModel.AgeReadingFileViewModel.FileSettings();
-
 
             ////this order is important
             //Show();
@@ -62,5 +60,16 @@ namespace SmartDots.View
         //    {
         //    }
         //}
+
+        private void Previous_Click(object sender, RoutedEventArgs e)
+        {
+
+            AgeReadingViewModel.AgeReadingFileView.FileList.MovePrevRow();
+        }
+
+        private void Next_Click(object sender, RoutedEventArgs e)
+        {
+            AgeReadingViewModel.AgeReadingFileView.FileList.MoveNextRow();
+        }
     }
 }

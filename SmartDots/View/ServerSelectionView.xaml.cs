@@ -136,12 +136,13 @@ namespace SmartDots.View
                     LabelConnecting.Content = string.Empty;
                     return;
                 }
-                if (!LoadQualities())
-                {
-                    LabelConnecting.Content = string.Empty;
-                    return;
-                }
+                //if (!LoadQualities())
+                //{
+                //    LabelConnecting.Content = string.Empty;
+                //    return;
+                //}
                 IsLoggedIn = true;
+                MainWindowViewModel.HeaderBackBtnIsVisible = true;
                 LabelConnecting.Content = string.Empty;
                 Background = Brushes.White;
                 FieldPassword.Clear();
@@ -153,46 +154,30 @@ namespace SmartDots.View
 
             var cea = new ConnectionEventArgs();
             cea.ConnectionInfo = c;
-            cea.UserInfo = WebAPI.CurrentUser;
+            cea.UserInfo = Global.API.CurrentUser;
             Connected?.Invoke(this, cea);
         }
 
         public bool LoadSettings()
         {
-            var settings = WebAPI.GetSettings();
+            var settings = Global.API.GetSettings();
             if (!settings.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error loading SmartDots settings from the Web API\n" + settings.ErrorMessage, "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
-            WebAPI.Settings = settings.Result;
-            if (WebAPI.Settings.MinRequiredVersion > Helper.Version)
+            Global.API.Settings = settings.Result;
+            if (Global.API.Settings.MinRequiredVersion > Helper.Version)
             {
-                Helper.ShowWinUIMessageBox($"The minimum supported version of SmartDots is {WebAPI.Settings.MinRequiredVersion.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)}.\nPlease install the latest version.\nhttps://github.com/ices-eg/SmartDots", "Incompatible version", MessageBoxButton.OK, MessageBoxImage.Error);
+                Helper.ShowWinUIMessageBox($"The minimum supported version of SmartDots is {Global.API.Settings.MinRequiredVersion.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)}.\nPlease install the latest version.\nhttps://github.com/ices-eg/SmartDots", "Incompatible version", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             MainWindowViewModel.ApplySettings();
             return true;
         }
 
-        public bool LoadQualities()
-        {
-            var dtoQualities = WebAPI.GetQualities();
-            if (!dtoQualities.Succeeded)
-            {
-                Helper.ShowWinUIMessageBox("Error loading Qualities from the Web API", "Error", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                return false;
-            }
-            var qualities = new List<Quality>();
-            foreach (var dtoQuality in dtoQualities.Result)
-            {
-                qualities.Add((Quality) Helper.ConvertType(dtoQuality, typeof(Quality)));
-            }
-            MainWindowViewModel.SmartDotsControl.AgeReadingViewModel.AgeReadingAnnotationViewModel.MapAQColors(qualities);
-            return true;
-        }
+        
 
         private async Task<ConnectionInfo> HandleConnect(ConnectionInfo c)
         {
@@ -208,7 +193,15 @@ namespace SmartDots.View
         private WebApiResult<DtoUser> DoConnect(ConnectionInfo c)
         {
             var auth = new DtoUserAuthentication();
-            var connectionAttempt = WebAPI.EstablishConnection(c.ApiUrl);
+            if(c.ApiUrl.ToLower().Trim() == "offline")
+            {
+                //Global.API = new 
+            }
+            else
+            {
+                Global.API = new WebAPI();
+            }
+            var connectionAttempt = Global.API.EstablishConnection(c.ApiUrl);
             if (!connectionAttempt.Succeeded)
                 return new WebApiResult<DtoUser> {ErrorMessage = connectionAttempt.ErrorMessage};
 
@@ -224,7 +217,6 @@ namespace SmartDots.View
 
                 case AuthWindows:
                     auth.DtoAuthenticationMethod = DtoAuthenticationMethod.Windows;
-                    //auth.Username = "CLO\\imaertens";
                     auth.Username = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
                     break;
 
@@ -240,7 +232,7 @@ namespace SmartDots.View
                     break;
             }
 
-            var dtoUser = WebAPI.Authenticate(auth);
+            var dtoUser = Global.API.Authenticate(auth);
             if (!dtoUser.Succeeded)
             {
                 Helper.ShowWinUIMessageBox(dtoUser.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -250,13 +242,13 @@ namespace SmartDots.View
 
         public void LoadGrid()
         {
-            var user = WebAPI.CurrentUser;
+            var user = Global.API.CurrentUser;
             if (user == null)
             {
                 return;
             }
 
-            var itemsResult = WebAPI.GetAnalysesDynamic();
+            var itemsResult = Global.API.GetAnalysesDynamic();
             if (!itemsResult.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error loading Analyses from the Web API\n" + itemsResult.ErrorMessage, "Error", MessageBoxButton.OK,
@@ -299,7 +291,7 @@ namespace SmartDots.View
             }
 
             List<GridColumn> columns = new List<GridColumn>();
-            columns.AddRange(toReturn.Where(x => !x.ToUpper().Equals("ID")).Select(columnName => new GridColumn() { FieldName = columnName, Style = Resources["AnalysisColumn"] as Style, AllowSorting = DefaultBoolean.True}));
+            columns.AddRange(toReturn.Where(x => !x.ToUpper().Equals("ID")).Select(columnName => new GridColumn() { FieldName = columnName, HeaderTemplate = Resources["ColumnHeaderTemplate"] as DataTemplate, AllowSorting = DefaultBoolean.True, AllowBestFit = DefaultBoolean.True}));
             //columns.Add(new GridColumn() { Header = "Is Available Offline", FieldName = "IsAvailableOffline", UnboundType = UnboundColumnType.Boolean, Style = Resources["AnalysisColumn"] as Style, AllowSorting = DefaultBoolean.True });
 
             Analyses.ItemsSource = itemsResult.Result;
@@ -317,6 +309,14 @@ namespace SmartDots.View
                 Analyses.SelectedItem = item;
             }
 
+            if (values.Keys.Any(x => x == "Closed"))
+            {
+                Analyses.FilterString = "[Closed] <> 'Event is public'";
+            }
+
+            AnalysesView.BestFitColumns();
+
+
             //Analyses.ColumnsSource = typeof(AnalysisRowObject).GetProperties()
             //.Where(x => !x.GetGetMethod()?.IsVirtual & !x.Name.Equals("AnalysisParameters") ?? false)
             //.Select(x => new GridColumn { FieldName = x.Name, Visible = !x.Name.EndsWith("ID") })
@@ -325,7 +325,7 @@ namespace SmartDots.View
 
         private void Finish()
         {
-            var user = WebAPI.CurrentUser;
+            var user = Global.API.CurrentUser;
             if (user == null)
             {
                 return;
@@ -338,8 +338,26 @@ namespace SmartDots.View
             var ae = new AnalysisEventArgs();
             var rowIndex = selection.GetSelectedRows()[0];
             ae.Analysis = Analyses.GetRow(rowIndex);
-            WebAPI.ToggleAnalysisUserProgress((Guid) ae.Analysis.ID);
-
+            if (ae.Analysis.Purpose != null)
+            {
+                switch (ae.Analysis.Purpose.Value.ToString().ToLower().Substring(0,3))
+                {
+                    case "mat":
+                        Global.API.ToggleMaturityAnalysisUserProgress((Guid)ae.Analysis.ID);
+                        break;
+                    case "lar":
+                        Global.API.ToggleLarvaeAnalysisUserProgress((Guid)ae.Analysis.ID);
+                        break;
+                    default:
+                        Global.API.ToggleAnalysisUserProgress((Guid)ae.Analysis.ID);
+                        break;
+                }
+            }
+            else
+            {
+                Global.API.ToggleAnalysisUserProgress((Guid)ae.Analysis.ID);
+            }
+            
             LoadGrid();
         }
 
@@ -360,6 +378,7 @@ namespace SmartDots.View
             Fields.Visibility = Visibility.Visible;
             Analyses.Visibility = Visibility.Collapsed;
             MainWindowViewModel.HeaderInfo = "";
+            MainWindowViewModel.HeaderModule = "";
             AnalysesActions.Visibility = Visibility.Collapsed;
             Logo.Visibility = Visibility.Visible;
 
@@ -387,7 +406,8 @@ namespace SmartDots.View
         {
             Fields.Visibility = Visibility.Collapsed;
             Analyses.Visibility = Visibility.Visible;
-            MainWindowViewModel.HeaderInfo = WebAPI.Settings.EventAlias + " overview";
+            MainWindowViewModel.HeaderInfo = $"  {Global.API.Settings.EventAlias.ToUpper()} OVERVIEW";
+            MainWindowViewModel.HeaderModule = "";
             AnalysesActions.Visibility = Visibility.Visible;
             Logo.Visibility = Visibility.Collapsed;
 
@@ -501,15 +521,15 @@ namespace SmartDots.View
 
         private void GetToken(object sender, RoutedEventArgs e)
         {
-            WebAPI.EstablishConnection(FieldApi.Text);
-            var webapiresult = WebAPI.GetGuestToken();
+            Global.API.EstablishConnection(FieldApi.Text);
+            var webapiresult = Global.API.GetGuestToken();
             if (!webapiresult.Succeeded)
             {
                 Helper.ShowWinUIMessageBox(webapiresult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             FieldUser.Text = webapiresult.Result;
-            WebAPI.Reset();
+            Global.API.Reset();
         }
 
         private void Connect_Click(object sender, RoutedEventArgs e)
@@ -517,13 +537,14 @@ namespace SmartDots.View
             Login();
         }
 
-        private void Disconnect_Click(object sender, RoutedEventArgs e)
+        public void Disconnect()
         {
-            MainWindowViewModel.SmartDotsControl.AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes = new ObservableCollection<Model.Annotation>();
+            MainWindowViewModel.AgeReadingControl.AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes = new ObservableCollection<Model.Annotation>();
             IsLoggedIn = false;
+            MainWindowViewModel.HeaderBackBtnIsVisible = false;
             Background = (SolidColorBrush)Application.Current.TryFindResource("BrushSmartFishDarkBlue") ?? Brushes.White;
 
-            Disconnected?.Invoke(sender, new EventArgs());
+            MainWindowViewModel.HeaderLogoIsVisible = false;
         }
 
         private void WorkOnline_Click(object sender, RoutedEventArgs e)
@@ -541,7 +562,7 @@ namespace SmartDots.View
         {
             try
             {
-                MainWindowViewModel.SmartDotsControl.AgeReadingViewModel.WaitState = true;
+                MainWindowViewModel.AgeReadingControl.AgeReadingViewModel.WaitState = true;
                 FolderSelectDialog fbd = new FolderSelectDialog();
                 if (fbd.ShowDialog(IntPtr.Zero))
                 {
@@ -552,7 +573,7 @@ namespace SmartDots.View
                     var ae = new AnalysisEventArgs();
                     var rowIndex = selection.GetSelectedRows()[0];
                     ae.Analysis = Analyses.GetRow(rowIndex);
-                    var webapiresult = WebAPI.UpdateAnalysisFolder((Guid)ae.Analysis.ID, folderpath);
+                    var webapiresult = Global.API.UpdateAnalysisFolder((Guid)ae.Analysis.ID, folderpath);
                     if (!webapiresult.Succeeded)
                     {
                         Helper.ShowWinUIMessageBox(webapiresult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);

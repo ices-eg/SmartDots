@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using DevExpress.Data.Helpers;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
@@ -140,6 +141,8 @@ namespace SmartDots.ViewModel
                 RaisePropertyChanged("DotWidth");
             }
         }
+
+        public List<Tuple<string,string>> DotTypes { get; set; } = new List<Tuple<string, string>>(){ new Tuple<string, string>("Seawater", "Seawater") , new Tuple<string, string>("Freshwater", "Freshwater/Absorbed") , new Tuple<string, string>("Non-counting mark", "Non-counting mark") };
 
         public string DotType
         {
@@ -474,7 +477,7 @@ namespace SmartDots.ViewModel
             {
                 originalImage = value;
                 originalImage.Freeze();
-                if (WebAPI.Settings.AutoMeasureScale && (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale == null || AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale == 0.0m))
+                if (Global.API.Settings.AutoMeasureScale && (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale == null || AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale == 0.0m))
                 {
                     AutoMeasureScale();
                 }
@@ -535,7 +538,7 @@ namespace SmartDots.ViewModel
                        && !AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly
                        &&
                        (AgeReadingViewModel?.AgeReadingSampleViewModel.Sample != null ||
-                        WebAPI.Settings.AnnotateWithoutSample);
+                        Global.API.Settings.AnnotateWithoutSample);
             }
         }
 
@@ -552,7 +555,7 @@ namespace SmartDots.ViewModel
                        && !AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly
                        &&
                        (AgeReadingViewModel?.AgeReadingSampleViewModel.Sample != null ||
-                        WebAPI.Settings.AnnotateWithoutSample);
+                        Global.API.Settings.AnnotateWithoutSample);
             }
         }
 
@@ -571,7 +574,7 @@ namespace SmartDots.ViewModel
                        && !AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly
                        &&
                        (AgeReadingViewModel?.AgeReadingSampleViewModel.Sample != null ||
-                        WebAPI.Settings.AnnotateWithoutSample));
+                        Global.API.Settings.AnnotateWithoutSample));
             }
         }
 
@@ -581,19 +584,24 @@ namespace SmartDots.ViewModel
             set
             {
                 isScaleDrawn = value;
-                if (isScaleDrawn)
-                {
-                    AgeReadingViewModel.AgeReadingEditorView.ScaleDrawn.Visibility = Visibility.Visible;
-                    AgeReadingViewModel.AgeReadingEditorView.ScaleNotDrawn.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    AgeReadingViewModel.AgeReadingEditorView.ScaleDrawn.Visibility = Visibility.Collapsed;
-                    AgeReadingViewModel.AgeReadingEditorView.ScaleNotDrawn.Visibility = Visibility.Visible;
-                }
+                //if (isScaleDrawn)
+                //{
+                //    AgeReadingViewModel.AgeReadingEditorView.ScaleDrawn.Visibility = Visibility.Visible;
+                //    AgeReadingViewModel.AgeReadingEditorView.ScaleNotDrawn.Visibility = Visibility.Collapsed;
+                //}
+                //else
+                //{
+                //    AgeReadingViewModel.AgeReadingEditorView.ScaleDrawn.Visibility = Visibility.Collapsed;
+                //    AgeReadingViewModel.AgeReadingEditorView.ScaleNotDrawn.Visibility = Visibility.Visible;
+                //}
                 RaisePropertyChanged("IsScaleDrawn");
             }
         }
+
+        public ObservableCollection<string> Units { get; set; } = new ObservableCollection<string>
+            { "µm", "mm", "cm" };
+
+        public string MeasureUnit { get; set; } = "mm";
 
         public bool IsMeasureDrawn
         {
@@ -784,7 +792,7 @@ namespace SmartDots.ViewModel
                     DtoFile dtofile =
                         (DtoFile)
                         Helper.ConvertType(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile, typeof(DtoFile));
-                    var updateFileResult = WebAPI.UpdateFile(dtofile);
+                    var updateFileResult = Global.API.UpdateFile(dtofile);
                     if (!updateFileResult.Succeeded)
                     {
                         Helper.ShowWinUIMessageBox("Error saving File to Web API\n" + updateFileResult.ErrorMessage, "Error", MessageBoxButton.OK,
@@ -1309,9 +1317,17 @@ namespace SmartDots.ViewModel
         {
             try
             {
+                
                 if (OriginalImage != null)
                 {
-                    OtolithImage = SetBrightness(SetContrast(OriginalImage));
+                    if (Brightness == 0 && Contrast == 0)
+                    {
+                        OtolithImage = OriginalImage;
+                    }
+                    else
+                    {
+                        OtolithImage = SetBrightness(SetContrast(OriginalImage));
+                    }
                     AgeReadingViewModel.UpdateGraphs();
                 }
             }
@@ -2071,7 +2087,7 @@ namespace SmartDots.ViewModel
             ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).Scale = null;
             AgeReadingViewModel.AgeReadingFileView.FileGrid.RefreshData();
             var dtofile = (DtoFile)Helper.ConvertType(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile, typeof(DtoFile));
-            var deleteResult = WebAPI.UpdateFile(dtofile);
+            var deleteResult = Global.API.UpdateFile(dtofile);
             if (!deleteResult.Succeeded)
                 Helper.ShowWinUIMessageBox(deleteResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
@@ -2089,8 +2105,18 @@ namespace SmartDots.ViewModel
         {
             double pixels;
             double.TryParse(AgeReadingViewModel.AgeReadingEditorView.ScalePixels.Text.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out pixels);
-            double milimeters;
-            double.TryParse(AgeReadingViewModel.AgeReadingEditorView.ScaleMilimeters.Text.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out milimeters);
+            double unitLength;
+            double.TryParse(AgeReadingViewModel.AgeReadingEditorView.ScaleMilimeters.Text.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out unitLength);
+
+            double milimeters = unitLength;
+            if (MeasureUnit == "cm")
+            {
+                milimeters *= 10;
+            }
+            else if (MeasureUnit == "µm")
+            {
+                milimeters /= 1000;
+            }
 
             PixelLength = (decimal)(pixels / milimeters);
             var oldvalue = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale;
@@ -2102,7 +2128,7 @@ namespace SmartDots.ViewModel
                 AgeReadingViewModel.AgeReadingFileView.FileGrid.RefreshData();
                 AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = true;
                 DtoFile dtofile = (DtoFile)Helper.ConvertType(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile, typeof(DtoFile));
-                var updateFileResult = WebAPI.UpdateFile(dtofile);
+                var updateFileResult = Global.API.UpdateFile(dtofile);
                 if (!updateFileResult.Succeeded)
                 {
                     Helper.ShowWinUIMessageBox("Error saving File to Web API\n" + updateFileResult.ErrorMessage, "Error", MessageBoxButton.OK,
@@ -2151,6 +2177,11 @@ namespace SmartDots.ViewModel
             //    );
             ClosestDot = null;
             RefreshShapes();
+        }
+
+        public void Graphs_Click(object sender, RoutedEventArgs e)
+        {
+            AgeReadingViewModel.ToggleGraphs();
         }
     }
 }

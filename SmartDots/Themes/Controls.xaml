@@ -16,7 +16,8 @@
                     xmlns:userControls="clr-namespace:SmartDots.View.UserControls"
                     xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
                     xmlns:ve="http://schemas.devexpress.com/winfx/2008/xaml/docking/visualelements"
-                    xmlns:helpers="clr-namespace:SmartDots.Helpers">
+                    xmlns:helpers="clr-namespace:SmartDots.Helpers"
+                    xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys">
 
     <helpers:NullImageConverter x:Key="nullImageConverter"/>
 
@@ -29,6 +30,7 @@
     <Color x:Key="ColorSmartFishYellow" A="255" R="234" G="225" B="143"/>
 
     <Color x:Key="ColorSmartFishDarkBlue" A="255" R="41" G="60" B="69"/>
+    <Color x:Key="ColorSmartFishLessDarkBlue" A="255" R="51" G="77" B="90"/>
     <Color x:Key="ColorSmartFishFairBlue" A="255" R="96" G="133" B="150"/>
     <Color x:Key="ColorSmartFishFairBlue2" A="255" R="200" G="225" B="230"/>
     <Color x:Key="ColorSmartFishLightBlue" A="255" R="71" G="195" B="221"/>
@@ -46,6 +48,7 @@
     <SolidColorBrush x:Key="BrushSmartFishYellow" Color="{StaticResource ColorSmartFishYellow}"/>
 
     <SolidColorBrush x:Key="BrushSmartFishDarkBlue" Color="{StaticResource ColorSmartFishDarkBlue}"/>
+    <SolidColorBrush x:Key="BrushSmartFishLessDarkBlue" Color="{StaticResource ColorSmartFishLessDarkBlue}"/>
     <SolidColorBrush x:Key="BrushSmartFishFairBlue" Color="{StaticResource ColorSmartFishFairBlue}"/>
     <SolidColorBrush x:Key="BrushSmartFishFairBlue2" Color="{StaticResource ColorSmartFishFairBlue2}"/>
     <SolidColorBrush x:Key="BrushSmartFishLightBlue" Color="{StaticResource ColorSmartFishLightBlue}"/>
@@ -67,6 +70,9 @@
     <BitmapImage x:Key="Close" UriSource="/SmartDots;Component/Resources/Cancel.png" />
     <BitmapImage x:Key="ContextButton" UriSource="/SmartDots;Component/Resources/ContextButtton.png" />
 
+    <Style TargetType="dxg:GridCardHeaderControl">
+        <Setter Property="Visibility" Value="Collapsed"/>
+    </Style>
 
     <Style TargetType="{x:Type Button}">
         <Setter Property="Height" Value="40" />
@@ -92,18 +98,28 @@
         <Setter Property="FontSize" Value="12"/>
     </Style>
 
-    <Style TargetType="{x:Type dxg:TableView}">
+    <Style TargetType="dxg:GridColumnHeader">
+        <Setter Property="ShowFilterButtonOnHover" Value="False"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <!--<Setter Property="Height" Value="30"/>-->
+    </Style>
+
+<DataTemplate x:Key="ColumnHeaderTemplate">
+        <TextBlock Text="{Binding }" FontWeight="Bold" TextWrapping="Wrap"/>
+    </DataTemplate>
+
+<Style TargetType="{x:Type dxg:TableView}">
         <Setter Property="AutoWidth" Value="True"></Setter>
         <Setter Property="AllowBestFit" Value="True"></Setter>
         <Setter Property="BestFitArea" Value="All"></Setter>
         <Setter Property="BestFitMode" Value="AllRows"></Setter>
-        <!--<Setter Property="AllowEditing" Value="False"></Setter>-->
+        <Setter Property="AllowEditing" Value="False"></Setter>
         <Setter Property="RowMinHeight" Value="34"></Setter>
         <Setter Property="ShowGroupPanel" Value="False"></Setter>
         <Setter Property="ShowIndicator" Value="False"></Setter>
         <Setter Property="AllowColumnFiltering" Value="False"></Setter>
         <Setter Property="VerticalScrollbarVisibility" Value="Auto"></Setter>
-        <!--<Setter Property="NavigationStyle" Value="Row"></Setter>-->
+        <Setter Property="NavigationStyle" Value="Row"></Setter>
         <Setter Property="TotalSummaryContentStyle">
             <Setter.Value>
                 <Style TargetType="{x:Type ContentPresenter}">
@@ -161,6 +177,31 @@
         </Style.Triggers>
     </Style>
 
+    <!--<Style TargetType="dxwui:WinUIDialogWindow">
+        <Setter Property="dx:ThemeManager.Theme" Value="HybridApp" />
+    </Style>-->
+
+        <Style TargetType="dxdo:LayoutPanel">
+        <Setter Property="Appearance">
+            <Setter.Value>
+                <dxdo:Appearance>
+                    <dxdo:Appearance.Normal>
+                        <dxdo:AppearanceObject Background="{StaticResource BrushSmartFishFairBlue2}" Foreground="{StaticResource BrushSmartFishDarkBlue}" FontWeight="DemiBold"/>
+                    </dxdo:Appearance.Normal>
+                    <dxdo:Appearance.Active>
+                        <dxdo:AppearanceObject Background="{StaticResource BrushSmartFishFairBlue2}" Foreground="{StaticResource BrushSmartFishOrange}" FontWeight="DemiBold"/>
+                    </dxdo:Appearance.Active>
+                </dxdo:Appearance>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style TargetType="dxdove:TabCaptionControl">
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
     <dx:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
     <dx:BoolToVisibilityInverseConverter x:Key="boolToVisibilityInverseConverter"/>
 
@@ -196,6 +237,17 @@
     <SolidColorBrush x:Key="contentBrushPressedChecked" Color="{StaticResource contentColorPressedChecked}" />
     <SolidColorBrush x:Key="borderBrushPressedChecked" Color="#FFE3EFFF" />
     <SolidColorBrush x:Key="backBrushPressedChecked" Color="#00E3EFFF" />
+
+    <ControlTemplate x:Key="{dxgt:GridColumnHeaderThemeKey ResourceKey=ColumnFilterTemplate}" TargetType="{x:Type ToggleButton}">
+        <Grid Background="Transparent">
+            <Path x:Name="Filter"
+                  
+                  Margin="3,0,0,0"
+                  Style="{StaticResource UIShape.Filter}"
+                  />
+        </Grid>
+        
+    </ControlTemplate>
 
     <ControlTemplate TargetType="dxwui:AppBarButton" x:Key="{themeKeys:AppBarElementsThemeKey ResourceKey=AppBarButtonTemplate, IsThemeIndependent=True}">
         <Grid x:Name="RootGrid" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Background="Transparent">
@@ -391,12 +443,30 @@
         </Grid>
     </ControlTemplate>
 
-    <DataTemplate x:Key="StatusColumn">
+    <!--<ControlTemplate x:Key="{dxgt:GridColumnHeaderThemeKey ResourceKey=ColumnFilterTemplate, IsThemeIndependent=True}" >
+        <DockPanel VerticalAlignment="Center" HorizontalAlignment="Right">
+            <TextBlock Text="å" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"  FontFamily="Webdings" FontWeight="SemiBold"/>
+        </DockPanel>
+    </ControlTemplate>-->
+
+<DataTemplate x:Key="StatusColumn">
         <Rectangle Margin="5" StrokeThickness="1" ToolTip="{Binding Data.Status.Tooltip}" Stroke="{Binding Data.Status.BorderColor}">
             <Rectangle.Fill>
                 <SolidColorBrush Color="{Binding Data.Status.Color}"/>
             </Rectangle.Fill>
         </Rectangle>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CreatorColumn">
+        <StackPanel Orientation="Horizontal">
+            <Rectangle Margin="5,2, 5 ,2" StrokeThickness="1" Stroke="#333" Width="25" Height="17" HorizontalAlignment="Left">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{Binding Data.MultiUserColor}"/>
+                </Rectangle.Fill>
+            </Rectangle>
+            <TextBlock Text="{Binding Data.LabTechnician}" VerticalAlignment="Center" ></TextBlock>
+        </StackPanel>
+        
     </DataTemplate>
 
     <Style x:Key="AppBarItemBaseStyle" TargetType="Control">
@@ -451,24 +521,9 @@
         </Setter>
     </Style>
 
-    <Style TargetType="dxdo:LayoutPanel">
-        <Setter Property="Appearance">
-            <Setter.Value>
-                <dxdo:Appearance>
-                    <dxdo:Appearance.Normal>
-                        <dxdo:AppearanceObject Background="{StaticResource BrushSmartFishFairBlue2}" Foreground="{StaticResource BrushSmartFishDarkBlue}"/>
-                    </dxdo:Appearance.Normal>
-                    <dxdo:Appearance.Active>
-                        <dxdo:AppearanceObject Background="{StaticResource BrushSmartFishFairBlue2}" Foreground="{StaticResource BrushSmartFishOrange}"/>
-                    </dxdo:Appearance.Active>
-                </dxdo:Appearance>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style TargetType="ToggleButton">
-        <Setter Property="Width" Value="28"/>
-        <Setter Property="Height" Value="28"/>
+        <!--<Setter Property="Width" Value="28"/>
+        <Setter Property="Height" Value="28"/>-->
         <Setter Property="Margin" Value="2"/>
         <Setter Property="Padding" Value="2"/>
         <Setter Property="dx:ThemeManager.ThemeName" Value="None"/>
@@ -514,7 +569,7 @@
                     </Setter.Value>
                 </Setter>
             </Trigger>
-            <Trigger Property='IsPressed' Value='True'>
+            <!--<Trigger Property='IsPressed' Value='True'>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ToggleButton">
@@ -526,7 +581,7 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-            </Trigger>
+            </Trigger>-->
             <Trigger Property='IsEnabled' Value='False'>
                 <Setter Property="Template">
                     <Setter.Value>
@@ -598,6 +653,63 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="SDWhiteButtonBase" TargetType="ButtonBase">
+        <Setter Property="Width" Value="28"/>
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Margin" Value="2"/>
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="dx:ThemeManager.ThemeName" Value="None"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border BorderThickness="1" BorderBrush="White" 
+                            CornerRadius="3" Background="White">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border BorderThickness="1" BorderBrush="{StaticResource BrushSmartFishDarkBlue}" 
+                                    CornerRadius="3" Background="{StaticResource BrushSmartFishOrange}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <!--<Trigger Property="IsPressed" Value="True">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border BorderThickness="1" BorderBrush="{StaticResource BrushSmartFishDarkBlue}" 
+                                    CornerRadius="3" Background="{StaticResource BrushSmartFishLightOrange}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>-->
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border BorderThickness="1" BorderBrush="{StaticResource BrushSmartFishFairGray}" 
+                                    CornerRadius="3" Background="{StaticResource BrushSmartFishFairGray}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+
     <Style TargetType="{x:Type dxb:PopupMenu}">
         <Setter Property="dxb:BarManager.ShowGlyphsInPopupMenus" Value="False"/>
         <Setter Property="MinWidth" Value="150"/>
@@ -629,6 +741,18 @@
         <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
         <Setter Property="RenderOptions.EdgeMode" Value="Unspecified"/>
     </Style>
+
+
+    <!--<Style TargetType="{x:Type dxdove:TabCaptionControl}">
+        <Setter Property="ItemStyle">
+            <Setter.Value>
+                <Style TargetType="Control">
+                    <Setter Property="FontSize" Value="18"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
 
     <!--<Style TargetType="dxg:GridColumn" x:Key="AnalysisColumn">
         <Setter Property="CellTemplate">

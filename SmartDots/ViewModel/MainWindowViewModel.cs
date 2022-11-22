@@ -4,6 +4,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
+using DevExpress.Xpf.Core;
+using DevExpress.Xpf.WindowsUI;
 using SmartDots.Helpers;
 using SmartDots.Model.Events;
 using SmartDots.Model.Security;
@@ -15,6 +18,8 @@ namespace SmartDots.ViewModel
     {
         private bool _headerLogoIsVisible;
         private string _headerInfo;
+        private string _headerModule;
+        private bool _headerBackBtnIsVisible;
         public bool _isListening;
 
         public string HeaderInfo
@@ -24,6 +29,16 @@ namespace SmartDots.ViewModel
             {
                 _headerInfo = value;
                 OnPropertyChanged("HeaderInfo");
+            }
+        }
+
+        public string HeaderModule
+        {
+            get { return _headerModule; }
+            set
+            {
+                _headerModule = value;
+                OnPropertyChanged("HeaderModule");
             }
         }
 
@@ -43,11 +58,22 @@ namespace SmartDots.ViewModel
         }
 
         public ObservableCollection<object> ContentControls { get; } = new ObservableCollection<object>();
-        public AgeReadingView SmartDotsControl { get; private set; }
+        public AgeReadingView AgeReadingControl { get; private set; }
+        public MaturityView MaturityControl { get; private set; }
+        public LarvaeView LarvaeControl { get; private set; }
         public ServerSelectionView ServerSelectionView { get; private set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public bool HeaderBackBtnIsVisible
+        {
+            get { return _headerBackBtnIsVisible; }
+            set
+            {
+                _headerBackBtnIsVisible = value;
+                OnPropertyChanged(nameof(HeaderBackBtnIsVisible));
+            }
+        }
 
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public MainWindowViewModel()
         {
@@ -57,13 +83,18 @@ namespace SmartDots.ViewModel
 
         public void Initialize()
         {
-            SmartDotsControl = new AgeReadingView(this);
+            Global.API = new WebAPI();
+            AgeReadingControl = new AgeReadingView(this);
+            MaturityControl = new MaturityView(this);
+            LarvaeControl = new LarvaeView(this);
             LoadServerScreen();
             if (!Connect(null))
             {
                 SetActiveControl(ServerSelectionView);
             }
-            SmartDotsControl.AgeReadingViewModel.WaitState = false;
+            AgeReadingControl.AgeReadingViewModel.WaitState = false;
+            MaturityControl.MaturityViewModel.WaitState = false;
+            LarvaeControl.LarvaeViewModel.WaitState = false;
         }
 
         public void SetActiveControl(object ctrl)
@@ -72,12 +103,49 @@ namespace SmartDots.ViewModel
             //ctrl.HorizontalAlignment = HorizontalAlignment.Stretch;
             //ctrl.VerticalAlignment = VerticalAlignment.Stretch;
             ContentControls.Add(ctrl);
+
+            if (ctrl.GetType() == typeof(ServerSelectionView))
+            {
+                var isLoggedIn = ((ServerSelectionView) ctrl).IsLoggedIn;
+                if (isLoggedIn)
+                {
+                    HeaderBackBtnIsVisible = true;
+                }
+                else
+                {
+                    HeaderBackBtnIsVisible = false;
+                }
+                
+            }
+            else
+            {
+                HeaderBackBtnIsVisible = true;
+            }
+        }
+
+        public void GoBack(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (ContentControls.Contains(AgeReadingControl))
+            {
+                AgeReadingControl.AgeReadingViewModel.GoBack();
+            }
+            else if (ContentControls.Contains(MaturityControl))
+            {
+                MaturityControl.MaturityViewModel.GoBack();
+            }
+            else if (ContentControls.Contains(LarvaeControl))
+            {
+                LarvaeControl.LarvaeViewModel.GoBack();
+            }
+            else
+            {
+                ServerSelectionView.Disconnect();
+            }
         }
 
         public void LoadServerScreen()
         {
             ServerSelectionView = new ServerSelectionView(this);
-            ServerSelectionView.Disconnected += Disconnected;
             ServerSelectionView.Connected += Connected;
             ServerSelectionView.AnalysisSelected += AnalysisSelected;
 
@@ -85,27 +153,43 @@ namespace SmartDots.ViewModel
 
         private void AnalysisSelected(object sender, AnalysisEventArgs e)
         {
-            if (SmartDotsControl.AgeReadingViewModel.LoadAnalysis(Guid.Parse(e.Analysis.ID.ToString()))) SetActiveControl(SmartDotsControl);
+            if (e.Analysis.Purpose != null && e.Analysis.Purpose.ToString().ToLower().Substring(0, 3).Equals("mat"))
+            {
+                if (MaturityControl.MaturityViewModel.LoadMaturityAnalysis(Guid.Parse(e.Analysis.ID.ToString())))
+                {
+                    SetActiveControl(MaturityControl);
+                }
+
+            }
+            else if (e.Analysis.Purpose != null && e.Analysis.Purpose.ToString().ToLower().Substring(0, 3).Equals("lar"))
+            {
+                if (LarvaeControl.LarvaeViewModel.LoadLarvaeAnalysis(Guid.Parse(e.Analysis.ID.ToString())))
+                {
+                    SetActiveControl(LarvaeControl);
+                }
+
+            }
+            else if (AgeReadingControl.AgeReadingViewModel.LoadAnalysis(Guid.Parse(e.Analysis.ID.ToString()))) SetActiveControl(AgeReadingControl);
 
         }
 
         public void ApplySettings()
         {
-            if (WebAPI.Settings.EventAlias == null) WebAPI.Settings.EventAlias = "Event";
-            if (WebAPI.Settings.SampleAlias == null) WebAPI.Settings.SampleAlias = "Sample";
-            SmartDotsControl.AgeReadingViewModel.SampleAlias = WebAPI.Settings.SampleAlias;
-            SmartDotsControl.AgeReadingViewModel.AgeReadingFileViewModel.SampleNumberAlias = WebAPI.Settings.SampleAlias + " number";
-            SmartDotsControl.AgeReadingViewModel.AgeReadingFileViewModel.CanAttachDetachSampleVisibility = WebAPI.Settings.CanAttachDetachSample ? Visibility.Visible : Visibility.Collapsed;
+            if (Global.API.Settings.EventAlias == null) Global.API.Settings.EventAlias = "Event";
+            if (Global.API.Settings.SampleAlias == null) Global.API.Settings.SampleAlias = "Sample";
+            AgeReadingControl.AgeReadingViewModel.SampleAlias = Global.API.Settings.SampleAlias;
+            AgeReadingControl.AgeReadingViewModel.AgeReadingFileViewModel.SampleNumberAlias = Global.API.Settings.SampleAlias + " number";
+            AgeReadingControl.AgeReadingViewModel.AgeReadingFileViewModel.CanAttachDetachSampleVisibility = Global.API.Settings.CanAttachDetachSample ? Visibility.Visible : Visibility.Collapsed;
             //SmartDotsControl.AgeReadingViewModel.AgeReadingFileViewModel.CanBrowseFolderVisibility = WebAPI.Settings.CanBrowseFolder ? Visibility.Visible : Visibility.Collapsed;
-            ServerSelectionView.ButtonFolder.Visibility = WebAPI.Settings.CanBrowseFolder ? Visibility.Visible : Visibility.Collapsed;
-            ServerSelectionView.ButtonFinished.Visibility = WebAPI.Settings.CanMarkEventAsCompleted ? Visibility.Visible : Visibility.Collapsed;
-            SmartDotsControl.AgeReadingViewModel.AgeReadingFileViewModel.UseSampleStatus = WebAPI.Settings.UseSampleStatus;
-            SmartDotsControl.AgeReadingViewModel.AgeReadingAnnotationViewModel.CanApproveAnnotation = WebAPI.Settings.CanApproveAnnotation;
-            SmartDotsControl.AgeReadingViewModel.EditAnnotationDialogViewModel.CanApproveAnnotation = WebAPI.Settings.CanApproveAnnotation ? Visibility.Visible : Visibility.Collapsed;
-            var newWindow = !WebAPI.Settings.OpenSocket;
+            ServerSelectionView.ButtonFolder.Visibility = Global.API.Settings.CanBrowseFolder ? Visibility.Visible : Visibility.Collapsed;
+            ServerSelectionView.ButtonFinished.Visibility = Global.API.Settings.CanMarkEventAsCompleted ? Visibility.Visible : Visibility.Collapsed;
+            AgeReadingControl.AgeReadingViewModel.AgeReadingFileViewModel.UseSampleStatus = Global.API.Settings.UseSampleStatus;
+            AgeReadingControl.AgeReadingViewModel.AgeReadingAnnotationViewModel.CanApproveAnnotation = Global.API.Settings.CanApproveAnnotation;
+            AgeReadingControl.AgeReadingViewModel.EditAnnotationDialogViewModel.CanApproveAnnotation = Global.API.Settings.CanApproveAnnotation ? Visibility.Visible : Visibility.Collapsed;
+            var newWindow = !Global.API.Settings.OpenSocket;
             if (!_isListening && !newWindow)
             {
-                AsynchronousSocketListener.AgeReadingViewModel = SmartDotsControl.AgeReadingViewModel;
+                AsynchronousSocketListener.AgeReadingViewModel = AgeReadingControl.AgeReadingViewModel;
                 Helper.DoAsync(AsynchronousSocketListener.StartListening);
                 _isListening = true;
             }
@@ -117,30 +201,27 @@ namespace SmartDots.ViewModel
                 HeaderLogoIsVisible = true;
         }
 
-        private void Disconnected(object sender, EventArgs eventArgs)
-        {
-            HeaderLogoIsVisible = false;
-        }
+        //public void StartDotting()
+        //{
+        //    try
+        //    {
+        //        //var user = SmartDots.Helpers.WebAPI.CurrentUser;
+        //        //TODO: check permission(?)
 
-        public void StartDotting()
-        {
-            try
-            {
-                //var user = SmartDots.Helpers.WebAPI.CurrentUser;
-                //TODO: check permission(?)
-
-                var smartDotsControl = new AgeReadingView(this);
-                this.ContentControls.Add(smartDotsControl);
-            }
-            catch (Exception ex)
-            {
-                HandleError(ex);
-            }
-        }
+        //        var smartDotsControl = new AgeReadingView(this);
+        //        this.ContentControls.Add(smartDotsControl);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        HandleError(ex);
+        //    }
+        //}
 
         public void HandleClosing()
         {
-            SmartDotsControl?.AgeReadingViewModel.Save();
+            AgeReadingControl?.AgeReadingViewModel.Save();
+            MaturityControl?.MaturityViewModel.Save();
+            LarvaeControl?.LarvaeViewModel.Save();
 
             Application.Current.Shutdown();
             Environment.Exit(0);
@@ -172,6 +253,7 @@ namespace SmartDots.ViewModel
             MessageBox.Show(message, title, buttons, icon);
         }
 
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -185,7 +267,7 @@ namespace SmartDots.ViewModel
                 //args = "analysis;http://localhost:63216/api/smartdots/,7C74D726-3F5F-4283-82E9-760E56D818BF,0F4E57BD-6832-40EC-9B14-E2CC0507EFD1";
                 if (args == null && App.Args == null)
                 {
-                    SmartDotsControl.AgeReadingViewModel.FirstLoad = false;
+                    AgeReadingControl.AgeReadingViewModel.FirstLoad = false;
                     return false;
                 }
 
@@ -193,7 +275,7 @@ namespace SmartDots.ViewModel
                 //Helper.ShowWinUIMessageBox(args, "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 //TODO: clean up & refactor entire method
 
-                SmartDotsControl.AgeReadingViewModel.WaitState = true;
+                AgeReadingControl.AgeReadingViewModel.WaitState = true;
                 var arguments = new string[2];
                 var serverarg = "";
                 var userid = "";
@@ -215,7 +297,7 @@ namespace SmartDots.ViewModel
 
                 serverarg = serverarg?.Replace("\\", @"/");
                 var auth = new DtoUserAuthentication();
-                var connectionAttempt = WebAPI.EstablishConnection(serverarg);
+                var connectionAttempt = Global.API.EstablishConnection(serverarg);
                 if (!connectionAttempt.Succeeded)
                 {
                     Helper.ShowWinUIMessageBox(connectionAttempt.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -226,7 +308,7 @@ namespace SmartDots.ViewModel
                 auth.DtoAuthenticationMethod = DtoAuthenticationMethod.Windows;
                 auth.Username = userid;
 
-                var authentication = WebAPI.Authenticate(auth);
+                var authentication = Global.API.Authenticate(auth);
                 if (!authentication.Succeeded)
                 {
                     Helper.ShowWinUIMessageBox(authentication.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -238,13 +320,13 @@ namespace SmartDots.ViewModel
                     Helper.ShowWinUIMessageBox("Unable to load settings", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }
-                if (!ServerSelectionView.LoadQualities())
-                {
-                    Helper.ShowWinUIMessageBox("Unable to load qualities", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
-                }
+                //if (!ServerSelectionView.LoadQualities())
+                //{
+                //    Helper.ShowWinUIMessageBox("Unable to load qualities", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //    return false;
+                //}
 
-                if (!SmartDotsControl.AgeReadingViewModel.LoadAnalysis(Guid.Parse(analysisid)))
+                if (!AgeReadingControl.AgeReadingViewModel.LoadAnalysis(Guid.Parse(analysisid)))
                 {
                     Helper.ShowWinUIMessageBox("Unable to load Analysis", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
@@ -252,7 +334,7 @@ namespace SmartDots.ViewModel
 
                 ServerSelectionView.FieldApi.Text = serverarg;
                 ServerSelectionView.SaveChoices();
-                SetActiveControl(SmartDotsControl);
+                SetActiveControl(AgeReadingControl);
                 return true;
             }
             catch (Exception e)
@@ -261,5 +343,44 @@ namespace SmartDots.ViewModel
                 return false;
             }
         }
+
+        public void ResetLayout()
+        {
+            if (ContentControls.Contains(AgeReadingControl))
+            {
+                AgeReadingControl.AgeReadingViewModel.LoadLayout("DefaultLayout.xml");
+            }
+            else if (ContentControls.Contains(MaturityControl))
+            {
+                MaturityControl.MaturityViewModel.LoadLayout("DefaultMaturityLayout.xml");
+            }
+            else if (ContentControls.Contains(LarvaeControl))
+            {
+                LarvaeControl.LarvaeViewModel.LoadLayout("DefaultLarvaeLayout.xml");
+            }
+        }
+
+        public void OpenManualsLink()
+        {
+            //System.Diagnostics.Process.Start("http://ices.dk/publications/library/Pages/default.aspx#k=smartdots%20handbook");
+            System.Diagnostics.Process.Start("https://ices-library.figshare.com/search?q=%3Atitle%3A%20smartdots&sortBy=publication_date&sortType=desc&groups=37194");
+        }
+
+        public void OpenIcesSharePoint()
+        {
+            System.Diagnostics.Process.Start("https://www.ices.dk/data/tools/Pages/smartdots.aspx");
+        }
+
+        public void OpenIcesTrainingVideos()
+        {
+            System.Diagnostics.Process.Start("https://www.youtube.com/channel/UCa4bjXo-eBDfW0cm1oElWeQ");
+        }
+
+        public void OpenGitHub()
+        {
+            System.Diagnostics.Process.Start("https://github.com/ices-eg/SmartDots#readme");
+        }
+
+        
     }
 }

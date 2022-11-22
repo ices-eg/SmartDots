@@ -239,6 +239,8 @@
     <Compile Include="Helpers\Cross.cs" />
     <Compile Include="Helpers\DisableSelectorColumnBehavior.cs" />
     <Compile Include="Helpers\FolderHelper.cs" />
+    <Compile Include="Helpers\Global.cs" />
+    <Compile Include="Helpers\ISmartDotsAPI.cs" />
     <Compile Include="Helpers\LinkFinder.cs" />
     <Compile Include="Helpers\ScaleMeasureTool.cs" />
     <Compile Include="Helpers\ThreadTuple.cs" />
@@ -254,24 +256,46 @@
     <Compile Include="Model\Extension\ConnectionInfo.cs" />
     <Compile Include="Model\Extension\Folder.cs" />
     <Compile Include="Model\Extension\AnalysisParameter.cs" />
+    <Compile Include="Model\Extension\LarvaeAnalysis.cs" />
+    <Compile Include="Model\Extension\LarvaeAnnotation.cs" />
+    <Compile Include="Model\Extension\LarvaeFile.cs" />
+    <Compile Include="Model\Extension\LarvaeQuality.cs" />
+    <Compile Include="Model\Extension\LarvaeSample.cs" />
+    <Compile Include="Model\Extension\Maturity.cs" />
+    <Compile Include="Model\Extension\MaturityAnalysis.cs" />
+    <Compile Include="Model\Extension\MaturityAnnotation.cs" />
+    <Compile Include="Model\Extension\MaturityFile.cs" />
+    <Compile Include="Model\Extension\MaturityQuality.cs" />
+    <Compile Include="Model\Extension\MaturitySample.cs" />
+    <Compile Include="Model\Extension\MaturitySex.cs" />
     <Compile Include="Model\Extension\Quality.cs" />
     <Compile Include="Model\Extension\Sample.cs" />
     <Compile Include="Model\Security\DtoUserAuthentication.cs" />
     <Compile Include="Model\Security\User.cs" />
     <Compile Include="Model\Extension\DtoSmartdotsSettings.cs" />
     <Compile Include="Model\Security\LoginToken.cs" />
-    <Compile Include="Model\Smartdots\Analysis.cs" />
-    <Compile Include="Model\Smartdots\AnalysisSample.cs" />
-    <Compile Include="Model\Smartdots\AnnotationProperty.cs" />
-    <Compile Include="Model\Smartdots\Dot.cs" />
-    <Compile Include="Model\Smartdots\File.cs" />
-    <Compile Include="Model\Smartdots\Folder.cs" />
-    <Compile Include="Model\Smartdots\Line.cs" />
-    <Compile Include="Model\Smartdots\Annotation.cs" />
-    <Compile Include="Model\Smartdots\Parameter.cs" />
-    <Compile Include="Model\Smartdots\Quality.cs" />
-    <Compile Include="Model\Smartdots\Sample.cs" />
-    <Compile Include="Model\Smartdots\User.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoAnalysis.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoAnalysisSample.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoAnnotation.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoAnnotationProperty.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoDot.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoFile.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoFolder.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoLine.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoParameter.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoQuality.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoSample.cs" />
+    <Compile Include="Model\Smartdots\AgeReading\DtoUser.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoMaturityAnalysis.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoMaturityAnnotation.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoMaturityFile.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoMaturityLookupItem.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoMaturitySample.cs" />
+    <Compile Include="Model\Smartdots\Maturity\DtoMaturityAnalysis.cs" />
+    <Compile Include="Model\Smartdots\Maturity\DtoMaturityAnnotation.cs" />
+    <Compile Include="Model\Smartdots\Maturity\DtoMaturityFile.cs" />
+    <Compile Include="Model\Smartdots\Maturity\DtoMaturityLookupItem.cs" />
+    <Compile Include="Model\Smartdots\Maturity\DtoMaturitySample.cs" />
     <Compile Include="Model\Smartdots\VisibilityState.cs" />
     <Compile Include="Service References\ServiceReferenceBroadCast\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -279,11 +303,28 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="ViewModel\AgeReading\AgeReadingBaseViewModel.cs" />
     <Compile Include="ViewModel\AgeReading\AgeReadingSampleViewModel.cs" />
     <Compile Include="ViewModel\AgeReading\SelectAnalysisDialogViewModel.cs" />
     <Compile Include="ViewModel\AgeReading\EditAnnotationDialogViewModel.cs" />
     <Compile Include="ViewModel\AgeReading\AttachSampleDialogViewModel.cs" />
+    <Compile Include="ViewModel\Larvae\LarvaeAllAnnotationViewModel.cs" />
+    <Compile Include="ViewModel\Larvae\LarvaeBaseViewModel.cs" />
+    <Compile Include="ViewModel\Larvae\LarvaeEditorViewModel.cs" />
+    <Compile Include="ViewModel\Larvae\LarvaeFileViewModel.cs" />
+    <Compile Include="ViewModel\Larvae\LarvaeOwnAnnotationViewModel.cs" />
+    <Compile Include="ViewModel\Larvae\LarvaeSampleViewModel.cs" />
+    <Compile Include="ViewModel\Larvae\LarvaeStatusbarViewModel.cs" />
+    <Compile Include="ViewModel\Larvae\LarvaeViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="ViewModel\Maturity\MaturityAllAnnotationViewModel.cs" />
+    <Compile Include="ViewModel\Maturity\MaturityBaseViewModel.cs" />
+    <Compile Include="ViewModel\Maturity\MaturityEditorViewModel.cs" />
+    <Compile Include="ViewModel\Maturity\MaturityFileViewModel.cs" />
+    <Compile Include="ViewModel\Maturity\MaturityOwnAnnotationViewModel.cs" />
+    <Compile Include="ViewModel\Maturity\MaturitySampleViewModel.cs" />
+    <Compile Include="ViewModel\Maturity\MaturityStatusbarViewModel.cs" />
+    <Compile Include="ViewModel\Maturity\MaturityViewModel.cs" />
     <Compile Include="View\AgeReading\AgeReadingSampleView.xaml.cs">
       <DependentUpon>AgeReadingSampleView.xaml</DependentUpon>
     </Compile>
@@ -296,20 +337,75 @@
     <Compile Include="View\AgeReading\SelectAnalysisDialog.xaml.cs">
       <DependentUpon>SelectAnalysisDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Larvae\LarvaeAllAnnotationView.xaml.cs">
+      <DependentUpon>LarvaeAllAnnotationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Larvae\LarvaeEditorView.xaml.cs">
+      <DependentUpon>LarvaeEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Larvae\LarvaeFileView.xaml.cs">
+      <DependentUpon>LarvaeFileView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Larvae\LarvaeOwnAnnotationView.xaml.cs">
+      <DependentUpon>LarvaeOwnAnnotationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Larvae\LarvaeSampleView.xaml.cs">
+      <DependentUpon>LarvaeSampleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Larvae\LarvaeStatusbarView.xaml.cs">
+      <DependentUpon>LarvaeStatusbarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Larvae\LarvaeView.xaml.cs">
+      <DependentUpon>LarvaeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Maturity\MaturityAllAnnotationView.xaml.cs">
+      <DependentUpon>MaturityAllAnnotationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Maturity\MaturityEditorView.xaml.cs">
+      <DependentUpon>MaturityEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Maturity\MaturityFileView.xaml.cs">
+      <DependentUpon>MaturityFileView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Maturity\MaturityOwnAnnotationView.xaml.cs">
+      <DependentUpon>MaturityOwnAnnotationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Maturity\MaturitySampleView.xaml.cs">
+      <DependentUpon>MaturitySampleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Maturity\MaturityStatusbarView.xaml.cs">
+      <DependentUpon>MaturityStatusbarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Maturity\MaturityView.xaml.cs">
+      <DependentUpon>MaturityView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ServerSelectionView.xaml.cs">
       <DependentUpon>ServerSelectionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\UserControls\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\UserControls\CleanableComboBox.cs" />
+    <Compile Include="View\UserControls\DropDownWindowButton.xaml.cs">
+      <DependentUpon>DropDownWindowButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\UserControls\SDButton.xaml.cs">
       <DependentUpon>SDButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControls\SDFullDropDownButton.xaml.cs">
+      <DependentUpon>SDFullDropDownButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UserControls\WindowsButton.xaml.cs">
       <DependentUpon>WindowsButton.xaml</DependentUpon>
     </Compile>
     <Content Include="Resources\falsering.svg" />
+    <Resource Include="Resources\WindowButtonClose-Original.png" />
+    <Resource Include="Resources\SmartDots.png" />
+    <Resource Include="Resources\icons8-cog-48.png" />
+    <Resource Include="Resources\icons8-arrow-100.png" />
     <Resource Include="Resources\scalelength32.png" />
     <Resource Include="Resources\ContextButtton.png" />
     <Resource Include="Resources\New.png" />
@@ -340,6 +436,10 @@
     <Page Include="DXSplashScreen\SmartdotsSplashScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Simple Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Controls.xaml">
       <SubType>Designer</SubType>
@@ -380,7 +480,6 @@
     <Compile Include="Model\Extension\Dot.cs" />
     <Compile Include="Model\Extension\Line.cs" />
     <Compile Include="Model\Extension\File.cs" />
-    <Compile Include="ViewModel\AgeReadingBaseViewModel.cs" />
     <Compile Include="ViewModel\AgeReading\AgeReadingEditorViewModel.cs" />
     <Compile Include="ViewModel\AgeReading\AgeReadingFileViewModel.cs" />
     <Compile Include="ViewModel\AgeReading\AgeReadingAnnotationViewModel.cs" />
@@ -455,7 +554,63 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\Larvae\LarvaeAllAnnotationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Larvae\LarvaeEditorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Larvae\LarvaeFileView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Larvae\LarvaeOwnAnnotationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Larvae\LarvaeSampleView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Larvae\LarvaeStatusbarView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Larvae\LarvaeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Maturity\MaturityAllAnnotationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Maturity\MaturityEditorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Maturity\MaturityFileView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Maturity\MaturityOwnAnnotationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Maturity\MaturitySampleView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Maturity\MaturityStatusbarView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Maturity\MaturityView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -463,9 +618,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\UserControls\AboutWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UserControls\DropDownWindowButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\UserControls\SDButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserControls\SDFullDropDownButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\UserControls\WindowsButton.xaml">
       <SubType>Designer</SubType>

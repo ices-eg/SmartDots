@@ -18,11 +18,11 @@ namespace SmartDots.Helpers
     public static class Helper
     {
 
-        public static float Version { get; } = 2.3f;
+        public static float Version { get; } = 2.4f;
         
         public static void ShowWinUIMessageBox(string message, string caption, MessageBoxButton msgBoxButton, MessageBoxImage img, Exception e = null)
         {
-            Log("errors.txt", message + e?.StackTrace, e);
+            //Log("errors.txt", message + e?.StackTrace, e);
 
             Application.Current.Dispatcher.Invoke((Action)delegate {
 
@@ -30,6 +30,18 @@ namespace SmartDots.Helpers
 
             });
 
+        }
+
+        public static MessageBoxResult ShowWinUIDialog(string message, string caption, MessageBoxImage img, Exception e = null)
+        {
+            var messageBoxResult = System.Windows.MessageBoxResult.No;
+
+            Application.Current.Dispatcher.Invoke((Action)delegate {
+
+                messageBoxResult = new WinUIMessageBoxService().Show(message, caption, MessageBoxButton.YesNo, img);
+
+            });
+            return messageBoxResult;
         }
 
 
@@ -159,6 +171,34 @@ namespace SmartDots.Helpers
             "#8080FF",
             "#FF8080",
             "#80FF80",
+            "#44DDDD",
+            "#DDDD44",
+            "#DD4444",
+            "#DD8044",
+            "#8440DD",
+            "#44DD44",
+            "#80DD44",
+            "#DD4480",
+            "#4480DD",
+            "#44DD80",
+            "#8080DD",
+            "#DD8080",
+            "#80DD80",
         };
+
+        public static Dictionary<Guid, string> MultiUserDotColorsDict { get; } = new Dictionary<Guid, string>();
+
+        public static bool FolderExists(string path)
+        {
+            if (path.StartsWith("http"))
+            {
+                //todo have to implement
+                return true;
+            }
+            else
+            {
+                return Directory.Exists(path);
+            }
+        }
     }
 }

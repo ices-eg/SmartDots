@@ -51,14 +51,14 @@ namespace SmartDots.ViewModel
             file.SampleNumber = Sample.No.ToString();
 
             var dbfile = (DtoFile)Helper.ConvertType(file, typeof(DtoFile));
-            var updateFileResult = WebAPI.UpdateFile(dbfile);
+            var updateFileResult = Global.API.UpdateFile(dbfile);
             if (!updateFileResult.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error saving File in Web API\n" + updateFileResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            var fileResult = WebAPI.GetFile(dbfile.ID, false, true);
+            var fileResult = Global.API.GetFile(dbfile.ID, false, true);
             if (!fileResult.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error loading File from the Web API\n" + fileResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);

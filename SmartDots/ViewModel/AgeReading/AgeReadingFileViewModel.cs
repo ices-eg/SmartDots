@@ -62,7 +62,6 @@ namespace SmartDots.ViewModel
                         SelectedFile = Files.FirstOrDefault(x => x.ID == dynamicFiles[0].ID);
                         LoadNewFile();
                     }
-                    
                 }
                 RaisePropertyChanged("DynamicFiles");
             }
@@ -82,9 +81,9 @@ namespace SmartDots.ViewModel
                                                                                  new ObservableCollection<Annotation>();
                     AgeReadingViewModel.AgeReadingEditorViewModel.OriginalMeasureShapes = new ObservableCollection<Line>();
                     AgeReadingViewModel.AgeReadingEditorViewModel.TextShapes = new ObservableCollection<TextBlock>();
-                    AgeReadingViewModel.AgeReadingView.BrightnessSlider.EditValue = 0;
+                    AgeReadingViewModel.AgeReadingEditorView.BrightnessSlider.EditValue = 0;
                     AgeReadingViewModel.AgeReadingEditorViewModel.Brightness = 0;
-                    AgeReadingViewModel.AgeReadingView.ContrastSlider.EditValue = 0;
+                    AgeReadingViewModel.AgeReadingEditorView.ContrastSlider.EditValue = 0;
                     AgeReadingViewModel.AgeReadingEditorViewModel.Contrast = 0;
                     AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine = null;
                 }
@@ -134,7 +133,7 @@ namespace SmartDots.ViewModel
                 NeedsSampleLink = SelectedFile != null && SelectedFile?.SampleID == null;
                 CanDetach = SelectedFile?.SampleID != null && !AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes.Any();
 
-
+                RefreshNavigationButtons();
             }
         }
 
@@ -360,19 +359,6 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public bool FolderExists(string path)
-        {
-            if (path.StartsWith("http"))
-            {
-                //todo have to implement
-                return true;
-            }
-            else
-            {
-                return Directory.Exists(path);
-            }
-        }
-
         public async Task CopyFileAsync(string sourceFile, string destinationFile)
         {
             loadingNextPicture = true;
@@ -413,7 +399,7 @@ namespace SmartDots.ViewModel
         {
             try
             {
-                var analysisSamples = WebAPI.GetAnalysisSamples(AgeReadingViewModel.Analysis.ID).Result;
+                var analysisSamples = Global.API.GetAnalysisSamples(AgeReadingViewModel.Analysis.ID).Result;
 
                 AgeReadingViewModel.AttachSampleDialog = new AttachSampleDialog(AgeReadingViewModel);
                 AgeReadingViewModel.AttachSampleDialogViewModel =
@@ -512,7 +498,7 @@ namespace SmartDots.ViewModel
         {
             Guid fileid = SelectedFile.ID;
 
-            var file = WebAPI.GetFile(fileid, false, false);
+            var file = Global.API.GetFile(fileid, false, false);
             if (!file.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error loading File from Web API\n" + file.ErrorMessage, "Error", MessageBoxButton.OK,
@@ -522,7 +508,7 @@ namespace SmartDots.ViewModel
             file.Result.SampleID = null;
             file.Result.Sample = null;
             file.Result.SampleNumber = null;
-            var updateFileResult = WebAPI.UpdateFile(file.Result);
+            var updateFileResult = Global.API.UpdateFile(file.Result);
             if (!updateFileResult.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error saving File to Web API\n" + updateFileResult.ErrorMessage , "Error", MessageBoxButton.OK,
@@ -556,7 +542,7 @@ namespace SmartDots.ViewModel
 
         public File GetFileWithAnnotationsAndSampleProperties(Guid fileid)
         {
-            var file = WebAPI.GetFile(fileid, true, true);
+            var file = Global.API.GetFile(fileid, true, true);
             if (!file.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error loading File from Web API\n" + file.ErrorMessage, "Error", MessageBoxButton.OK,
@@ -597,7 +583,7 @@ namespace SmartDots.ViewModel
 
                 List<string> fullImageNames = new List<string>();
 
-                if (WebAPI.Settings.ScanFolder)
+                if (Global.API.Settings.ScanFolder)
                 {
                     if (CurrentFolder.Path.StartsWith("http"))
                     {
@@ -628,13 +614,13 @@ namespace SmartDots.ViewModel
                 }
                 
                 
-                var filesResult = WebAPI.GetFiles(AgeReadingViewModel.Analysis.ID, fullImageNames);
+                var filesResult = Global.API.GetFiles(AgeReadingViewModel.Analysis.ID, fullImageNames);
                 if (!filesResult.Succeeded)
                 {
                     Helper.ShowWinUIMessageBox("Error loading Files from Web API\n" + filesResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-                if (!WebAPI.Settings.ScanFolder)
+                if (!Global.API.Settings.ScanFolder)
                 {
                     fullImageNames = ((List<DtoFile>) filesResult.Result).Select(x => x.Filename).ToList();
                 }
@@ -809,6 +795,33 @@ namespace SmartDots.ViewModel
         public void CancelSettings()
         {
             ToggleFileOptions(false);
+        }
+
+        public void RefreshNavigationButtons()
+        {
+            var index = AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowHandle;
+            if (index <= 0)
+            {
+                AgeReadingViewModel.AgeReadingView.Previous.IsEnabled = false;
+            }
+            else
+            {
+                AgeReadingViewModel.AgeReadingView.Previous.IsEnabled = true;
+            }
+
+            if (index >= Files.Count - 1)
+            {
+                AgeReadingViewModel.AgeReadingView.Next.IsEnabled = false;
+            }
+            else
+            {
+                AgeReadingViewModel.AgeReadingView.Next.IsEnabled = true;
+            }
+        }
+
+        public void AgeReadingFileGrid_EndSorting(object sender, System.Windows.RoutedEventArgs e)
+        {
+            RefreshNavigationButtons();
         }
     }
 }

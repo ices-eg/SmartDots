@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="SmartDots.View.LarvaeStatusbarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SmartDots.View"
+             xmlns:viewModel="clr-namespace:SmartDots.ViewModel"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             dx:ThemeManager.Theme="Office2016Colorful"
+             mc:Ignorable="d" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+             d:DesignWidth="500">
+    <UserControl.DataContext>
+        <viewModel:LarvaeStatusbarViewModel/>
+    </UserControl.DataContext>
+
+    <dxb:BarManager AllowCustomization="False" >
+      <dxb:BarManager.Items>
+            <dxb:BarStaticItem x:Name="IconImgSize" GlyphSize="Small" Glyph="../../Resources/size.png"></dxb:BarStaticItem>
+            <dxb:BarStaticItem x:Name="lblImgSize" ></dxb:BarStaticItem>
+            <dxb:BarStaticItem x:Name="lblInfo" Content="{Binding Info, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></dxb:BarStaticItem>
+          <dxb:BarButtonItem x:Name="btn25Percent" Content="25%" Alignment="Far" CommandParameter="25" Command="{Binding ZoomCommand}"/>
+            <dxb:BarButtonItem x:Name="btn50Percent" Content="50%" Alignment="Far" CommandParameter="50" Command="{Binding ZoomCommand}"/>
+            <dxb:BarButtonItem x:Name="btn100Percent" Content="100%" Alignment="Far" CommandParameter="100" Command="{Binding ZoomCommand}"/>
+            <dxb:BarButtonItem x:Name="btn150Percent" Content="150%" Alignment="Far" CommandParameter="150" Command="{Binding ZoomCommand}"/>
+            <dxb:BarButtonItem x:Name="btn200Percent" Content="200%" Alignment="Far" CommandParameter="200" Command="{Binding ZoomCommand}"/>
+            <dxb:BarCheckItem x:Name="btnFit" Content="Fit"  IsChecked="{Binding IsFittingImage}" Alignment="Far" />
+            <dxb:BarEditItem x:Name="imgZoomSlider" EditWidth="191" Focusable="True" Alignment="Far" EditValue="{Binding ZoomPercentage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                <dxb:BarEditItem.EditSettings>
+                    <dxe:TrackBarEditSettings Minimum="10" Maximum="400" LargeStep="10" SmallStep="10" TickFrequency="19.5">
+                        <dxe:TrackBarEditSettings.StyleSettings>
+                            <dxe:TrackBarZoomStyleSettings/>
+                        </dxe:TrackBarEditSettings.StyleSettings>
+                    </dxe:TrackBarEditSettings>
+                </dxb:BarEditItem.EditSettings>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseDown">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="PreviewMouseDown"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="PreviewMouseLeftButtonDown"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </dxb:BarEditItem>
+            <dxb:BarStaticItem x:Name="lblZoomPercentage" ItemMinWidth="45" Alignment="Far" Content="{Binding ZoomPercentageString}"/>
+        </dxb:BarManager.Items>
+        <dxb:BarManager.Bars>
+            <dxb:Bar Caption="Tools" UseWholeRow="True" AllowCustomizationMenu="False" AllowHide="False" AllowQuickCustomization="False" GlyphSize="Large" IsStatusBar="True">
+                <dxb:BarStaticItemLink BarItemName="IconImgSize"/>
+                <dxb:BarStaticItemLink BarItemName="lblImgSize"/>
+                <dxb:BarItemLinkSeparator />
+                <dxb:BarStaticItemLink BarItemName="lblInfo"/>
+                <dxb:BarButtonItemLink BarItemName="btn25Percent"></dxb:BarButtonItemLink>
+                <dxb:BarButtonItemLink BarItemName="btn50Percent"></dxb:BarButtonItemLink>
+                <dxb:BarButtonItemLink BarItemName="btn100Percent"></dxb:BarButtonItemLink>
+                <dxb:BarButtonItemLink BarItemName="btn150Percent"></dxb:BarButtonItemLink>
+                <dxb:BarButtonItemLink BarItemName="btn200Percent"></dxb:BarButtonItemLink>
+
+                <dxb:BarCheckItemLink BarItemName="btnFit"></dxb:BarCheckItemLink>
+                <dxb:BarItemLinkSeparator Alignment="Far"/>
+                <dxb:BarEditItemLink BarItemName="imgZoomSlider" ></dxb:BarEditItemLink>
+                <dxb:BarStaticItemLink BarItemName="lblZoomPercentageString" />
+            </dxb:Bar>
+        </dxb:BarManager.Bars>
+    </dxb:BarManager>
+    
+               
+
+</UserControl>

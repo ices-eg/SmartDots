@@ -18,6 +18,8 @@
         public bool CanMarkEventAsCompleted { get; set; }
         public bool AllowMultipleApprovements { get; set; }
         public bool IgnoreMultiUserColor { get; set; }
+        public string MaturityAPI { get; set; }
+
         public float MinRequiredVersion { get; set; }
     }
 }

@@ -14,7 +14,6 @@ namespace SmartDots.ViewModel
 {
     public class AgeReadingViewModel : BaseViewModel
     {
-        private bool toolsetVisibile = true;
         private bool brightnessGraphVisibile = false;
         private bool rednessGraphVisibile = false;
         private bool growthGraphVisibile = false;
@@ -30,17 +29,6 @@ namespace SmartDots.ViewModel
         private ICommand closeBrightnessPanelCommand;
         private ICommand closeRednessPanelCommand;
         private ICommand closeGrowthPanelCommand;
-
-        public bool ToolsetVisibile
-        {
-            get { return toolsetVisibile; }
-            set
-            {
-                toolsetVisibile = value;
-                AgeReadingView.Adjustments.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
-                RaisePropertyChanged("ToolsetVisibile");
-            }
-        }
 
         public bool BrightnessGraphVisibile
         {
@@ -72,18 +60,6 @@ namespace SmartDots.ViewModel
                 growthGraphVisibile = value;
                 AgeReadingView.GrowthPanel.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
                 RaisePropertyChanged("GrowthGraphVisibile");
-            }
-        }
-
-        public ICommand CloseToolsetPanelCommand
-        {
-            get
-            {
-                if (closeToolsetPanelCommand == null)
-                {
-                    closeToolsetPanelCommand = new Command(p => true, p => ToolsetVisibile = false);
-                }
-                return closeToolsetPanelCommand;
             }
         }
 
@@ -147,7 +123,8 @@ namespace SmartDots.ViewModel
                 EditAnnotationDialogViewModel.ShowNucleusColumn = analysis.ShowNucleusColumn;
                 EditAnnotationDialogViewModel.ShowEdgeColumn = analysis.ShowEdgeColumn;
                 EditAnnotationDialogViewModel.Parameters = analysis.AnalysisParameters;
-                AgeReadingView.MainWindowViewModel.HeaderInfo = Analysis.HeaderInfo;
+                AgeReadingView.MainWindowViewModel.HeaderInfo = $"  {Analysis.HeaderInfo}";
+                AgeReadingView.MainWindowViewModel.HeaderModule = "  AGEREADING";
                 RaisePropertyChanged("Analysis");
             }
         }
@@ -234,13 +211,41 @@ namespace SmartDots.ViewModel
             Helper.ShowWinUIMessageBox(e.Error.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, e.Error);
         }
 
-        
+        public bool LoadQualities()
+        {
+            if (AgeReadingAnnotationViewModel.Qualities != null &&
+                AgeReadingAnnotationViewModel.Qualities.Any()) return true;
+
+            var dtoQualities = Global.API.GetQualities();
+            if (!dtoQualities.Succeeded)
+            {
+                Helper.ShowWinUIMessageBox("Error loading Qualities from the Web API", "Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return false;
+            }
+            var qualities = new List<Quality>();
+            foreach (var dtoQuality in dtoQualities.Result)
+            {
+                qualities.Add((Quality)Helper.ConvertType(dtoQuality, typeof(Quality)));
+            }
+            AgeReadingAnnotationViewModel.MapAQColors(qualities);
+            return true;
+        }
+
+
 
         public bool LoadAnalysis(Guid analysisid)
         {
             try
             {
-                var dtoAnalysis = WebAPI.GetAnalysis(analysisid);
+                Helper.MultiUserDotColorsDict.Clear();
+
+                if (!LoadQualities())
+                {
+                    Helper.ShowWinUIMessageBox("Unable to load qualities", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+                var dtoAnalysis = Global.API.GetAnalysis(analysisid);
                 if (!dtoAnalysis.Succeeded)
                 {
                     Helper.ShowWinUIMessageBox("Error loading analysis from the Web API\n" + dtoAnalysis.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -260,9 +265,8 @@ namespace SmartDots.ViewModel
                 }
                 analysis.AnalysisParameters = analysisParameters;
                 Analysis = analysis;
-                if(! AgeReadingFileViewModel.FolderExists(Analysis.Folder.Path)) throw new Exception("Could not find Folder " + Analysis.Folder.Path);
+                if(!Helper.FolderExists(Analysis.Folder.Path)) throw new Exception("Could not find Folder " + Analysis.Folder.Path);
                 AgeReadingFileViewModel.CurrentFolder = Analysis.Folder;
-                AgeReadingView.SaveBtn.IsEnabled = true;
                 return true;
 
             }
@@ -331,7 +335,7 @@ namespace SmartDots.ViewModel
                     dboutcome.Edge = outcome.Edge;
                     dboutcomes.Add(dboutcome);
                 }
-                var updateAnnotationsResult = WebAPI.UpdateAnnotations(dboutcomes);
+                var updateAnnotationsResult = Global.API.UpdateAnnotations(dboutcomes);
                 if (!updateAnnotationsResult.Succeeded)
                 {
                     Helper.ShowWinUIMessageBox("Error Saving Annotations\n" + updateAnnotationsResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -340,7 +344,7 @@ namespace SmartDots.ViewModel
 
                 AgeReadingEditorViewModel.ShapeChangeFlag = false;
 
-                var dbfile = WebAPI.GetFile(AgeReadingFileViewModel.SelectedFile.ID, false, true);
+                var dbfile = Global.API.GetFile(AgeReadingFileViewModel.SelectedFile.ID, false, true);
                 if (!dbfile.Succeeded)
                 {
                     Helper.ShowWinUIMessageBox("Error loading File from Web API\n" + dbfile.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -398,7 +402,7 @@ namespace SmartDots.ViewModel
 
         public void UpdateGraphs()
         {
-            if (!String.IsNullOrWhiteSpace(WebAPI.Connection))
+            if (!String.IsNullOrWhiteSpace(Global.API.Connection))
             {
                 AgeReadingView.BrightnessGraph.MakeGraph();
                 AgeReadingView.RednessGraph.MakeGraph();
@@ -447,12 +451,12 @@ namespace SmartDots.ViewModel
             AgeReadingFileView.IsEnabled = enabled;
             AgeReadingAnnotationView.IsEnabled = enabled;
             AgeReadingSampleView.IsEnabled = enabled;
-            AgeReadingView.Adjustments.IsEnabled = enabled;
             AgeReadingView.BrightnessPanel.IsEnabled = enabled;
             AgeReadingView.RednessPanel.IsEnabled = enabled;
             AgeReadingView.GrowthPanel.IsEnabled = enabled;
-            AgeReadingView.CollectionAppBar.IsEnabled = enabled;
-            AgeReadingView.btnFileSettings.IsEnabled = enabled;
+            //AgeReadingView.CollectionAppBar.IsEnabled = enabled;
+            AgeReadingView.Previous.IsEnabled = enabled;
+            AgeReadingView.Next.IsEnabled = enabled;
             AgeReadingStatusbarView.imgZoomSlider.IsEnabled = enabled;
             AgeReadingStatusbarView.btn200Percent.IsEnabled = enabled;
             AgeReadingStatusbarView.btn150Percent.IsEnabled = enabled;
@@ -522,18 +526,12 @@ namespace SmartDots.ViewModel
             }
         }
 
+        //public void ToolsetBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    ToolsetVisibile = !ToolsetVisibile;
+        //}
 
-        public void SaveBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Save();
-        }
-
-        public void ToolsetBtn_Click(object sender, RoutedEventArgs e)
-        {
-            ToolsetVisibile = !ToolsetVisibile;
-        }
-
-        public void GraphsBtn_Click(object sender, RoutedEventArgs e)
+        public void ToggleGraphs()
         {
             int visiblegraphs = 0;
             if (AgeReadingView.BrightnessPanel.Visibility == Visibility.Visible) visiblegraphs++;
@@ -554,19 +552,14 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public void LayoutBtn_Click(object sender, RoutedEventArgs e)
-        {
-            AgeReadingEditorViewModel.RestoreUserPreferences();
-            LoadLayout("DefaultLayout.xml");
-        }
-
-        public void ReturnBtn_Click(object sender, RoutedEventArgs e)
+        public void GoBack()
         {
             Save();
             AgeReadingAnnotationViewModel.WorkingAnnotation = null;
             AgeReadingView.MainWindowViewModel.SetActiveControl(AgeReadingView.MainWindowViewModel.ServerSelectionView);
             AgeReadingView.MainWindowViewModel.ServerSelectionView.LoadGrid();
-            AgeReadingView.MainWindowViewModel.HeaderInfo = WebAPI.Settings.EventAlias + " overview";
+            AgeReadingView.MainWindowViewModel.HeaderInfo = $"  {Global.API.Settings.EventAlias.ToUpper()} OVERVIEW";
+            AgeReadingView.MainWindowViewModel.HeaderModule = "";
             AgeReadingView.Opacity = 0;
             AgeReadingView.WinFormBrightness.Visibility = Visibility.Hidden;
             AgeReadingView.WinFormRedness.Visibility = Visibility.Hidden;

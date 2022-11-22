@@ -50,6 +50,8 @@ namespace SmartDots.ViewModel
                 annotations = value;
                 SelectedAnnotations = new List<Annotation>();
                 WorkingAnnotation = null;
+                AgeReadingViewModel.AgeReadingAnnotationView.CreatorColumn.Visible = true;
+                AgeReadingViewModel.AgeReadingAnnotationView.CreatorColorColumn.Visible = false;
                 foreach (var annotation in value)
                 {
                     annotation.Quality = Qualities.FirstOrDefault(x => x.ID == annotation.QualityID);
@@ -68,10 +70,8 @@ namespace SmartDots.ViewModel
         public List<Annotation> SelectedAnnotations
         {
             get {
-                foreach (var annotation in selectedAnnotations.Where(x => string.IsNullOrEmpty(x.MultiUserColor)))
-                {
-                    annotation.MultiUserColor = WebAPI.Settings.IgnoreMultiUserColor ? null : Helper.MultiUserDotColors.FirstOrDefault(x => !annotations.Select(y => y.MultiUserColor).Contains(x)); //todo ignore multiUser setting
-                }
+                
+                
                 return selectedAnnotations; }
             set
             {
@@ -205,7 +205,7 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                if (String.IsNullOrWhiteSpace(Global.API.Connection))
                 {
                     NewAnnotationTooltip = "No active connection";
                     return false;
@@ -220,7 +220,7 @@ namespace SmartDots.ViewModel
                     NewAnnotationTooltip = "The selected file is read-only";
                     return false;
                 }
-                if (AgeReadingViewModel.AgeReadingSampleViewModel.Sample == null && !WebAPI.Settings.AnnotateWithoutSample)
+                if (AgeReadingViewModel.AgeReadingSampleViewModel.Sample == null && !Global.API.Settings.AnnotateWithoutSample)
                 {
                     NewAnnotationTooltip = "Cannot create an Annotation when no Sample is linked";
                     return false;
@@ -244,7 +244,7 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                if (String.IsNullOrWhiteSpace(Global.API.Connection))
                 {
                     EditAnnotationTooltip = "No active connection";
                     return false;
@@ -284,7 +284,7 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                if (String.IsNullOrWhiteSpace(Global.API.Connection))
                 {
                     DeleteAnnotationTooltip = "No active connection";
                     return false;
@@ -348,7 +348,7 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                if (String.IsNullOrWhiteSpace(Global.API.Connection))
                 {
                     PinAnnotationTooltip = "No active connection";
                     return false;
@@ -416,7 +416,7 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                if (String.IsNullOrWhiteSpace(Global.API.Connection))
                 {
                     PinAnnotationTooltip = "No active connection";
                     return false;
@@ -481,7 +481,7 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                if (String.IsNullOrWhiteSpace(Global.API.Connection))
                 {
                     ApproveAnnotationTooltip = "No active connection";
                     return false;
@@ -521,17 +521,17 @@ namespace SmartDots.ViewModel
                     ApproveAnnotationTooltip = "Cannot approve a fixed reading line";
                     return false;
                 }
-                if (WorkingAnnotation?.QualityID == null && WebAPI.Settings.RequireAqForApproval)
+                if (WorkingAnnotation?.QualityID == null && Global.API.Settings.RequireAqForApproval)
                 {
                     ApproveAnnotationTooltip = "A quality code (AQ) is needed to approve the Annotation";
                     return false;
                 };
-                if (WorkingAnnotation?.QualityID != Qualities.FirstOrDefault(x => x.Code.ToUpper() == "AQ1").ID && WebAPI.Settings.RequireAq1ForApproval)
+                if (WorkingAnnotation?.QualityID != Qualities.FirstOrDefault(x => x.Code.ToUpper() == "AQ1").ID && Global.API.Settings.RequireAq1ForApproval)
                 {
                     ApproveAnnotationTooltip = "A quality code AQ1 is needed to approve the Annotation";
                     return false;
                 };
-                if (WorkingAnnotation?.ParameterID == null && WebAPI.Settings.RequireParamForApproval)
+                if (WorkingAnnotation?.ParameterID == null && Global.API.Settings.RequireParamForApproval)
                 {
                     ApproveAnnotationTooltip = "A parameter is needed to approve the Annotation";
                     return false;
@@ -547,7 +547,7 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection))
+                if (String.IsNullOrWhiteSpace(Global.API.Connection))
                 {
                     ApproveAnnotationTooltip = "No active connection";
                     return false;
@@ -734,8 +734,8 @@ namespace SmartDots.ViewModel
             {
                 Annotation an = new Annotation()
                 {
-                    LabTechnicianID = WebAPI.CurrentUser?.ID,
-                    LabTechnician = WebAPI.CurrentUser.AccountName,
+                    LabTechnicianID = Global.API.CurrentUser?.ID,
+                    LabTechnician = Global.API.CurrentUser.AccountName,
                     DateCreation = DateTime.Now,
                     FileID = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID,
                     Qualities = Qualities,
@@ -772,7 +772,7 @@ namespace SmartDots.ViewModel
                 var dtoAnnotation = (DtoAnnotation)Helper.ConvertType(an, typeof(DtoAnnotation));
                 dtoAnnotation.SampleId = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile?.SampleID;
                 dtoAnnotation.AnalysisId = AgeReadingViewModel.Analysis.ID;
-                var webapiresult = WebAPI.AddAnnotation(dtoAnnotation);
+                var webapiresult = Global.API.AddAnnotation(dtoAnnotation);
                 if (!webapiresult.Succeeded)
                 {
                     Helper.ShowWinUIMessageBox(webapiresult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -812,7 +812,7 @@ namespace SmartDots.ViewModel
                         Helper.ShowWinUIMessageBox("Can not delete a fixed Annotation! " + action, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
-                    var deleteAnnotationsResult = WebAPI.DeleteAnnotations(SelectedAnnotations.Select(x => x.ID).ToList());
+                    var deleteAnnotationsResult = Global.API.DeleteAnnotations(SelectedAnnotations.Select(x => x.ID).ToList());
                     if (!deleteAnnotationsResult.Succeeded)
                     {
                         Helper.ShowWinUIMessageBox("Error deleting Annotations\n" + deleteAnnotationsResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -830,7 +830,7 @@ namespace SmartDots.ViewModel
 
                 if (!Outcomes.Any(x => !x.IsFixed))
                 {
-                    var dbfile = WebAPI.GetFile(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID, false, true);
+                    var dbfile = Global.API.GetFile(AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.ID, false, true);
                     if (!dbfile.Succeeded)
                     {
                         Helper.ShowWinUIMessageBox("Error loading File from Web API\n" + dbfile.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -900,6 +900,10 @@ namespace SmartDots.ViewModel
         public void GridControl_OnSelectionChanged(object sender, GridSelectionChangedEventArgs e)
         {
             AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine = null;
+            AgeReadingViewModel.AgeReadingAnnotationView.CreatorColumn.Visible = true;
+            AgeReadingViewModel.AgeReadingAnnotationView.CreatorColorColumn.Visible = false;
+            AgeReadingViewModel.AgeReadingAnnotationView.CreatorColorColumn.VisibleIndex = 2;
+
             if (SelectedAnnotations.Count == 1)
             {
                 WorkingAnnotation = SelectedAnnotations[0];
@@ -921,7 +925,32 @@ namespace SmartDots.ViewModel
             else
             {
                 WorkingAnnotation = null;
+
+                if (SelectedAnnotations.Count > 1)
+                {
+
+                    if (Global.API.Settings != null && !Global.API.Settings.IgnoreMultiUserColor)
+                    {
+                        AgeReadingViewModel.AgeReadingAnnotationView.CreatorColumn.Visible = false;
+                        AgeReadingViewModel.AgeReadingAnnotationView.CreatorColorColumn.Visible = true;
+                        foreach (var annotation in Outcomes.Where(x => string.IsNullOrEmpty(x.MultiUserColor)))
+                        {
+                            if (annotation.LabTechnicianID != null)
+                            {
+                                if (!Helper.MultiUserDotColorsDict.ContainsKey((Guid)annotation.LabTechnicianID))
+                                {
+                                    Helper.MultiUserDotColorsDict.Add((Guid)annotation.LabTechnicianID, Helper.MultiUserDotColors.FirstOrDefault(x => !Helper.MultiUserDotColorsDict.Select(y => y.Value).Contains(x)));
+                                }
+                                annotation.MultiUserColor = Helper.MultiUserDotColorsDict.FirstOrDefault(x => x.Key == (Guid)annotation.LabTechnicianID).Value;
+                            }
+                        }
+                    }
+                }
+
+                
+
                 AgeReadingViewModel.AgeReadingEditorViewModel.UndoRedo.EmptyStacks();
+                AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
             }
             AgeReadingViewModel.AgeReadingEditorViewModel.UpdateButtons();
             AgeReadingViewModel.AgeReadingEditorViewModel.RefreshShapes();
@@ -1127,7 +1156,7 @@ namespace SmartDots.ViewModel
         {
             foreach (var outcome in Outcomes)
             {
-                if (outcome.IsApproved && !WebAPI.Settings.AllowMultipleApprovements)
+                if (outcome.IsApproved && !Global.API.Settings.AllowMultipleApprovements)
                 {
                     outcome.IsChanged = true;
                     outcome.IsApproved = false;

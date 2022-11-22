@@ -38,7 +38,7 @@ namespace SmartDots.View
             InitializeComponent();
             editAnnotationDialogViewModel = (EditAnnotationDialogViewModel)base.DataContext;
             editAnnotationDialogViewModel.AgeReadingViewModel = ageReadingViewModel;
-            if(WebAPI.Settings != null) EditAnnotationDialogViewModel.ApplySettings();
+            if(Global.API.Settings != null) EditAnnotationDialogViewModel.ApplySettings();
         }
     }
 }

@@ -57,13 +57,39 @@
                         <dxdo:LayoutPanel x:Name="OtolithPanel" Caption="Files" ItemWidth="Auto" ItemHeight="1*" AllowClose="False" AllowHide="False" AllowMove="True" MinWidth="100">
                         <dxdo:LayoutPanel.ControlBoxContent>
                             <DockPanel>
-                                <Button Style="{StaticResource SDButtonBase}" x:Name="btnFileSettings" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="File settings" IsEnabled="True">
-                                    <Image Source="../../Resources/settings-16.png" RenderOptions.BitmapScalingMode="HighQuality" Width="16" Height="16"/>
-                                    <i:Interaction.Triggers>
-                                        <!--<i:EventTrigger EventName="Click">
-                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="DeleteAnnotation" />
-                                    </i:EventTrigger>-->
-                                    </i:Interaction.Triggers>
+                                <Button Style="{StaticResource SDWhiteButtonBase}" x:Name="Previous" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Previous File" Click="Previous_Click" >
+                                    <Image Source="../../Resources/icons8-arrow-100.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5">
+                                        <Image.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform/>
+                                                <SkewTransform/>
+                                                <RotateTransform Angle="270"/>
+                                                <TranslateTransform/>
+                                            </TransformGroup>
+                                        </Image.RenderTransform>
+                                    </Image>
+                                    <!--<i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnSamplePrevious_Click"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>-->
+                                </Button>
+                                <Button Style="{StaticResource SDWhiteButtonBase}" x:Name="Next" Height="21" Width="22" HorizontalAlignment="Right" ToolTip="Next File"  Padding="2" Margin="2" Click="Next_Click">
+                                    <Image Source="../../Resources/icons8-arrow-100.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5" >
+                                        <Image.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform/>
+                                                <SkewTransform/>
+                                                <RotateTransform Angle="90"/>
+                                                <TranslateTransform/>
+                                            </TransformGroup>
+                                        </Image.RenderTransform>
+                                    </Image>
+                                    <!--<i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnSampleNext_Click"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>-->
                                 </Button>
                                 <!--<userControls:SDButton x:Name="TestButton" Glyph="../../Resources/settings-16.png" ButtonToolTip="File options" IsToggleButton="True" IsEnabled="True" Width="24" Height="16" />
                                 <dxb:PopupMenu x:Name="MeasureContextMenu" HorizontalAlignment="Right" Width="20">
@@ -83,7 +109,7 @@
                         <ContentControl Content="{Binding AgeReadingFileView}"></ContentControl>
                         </dxdo:LayoutPanel>
                         <dxdo:LayoutGroup ItemWidth="Auto" ItemHeight="0.5*" Orientation="Horizontal" Grid.Row="2">
-                        <dxdo:LayoutPanel x:Name="Adjustments" ItemHeight="155" Caption="Adjustments" AllowDock="True" AllowMaximize="False" AllowSizing="True" CloseCommand="{Binding CloseToolsetPanelCommand}" AllowHide="False" AllowMove="True" >
+                        <!--<dxdo:LayoutPanel x:Name="Adjustments" ItemHeight="155" Caption="Adjustments" AllowDock="True" AllowMaximize="False" AllowSizing="True" CloseCommand="{Binding CloseToolsetPanelCommand}" AllowHide="False" AllowMove="True" >
                                 <StackPanel Orientation="Vertical" Margin="10,0,10,0" Height="115" HorizontalAlignment="Stretch">
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
                                         <Label Content="Brightness" HorizontalAlignment="Stretch" Padding="0,5"/>
@@ -94,7 +120,7 @@
                                         <dxe:TrackBarEdit x:Name="ContrastSlider" HorizontalAlignment="Stretch" Margin="0,0,0,4" Height="25" ToolTip="Adjust contrast of the current image" EditValue="{Binding AgeReadingEditorViewModel.Contrast, Mode=TwoWay}" SmallStep="10" LargeStep="10" Minimum="-100" TickFrequency="20" Maximum="100"/>
                                     </StackPanel>
                                 </StackPanel>
-                            </dxdo:LayoutPanel>
+                            </dxdo:LayoutPanel>-->
                         <dxdo:LayoutPanel x:Name="SamplePanel" Caption="{Binding SampleAlias}" ItemWidth="Auto" ItemHeight="0.30*" AllowClose="False" AllowHide="False" AllowMove="True">
                                 <ContentControl Content="{Binding AgeReadingSampleView}"/>
                             </dxdo:LayoutPanel>
@@ -133,47 +159,6 @@
                 </dxdo:LayoutGroup>
 
             </dxdo:DockLayoutManager>
-            <dxwui:AppBar x:Name="CollectionAppBar" Grid.Row="1" DockPanel.Dock="Bottom" dx:ThemeManager.Theme="HybridApp">
-            <dxwui:AppBarButton x:Name="ReturnBtn" Label="Back" Glyph="../../Resources/arrow-94-32.png" ToolTip="Back to Analysis list" >
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Click">
-                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="ReturnBtn_Click"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </dxwui:AppBarButton>
-            <dxwui:AppBarSeparator />
 
-            <dxwui:AppBarButton x:Name="SaveBtn" Label="Save" Glyph="../../Resources/Save.png" IsEnabled="False" >
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="SaveBtn_Click"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </dxwui:AppBarButton>
-                <dxwui:AppBarSeparator />
-                <dxwui:AppBarButton x:Name="GraphsBtn" Label="Graphs" Glyph="../../Resources/graphs.png" >
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="GraphsBtn_Click"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </dxwui:AppBarButton>
-                <dxwui:AppBarButton x:Name="ToolsetBtn" Label="Adjust" Glyph="../../Resources/tool-box-32.png" >
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="ToolsetBtn_Click"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </dxwui:AppBarButton>
-                <dxwui:AppBarSeparator />
-                <dxwui:AppBarButton x:Name="LayoutBtn" Label="Reset" Glyph="../../Resources/window-layout-32.png" ToolTip="Reset Layout and Shape properties" >
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="LayoutBtn_Click"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </dxwui:AppBarButton>
-            
-        </dxwui:AppBar>
         </Grid>
 </UserControl>

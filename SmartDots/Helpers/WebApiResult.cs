@@ -4,6 +4,7 @@
     {
         public dynamic Result { get; set; }
         public string ErrorMessage { get; set; }
+        public string WarningMessage { get; set; }
         public bool Succeeded => string.IsNullOrWhiteSpace(ErrorMessage);
     }
 
@@ -11,6 +12,7 @@
     {
         public t Result { get; set; }
         public string ErrorMessage { get; set; }
+        public string WarningMessage { get; set; }
         public bool Succeeded => string.IsNullOrWhiteSpace(ErrorMessage);
     }
 }

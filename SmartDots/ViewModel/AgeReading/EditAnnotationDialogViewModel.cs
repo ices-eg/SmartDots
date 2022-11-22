@@ -69,7 +69,7 @@ namespace SmartDots.ViewModel
             set
             {
                 analysisParameter = value;
-                if (analysisParameter == null && WebAPI.Settings.RequireParamForApproval)
+                if (analysisParameter == null && Global.API.Settings.RequireParamForApproval)
                 {
                     IsApproved = false;
                 }
@@ -94,11 +94,11 @@ namespace SmartDots.ViewModel
             set
             {
                 quality = value;
-                if (quality == null && WebAPI.Settings.RequireAqForApproval)
+                if (quality == null && Global.API.Settings.RequireAqForApproval)
                 {
                     IsApproved = false;
                 }
-                if (quality?.Code != "AQ1" && WebAPI.Settings.RequireAq1ForApproval)
+                if (quality?.Code != "AQ1" && Global.API.Settings.RequireAq1ForApproval)
                 {
                     IsApproved = false;
                 }
@@ -206,13 +206,13 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(WebAPI.Connection)) return false;
+                if (String.IsNullOrWhiteSpace(Global.API.Connection)) return false;
                 if (AgeReadingViewModel == null) return false;
                 if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return false;
                 if (Annotation == null) return false;
-                if (Quality == null && WebAPI.Settings.RequireAqForApproval) return false;
-                if (Quality != null && Quality.ID != Qualities.FirstOrDefault(x => x.Code == "AQ1").ID && WebAPI.Settings.RequireAq1ForApproval) return false;
-                if (AnalysisParameter?.ID == null && WebAPI.Settings.RequireParamForApproval) return false;
+                if (Quality == null && Global.API.Settings.RequireAqForApproval) return false;
+                if (Quality != null && Quality.ID != Qualities.FirstOrDefault(x => x.Code == "AQ1").ID && Global.API.Settings.RequireAq1ForApproval) return false;
+                if (AnalysisParameter?.ID == null && Global.API.Settings.RequireParamForApproval) return false;
                 
                 return true;
 
@@ -300,7 +300,7 @@ namespace SmartDots.ViewModel
                 //set all outcomes to approved false
                 foreach (var outcome in AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes)
                 {
-                    if (outcome.IsApproved && !WebAPI.Settings.AllowMultipleApprovements)
+                    if (outcome.IsApproved && !Global.API.Settings.AllowMultipleApprovements)
                     {
                         outcome.IsApproved = false;
                         outcome.IsChanged = true;
@@ -328,7 +328,7 @@ namespace SmartDots.ViewModel
 
         public void ApplySettings()
         {
-            if (!WebAPI.Settings.CanApproveAnnotation)
+            if (!Global.API.Settings.CanApproveAnnotation)
             {
                 CanApproveAnnotation = Visibility.Collapsed;
             }

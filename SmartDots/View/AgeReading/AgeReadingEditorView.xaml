@@ -28,10 +28,11 @@
     <DockPanel>
         <dxdo:DockLayoutManager EnableWin32Compatibility="True" FloatingMode="Desktop">
             <dxdo:DockLayoutManager.FloatGroups>
-                <dxdo:FloatGroup FloatSize="200,180" FloatLocation="100,100" AllowDock="False" AllowDrop="False" AllowClose="False" AllowContextMenu="False" AllowDockToCurrentItem="False" AllowExpand="False" AllowHide="False" AllowSizing="False" AllowMaximize="False" AllowMinimize="False" >
+                <dxdo:FloatGroup FloatSize="300,225" MinWidth="300" MinHeight="225" FloatLocation="100,100" AllowDock="False" AllowDrop="False" AllowClose="False" AllowContextMenu="False" AllowDockToCurrentItem="False" AllowExpand="False" AllowHide="False" AllowSizing="False" AllowMaximize="False" AllowMinimize="False" >
                     <dxdo:LayoutPanel x:Name="MeasureScalePanel" Caption="Measure Scale" AllowClose="False" AllowMaximize="False" AllowMinimize="False" Visibility="Collapsed" >
                         <Grid Margin="5">
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="45" />
                                 <RowDefinition Height="30" />
                                 <RowDefinition Height="30" />
                                 <RowDefinition Height="30" />
@@ -45,28 +46,32 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Draw a line on the scale..." Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="0" Margin="0,3,0,3"></TextBlock>
-                            <Image x:Name="ScaleNotDrawn" Source="../../Resources/cancel-16.png" Grid.Row="0" Grid.Column="5" HorizontalAlignment="Right" Margin="0,-1,0,3" Stretch="None"></Image>
-                            <Image x:Name="ScaleDrawn" Source="../../Resources/ok-16.png" Grid.Row="0" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,-1,0,3" Stretch="None" Visibility="Collapsed"></Image>
-                            <TextBlock Text="Scale (mm)" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Margin="0,3,0,3"></TextBlock>
-                            <dxe:SpinEdit x:Name="ScaleMilimeters" EditValue="1" IsFloatValue="True" Increment="0.5" MinValue="0" Grid.Column="3" Grid.ColumnSpan="3" Grid.Row="1" Margin="0,3,0,3"></dxe:SpinEdit>
-                            <TextBlock Text="Scale (pixels)" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Margin="0,3,0,3"></TextBlock>
-                            <TextBlock x:Name="ScalePixels" Text="0" Grid.Column="3" Grid.ColumnSpan="3" HorizontalAlignment="Right" Grid.Row="2" Margin="0,3,0,3"></TextBlock>
-                            <Button IsEnabled="{Binding IsScaleDrawn}" Content="Clear Line"  Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,7,3,3" Height="30" Padding="0">
+                            <TextBlock Text="Step 1: Click on the beginning of the scale line, then on the end of the scale line." TextWrapping="Wrap" Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="0" Margin="0,3,0,3"></TextBlock>
+                            <!--<Image x:Name="ScaleNotDrawn" Source="../../Resources/cancel-16.png" Grid.Row="0" Grid.Column="5" HorizontalAlignment="Right" Margin="0,-1,0,3" Stretch="None"></Image>-->
+                            <!--<Image x:Name="ScaleDrawn" Source="../../Resources/ok-16.png" Grid.Row="0" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,-1,0,3" Stretch="None" Visibility="Collapsed"></Image>-->
+                            <TextBlock Text="Result: Length of scale in pixels" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="1" Margin="0,3,0,3"></TextBlock>
+                            <TextBlock x:Name="ScalePixels" Text="0" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Right" Grid.Row="1" Margin="0,3,0,3"></TextBlock>
+                            <TextBlock Text="Step 2: Set length of scale" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="2" Margin="0,3,0,3"></TextBlock>
+                            <dxe:SpinEdit x:Name="ScaleMilimeters" EditValue="1" IsFloatValue="True" Increment="0.5" MinValue="0" Grid.Column="4" Grid.ColumnSpan="2" Grid.Row="2" Margin="0,3,0,3"></dxe:SpinEdit>
+                            <TextBlock Text="Step 3: Set scale unit" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="3" Margin="0,3,0,3"></TextBlock>
+                            <dxe:ComboBoxEdit x:Name="ScaleUnit" Grid.Column="4" ItemsSource="{Binding Units}" HorizontalContentAlignment="Right" EditValue="{Binding MeasureUnit, Mode=TwoWay}" Grid.ColumnSpan="2" Grid.Row="3" Margin="0,3,0,3" IsTextEditable="False">
+
+                            </dxe:ComboBoxEdit>
+                            <Button IsEnabled="{Binding IsScaleDrawn}" Content="Clear Line"  Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,7,3,3" Height="30" Padding="0">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Click">
                                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="ClearScaleLine"/>
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </Button>
-                            <Button IsEnabled="{Binding IsScaleDrawn}" Content="Accept"  Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="3,7,0,3" Height="30" Padding="0">
+                            <Button IsEnabled="{Binding IsScaleDrawn}" Content="Save"  Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Margin="3,7,0,3" Height="30" Padding="0">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Click">
                                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="AcceptScale"/>
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </Button>
-                            <Button Content="Cancel"  Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="2" Margin="3,7,0,3" Height="30" Padding="0">
+                            <Button Content="Cancel"  Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2" Margin="3,7,0,3" Height="30" Padding="0">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Click">
                                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="CancelScale"/>
@@ -132,12 +137,12 @@
                     <dxb:BarEditItem Style="{StaticResource BarItem}" Content="  Type" Name="DotType" EditValue="{Binding DotType, Mode=TwoWay}">
                         <!-- TODO: find proper way to give all labels the same width; is now charlength-based... -->
                         <dxb:BarEditItem.EditSettings>
-                            <dxe:ComboBoxEditSettings IsTextEditable="False">
-                                <dxe:ComboBoxEditSettings.Items>
-                                    <dxe:ComboBoxEditItem Content="Seawater" />
+                            <dxe:ComboBoxEditSettings IsTextEditable="False" ItemsSource="{Binding DotTypes}" DisplayMember="Item2" ValueMember="Item1">
+                                <!--<dxe:ComboBoxEditSettings.Items>
+                                    <dxe:ComboBoxEditItem Content="Seawater"   />
                                     <dxe:ComboBoxEditItem Content="Freshwater" />
                                     <dxe:ComboBoxEditItem Content="Non-counting mark" />
-                                </dxe:ComboBoxEditSettings.Items>
+                                </dxe:ComboBoxEditSettings.Items>-->
                             </dxe:ComboBoxEditSettings>
                         </dxb:BarEditItem.EditSettings>
                     </dxb:BarEditItem>
@@ -218,9 +223,68 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>-->
             </ToggleButton>
+            <Button x:Name="btnGraph" Style="{StaticResource SDButtonBase}" ToolTip="Show/Hide Graphs" >
+                <Image Source="../../Resources/graphs.png" Width="22" Height="22"/>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="Graphs_Click"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
 
             <StackPanel Width="2000" Margin="0" Height="33" Background="{StaticResource BrushSmartFishFairBlue2}" dxdove:DockPane.HitTestType="Header"></StackPanel>
         </StackPanel>
+
+        <dxb:BarManager AllowCustomization="False" DockPanel.Dock="Top" VerticalAlignment="Top" dx:ThemeManager.Theme="Office2016Colorful">
+            <dxb:BarManager.Items>
+                <dxb:BarStaticItem x:Name="BrightnessLabel" Alignment="Near" Content="Brightness"></dxb:BarStaticItem>
+
+                <dxb:BarEditItem x:Name="BrightnessSlider" EditWidth="191" Focusable="True" Alignment="Near" EditValue="{Binding Brightness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                    <dxb:BarEditItem.EditSettings>
+                        <dxe:TrackBarEditSettings Minimum="-255" LargeStep="25.5" SmallStep="25.5" Maximum="255" TickFrequency="51">
+                            <dxe:TrackBarEditSettings.StyleSettings>
+                                <dxe:TrackBarZoomStyleSettings/>
+                            </dxe:TrackBarEditSettings.StyleSettings>
+                        </dxe:TrackBarEditSettings>
+                    </dxb:BarEditItem.EditSettings>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseDown">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="PreviewMouseDown"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="PreviewMouseLeftButtonDown"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </dxb:BarEditItem>
+                <dxb:BarStaticItem x:Name="ContrastLabel" Alignment="Far" Content="Contrast"></dxb:BarStaticItem>
+
+                <dxb:BarEditItem x:Name="ContrastSlider" Alignment="Far" EditWidth="191" Focusable="True" EditValue="{Binding Contrast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                    <dxb:BarEditItem.EditSettings>
+                        <dxe:TrackBarEditSettings SmallStep="10" LargeStep="10" Minimum="-100" TickFrequency="20" Maximum="100">
+                            <dxe:TrackBarEditSettings.StyleSettings>
+                                <dxe:TrackBarZoomStyleSettings/>
+                            </dxe:TrackBarEditSettings.StyleSettings>
+                        </dxe:TrackBarEditSettings>
+                    </dxb:BarEditItem.EditSettings>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseDown">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="PreviewMouseDown"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="PreviewMouseLeftButtonDown"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </dxb:BarEditItem>
+            </dxb:BarManager.Items>
+            <dxb:BarManager.Bars>
+                <dxb:Bar UseWholeRow="True" AllowCustomizationMenu="False" AllowHide="False" AllowQuickCustomization="False" GlyphSize="Large" IsStatusBar="True">
+                    <dxb:BarStaticItemLink BarItemName="BrightnessLabel"/>
+                    <dxb:BarEditItemLink BarItemName="BrightnessSlider" ></dxb:BarEditItemLink>
+                    <dxb:BarStaticItemLink BarItemName="ContrastLabel"/>
+                    <dxb:BarEditItemLink BarItemName="ContrastSlider" ></dxb:BarEditItemLink>
+                </dxb:Bar>
+            </dxb:BarManager.Bars>
+        </dxb:BarManager>
 
         <dxdo:DockLayoutManager x:Name="DockLayoutManager" FloatingMode="Window">
             <dxdo:LayoutGroup AllowSplitters="False" BorderThickness="0" Padding="0" Margin="0">

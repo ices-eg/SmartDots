@@ -97,6 +97,7 @@
                             <i:EventTrigger EventName="FocusedRowChanged">
                                 <ei:CallMethodAction TargetObject="{Binding}" MethodName="FileList_FocusedRowChanged"/>
                             </i:EventTrigger>
+                            
                         </i:Interaction.Triggers>
                     </dxg:TableView>
                 </dxg:GridControl.View>
@@ -142,6 +143,9 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="CustomColumnSort">
                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnCustomColumnSort"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="EndSorting">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="AgeReadingFileGrid_EndSorting"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </dxg:GridControl>

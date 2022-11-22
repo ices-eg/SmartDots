@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="SmartDots.View.MaturityAllAnnotationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModel="clr-namespace:SmartDots.ViewModel"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
+             mc:Ignorable="d" 
+             dx:ThemeManager.ThemeName="Office2016White"
+             d:DesignHeight="200" d:DesignWidth="400">
+
+
+    <UserControl.DataContext>
+        <viewModel:MaturityAllAnnotationViewModel/>
+    </UserControl.DataContext>
+
+    <DockPanel>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <dxg:GridControl Grid.Row="0" ItemsSource="{Binding Annotations}" VerticalAlignment="Stretch" FontSize="11" x:Name="MaturityAnnotationGrid" SelectionMode="Row" Loaded="MaturityAnnotationGrid_Loaded" >
+                <dxg:GridControl.View>
+                    <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="AnnotationList" RowMinHeight="22" IsColumnChooserVisible="False" AllowBestFit="True" BestFitMode="AllRows">
+                    </dxg:TableView>
+                </dxg:GridControl.View>
+                <dxg:GridControl.Columns>
+                    <dxg:GridColumn FieldName="User" Header="Reader" AllowEditing="False" AllowSorting="True" VisibleIndex="0" MinWidth="65"/>
+                    <dxg:GridColumn FieldName="Date" AllowEditing="False" AllowSorting="True" VisibleIndex="1" MinWidth="65" />
+                    <dxg:GridColumn FieldName="Sex" AllowEditing="False" AllowSorting="True" VisibleIndex="2" MinWidth="60" />
+                    <dxg:GridColumn FieldName="Maturity" AllowEditing="False" AllowSorting="True" VisibleIndex="3" MinWidth="60" />
+                    <dxg:GridColumn FieldName="MaturityQuality" Header="Quality" AllowEditing="False" AllowSorting="True" VisibleIndex="4" MinWidth="60" />
+                    <dxg:GridColumn FieldName="Comments" Header="Comment" AllowEditing="False" AllowSorting="True" VisibleIndex="5" />
+                    <dxg:GridColumn Header="Approved" Width="30*" FieldName="IsApproved" ToolTip="Approved Annotation" AllowEditing="False" AllowSorting="True" VisibleIndex="6" MinWidth="50">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                    <Image Source="{Binding Path=Data.ApprovedPicture, Converter={StaticResource nullImageConverter}}" HorizontalAlignment="Center" Margin="0,0,0,0"  Stretch="Uniform" Width="17" Height="17" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+
+                </dxg:GridControl.Columns>
+                
+            </dxg:GridControl>
+        </Grid>
+    </DockPanel>
+
+</UserControl>

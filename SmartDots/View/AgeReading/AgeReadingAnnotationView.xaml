@@ -89,18 +89,19 @@
                         </dxg:LookUpEditSettings>
                     </dxg:GridColumn.EditSettings>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="LabTechnician" Header="Creator" ToolTip="Creator" Width="150*" AllowEditing="False" VisibleIndex="2"/>
-                <dxg:GridColumn FieldName="DateCreation" Header="Created" ToolTip="Date created" AllowEditing="False" Width="90*" VisibleIndex="3" >
+                <dxg:GridColumn x:Name="CreatorColumn" FieldName="LabTechnician" Header="Creator" ToolTip="Creator" Width="150*" AllowEditing="False" VisibleIndex="2"/>
+                <dxg:GridColumn x:Name="CreatorColorColumn" CellTemplate="{StaticResource CreatorColumn}" FieldName="LabTechnician" Header="Creator" ToolTip="Creator" Width="150*" AllowEditing="False" VisibleIndex="2" Visible="False"/>
+                <dxg:GridColumn FieldName="DateCreation" Header="Created" ToolTip="Date created" AllowEditing="False" Width="90*" VisibleIndex="4" >
                     <dxg:GridColumn.EditSettings>
                         <dxe:DateEditSettings DisplayFormat="dd-MM-yy"/>
                     </dxg:GridColumn.EditSettings>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="Result" Header="Age" ToolTip="Age" AllowEditing="False" Width="30*" VisibleIndex="4">
+                <dxg:GridColumn FieldName="Result" Header="Age" ToolTip="Age" AllowEditing="False" Width="30*" VisibleIndex="5">
                     <dxg:GridColumn.EditSettings>
                         <dxe:TextEditSettings MaskUseAsDisplayFormat="True" MaskType="Numeric" Mask="d"/>
                     </dxg:GridColumn.EditSettings>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="QualityID" Width="60*" Header="AQ" ToolTip="Annotation quality" VisibleIndex="5">
+                <dxg:GridColumn FieldName="QualityID" Width="60*" Header="AQ" ToolTip="Annotation quality" VisibleIndex="6">
                     <dxg:GridColumn.EditSettings>
                         <dxg:LookUpEditSettings Name="Quality" DisplayMember="Code" ValueMember="ID" ItemsSource="{Binding Qualities}" PopupMinWidth="100" PopupMinHeight="180" AutoPopulateColumns="False">
                             <dxg:LookUpEditSettings.PopupContentTemplate>
@@ -120,7 +121,7 @@
                 </dxg:GridColumn>
 
                 <!--<dxg:SelectAllColumn/>-->
-                <dxg:GridColumn Header="Approved" Width="30*" FieldName="IsApproved" ToolTip="Approved Annotation" AllowEditing="False" Visible="{Binding CanApproveAnnotation}" VisibleIndex="6">
+                <dxg:GridColumn Header="Approved" Width="30*" FieldName="IsApproved" ToolTip="Approved Annotation" AllowEditing="False" Visible="{Binding CanApproveAnnotation}" VisibleIndex="7">
                     <dxg:GridColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
@@ -129,7 +130,7 @@
                         </DataTemplate>
                     </dxg:GridColumn.CellTemplate>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="IsFixed" Header="Fixed reading line" ToolTip="Fixed reading line" Width="30*" AllowEditing="False" VisibleIndex="7">
+                <dxg:GridColumn FieldName="IsFixed" Header="Fixed reading line" ToolTip="Fixed reading line" Width="30*" AllowEditing="False" VisibleIndex="8">
                     <dxg:GridColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -138,7 +139,7 @@
                         </DataTemplate>
                     </dxg:GridColumn.CellTemplate>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="Nucleus" Width="80*" Header="Nucleus" ToolTip="Nucleus visibility" VisibleIndex="8" Visible="{Binding ShowNucleusColumn}" ShowInColumnChooser="{Binding ShowNucleusColumn}">
+                <dxg:GridColumn FieldName="Nucleus" Width="80*" Header="Nucleus" ToolTip="Nucleus visibility" VisibleIndex="9" Visible="{Binding ShowNucleusColumn}" ShowInColumnChooser="{Binding ShowNucleusColumn}">
                     <dxg:GridColumn.EditSettings>
                         <dxg:LookUpEditSettings DisplayMember="Visibility" ValueMember="Value" ItemsSource="{Binding VisibilityStates}" PopupMinWidth="100" PopupMinHeight="152" AutoPopulateColumns="False">
                             <dxg:LookUpEditSettings.PopupContentTemplate>
@@ -156,7 +157,7 @@
                         </dxg:LookUpEditSettings>
                     </dxg:GridColumn.EditSettings>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="Edge" Width="80*" Header="Edge" ToolTip="Edge visibility" VisibleIndex="9" Visible="{Binding ShowEdgeColumn}" ShowInColumnChooser="{Binding ShowEdgeColumn}">
+                <dxg:GridColumn FieldName="Edge" Width="80*" Header="Edge" ToolTip="Edge visibility" VisibleIndex="10" Visible="{Binding ShowEdgeColumn}" ShowInColumnChooser="{Binding ShowEdgeColumn}">
                     <dxg:GridColumn.EditSettings>
                         <dxg:LookUpEditSettings DisplayMember="Visibility" ValueMember="Value" ItemsSource="{Binding VisibilityStates}" PopupMinWidth="100" PopupMinHeight="152" AutoPopulateColumns="False">
                             <dxg:LookUpEditSettings.PopupContentTemplate>
@@ -174,7 +175,7 @@
                         </dxg:LookUpEditSettings>
                     </dxg:GridColumn.EditSettings>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="Comment" Header="Comment" ToolTip="Comment" Width="60*" AllowEditing="False" VisibleIndex="10"/>
+                <dxg:GridColumn FieldName="Comment" Header="Comment" ToolTip="Comment" Width="60*" AllowEditing="False" VisibleIndex="11"/>
 
 
 
