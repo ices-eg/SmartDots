@@ -46,7 +46,7 @@
         </Grid.RowDefinitions>
         <dxg:GridControl Grid.Row="0" x:Name="AnnotationGrid" ItemsSource="{Binding Outcomes, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectionMode="Row" SelectedItems="{Binding SelectedAnnotations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="None" FontSize="11" AllowLiveDataShaping="False" >
             <dxg:GridControl.View>
-                <dxg:TableView FormatConditionsSource="{Binding ConditionalRowStyles}" AllowConditionalFormattingMenu="True" ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" x:Name="AnnotationList" EditorShowMode="MouseDown" ShowCheckBoxSelectorColumn="True" CheckBoxSelectorColumnWidth="30"  RowMinHeight="22" CellStyle="{x:Null}" EnableImmediatePosting="True" AllowEditing="{Binding AllowEditing}" >
+                <dxg:TableView FormatConditionsSource="{Binding ConditionalRowStyles}" NavigationStyle="Cell" AllowConditionalFormattingMenu="True" ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" x:Name="AnnotationList" EditorShowMode="MouseDown" ShowCheckBoxSelectorColumn="True" CheckBoxSelectorColumnWidth="30"  RowMinHeight="22" CellStyle="{x:Null}" EnableImmediatePosting="True" AllowEditing="{Binding AllowEditing}" >
                     <dxmvvm:Interaction.Behaviors>
                         <helpers:DisableSelectorColumnBehavior />
                     </dxmvvm:Interaction.Behaviors>

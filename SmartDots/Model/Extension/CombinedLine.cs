@@ -49,7 +49,7 @@ namespace SmartDots.Model
                 {
                     foreach (LinePoint p in linePoints)
                     {
-                        if (p.X == (int) dotPoints[dotCounter].X && p.Y == (int) dotPoints[dotCounter].Y)
+                        if (p.X == (int)dotPoints[dotCounter].X && p.Y == (int)dotPoints[dotCounter].Y)
                         {
                             dotCounter++;
                             distances.Add(pointCounter);
@@ -78,9 +78,12 @@ namespace SmartDots.Model
 
             try
             {
-                foreach (var point in Points)
+                if (Points != null)
                 {
-                    brightness.Add(new decimal(img.GetPixel(point.X, point.Y).GetBrightness()));
+                    foreach (var point in Points)
+                    {
+                        brightness.Add(new decimal(img.GetPixel(point.X, point.Y).GetBrightness()));
+                    }
                 }
             }
             catch (Exception)
@@ -97,16 +100,19 @@ namespace SmartDots.Model
 
             try
             {
-                foreach (var point in Points)
+                if (Points != null)
                 {
-                    decimal red = img.GetPixel(point.X, point.Y).R;
-                    decimal green = img.GetPixel(point.X, point.Y).G;
-                    decimal blue = img.GetPixel(point.X, point.Y).B;
+                    foreach (var point in Points)
+                    {
+                        decimal red = img.GetPixel(point.X, point.Y).R;
+                        decimal green = img.GetPixel(point.X, point.Y).G;
+                        decimal blue = img.GetPixel(point.X, point.Y).B;
 
-                    decimal redval = (red - (blue + green) / 2) / 255;
-                    if (redval < 0) redval = 0;
+                        decimal redval = (red - (blue + green) / 2) / 255;
+                        if (redval < 0) redval = 0;
 
-                    redness.Add(redval);
+                        redness.Add(redval);
+                    }
                 }
             }
             catch (Exception)
@@ -140,7 +146,7 @@ namespace SmartDots.Model
             List<decimal> indices = new List<decimal>();
             indices.Add(0);
             CalculateDotIndices();
-            indices.AddRange(DotIndex.Select(i => (decimal) i));
+            indices.AddRange(DotIndex.Select(i => (decimal)i));
             return indices;
         }
 
@@ -251,7 +257,7 @@ namespace SmartDots.Model
             {
                 //not possible to calculate
             }
-            
+
         }
     }
     [Serializable]
