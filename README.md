@@ -36,13 +36,13 @@ User: userX   (Where X is any number from 0-30. Example: user4)
 
 Password: pwdX (Where X is the same number used for the user. Example: pwd4)
 
-![alt tag](https://webapi.smartfisheries.be/images/sd1.png) "SmartDots login")
+![alt tag](https://webapi.smartfisheries.be/images/sd1.png)
 
 ### Press connect
 If authentication succeeded, you will see a list of Analyses/Activities/Events
 
-![alt tag](https://webapi.smartfisheries.be/images/sd2.png) "Event overview")
+![alt tag](https://webapi.smartfisheries.be/images/sd2.png)
 
-### Double-Click any row (or select and press Age Reading at the bottom) to go to the Age Reading screen
+### Double-Click any AgeReading row (or select and press Analyze at the bottom) to go to the Age Reading screen
 
-![alt tag](https://webapi.smartfisheries.be/images/sd3.png) "Age Reading Screen")
+![alt tag](https://webapi.smartfisheries.be/images/sd3.png)
