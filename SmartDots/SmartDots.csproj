@@ -36,12 +36,12 @@
     <UpdateUrl>https://raw.githubusercontent.com/ices-eg/SmartDots/master/SmartDots/publish/</UpdateUrl>
     <ProductName>SmartDots</ProductName>
     <PublisherName>ILVO</PublisherName>
-    <MinimumRequiredVersion>2.3.0.0</MinimumRequiredVersion>
+    <MinimumRequiredVersion>3.0.0.6</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationRevision>8</ApplicationRevision>
     <ApplicationVersion>3.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
