@@ -52,7 +52,7 @@ namespace SmartDots.ViewModel
         private CombinedLine tempCombinedLine;
         private EditorModeEnum mode;
         private Image tracker;
-        private BitmapImage originalImage;
+        private Bitmap originalImage;
         private bool shapeChangeFlag;
         private BitmapImage otolithImage;
         private int originalWidth;
@@ -67,6 +67,7 @@ namespace SmartDots.ViewModel
         private bool hideLines;
         private bool isScaleDrawn;
         private bool isMeasureDrawn;
+        private string measureUnit = "mm";
         private UndoRedo undoRedo;
         private string dotType = "Seawater";
         private string dotShape = "Dot";
@@ -142,7 +143,7 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public List<Tuple<string,string>> DotTypes { get; set; } = new List<Tuple<string, string>>(){ new Tuple<string, string>("Seawater", "Seawater") , new Tuple<string, string>("Freshwater", "Freshwater/Absorbed") , new Tuple<string, string>("Non-counting mark", "Non-counting mark") };
+        public List<Tuple<string, string>> DotTypes { get; set; } = new List<Tuple<string, string>>() { new Tuple<string, string>("Seawater", "Seawater"), new Tuple<string, string>("Freshwater", "Freshwater/Absorbed"), new Tuple<string, string>("Non-counting mark", "Non-counting mark") };
 
         public string DotType
         {
@@ -470,13 +471,12 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public BitmapImage OriginalImage
+        public Bitmap OriginalImage
         {
             get { return originalImage; }
             set
             {
                 originalImage = value;
-                originalImage.Freeze();
                 if (Global.API.Settings.AutoMeasureScale && (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale == null || AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale == 0.0m))
                 {
                     AutoMeasureScale();
@@ -601,7 +601,18 @@ namespace SmartDots.ViewModel
         public ObservableCollection<string> Units { get; set; } = new ObservableCollection<string>
             { "µm", "mm", "cm" };
 
-        public string MeasureUnit { get; set; } = "mm";
+        public string MeasureUnit
+        {
+            get
+            {
+                return measureUnit;
+            }
+            set
+            {
+                measureUnit = value;
+                RaisePropertyChanged("MeasureUnit");
+            }
+        }
 
         public bool IsMeasureDrawn
         {
@@ -626,7 +637,7 @@ namespace SmartDots.ViewModel
         }
 
         public bool IsContextmenuOpen { get; set; }
-        
+
 
         public System.Drawing.Rectangle ScaleRectangle { get; private set; }
         public bool IsMeasuring { get; private set; }
@@ -1317,16 +1328,16 @@ namespace SmartDots.ViewModel
         {
             try
             {
-                
+
                 if (OriginalImage != null)
                 {
                     if (Brightness == 0 && Contrast == 0)
                     {
-                        OtolithImage = OriginalImage;
+                        OtolithImage = BitmapConverter.Bitmap2BitmapImage(OriginalImage);
                     }
                     else
                     {
-                        OtolithImage = SetBrightness(SetContrast(OriginalImage));
+                        OtolithImage = ImageManipulator.SetBrightnessContrast(new Bitmap(OriginalImage), Brightness, Contrast);
                     }
                     AgeReadingViewModel.UpdateGraphs();
                 }
@@ -1335,115 +1346,6 @@ namespace SmartDots.ViewModel
             {
                 Helper.ShowWinUIMessageBox("Error adjusting image", "Error", MessageBoxButton.OK, MessageBoxImage.Error,
                     e);
-            }
-        }
-
-        public BitmapImage SetBrightness(BitmapImage img)
-        {
-            unsafe
-            {
-                double brightness = Brightness;
-                Bitmap bmap = BitmapConverter.BitmapImage2Bitmap(img);
-                BitmapData bitmapData = bmap.LockBits(new System.Drawing.Rectangle(0, 0, bmap.Width, bmap.Height),
-                    ImageLockMode.ReadWrite, bmap.PixelFormat);
-
-                int bytesPerPixel = Bitmap.GetPixelFormatSize(bmap.PixelFormat) / 8;
-                int heightInPixels = bitmapData.Height;
-                int widthInBytes = bitmapData.Width * bytesPerPixel;
-                byte* PtrFirstPixel = (byte*)bitmapData.Scan0;
-
-                Parallel.For((long)0, heightInPixels, y =>
-               {
-                   byte* currentLine = PtrFirstPixel + (y * bitmapData.Stride);
-
-                   for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
-                   {
-                       double oldBlue = currentLine[x] + brightness;
-                       if (oldBlue < 0) oldBlue = 1;
-                       if (oldBlue > 255) oldBlue = 255;
-
-                       double oldGreen = currentLine[x + 1] + brightness;
-                       if (oldGreen < 0) oldGreen = 1;
-                       if (oldGreen > 255) oldGreen = 255;
-
-                       double oldRed = currentLine[x + 2] + brightness;
-                       if (oldRed < 0) oldRed = 1;
-                       if (oldRed > 255) oldRed = 255;
-
-                       currentLine[x] = (byte)oldBlue;
-                       currentLine[x + 1] = (byte)oldGreen;
-                       currentLine[x + 2] = (byte)oldRed;
-                   }
-               });
-                bmap.UnlockBits(bitmapData);
-                return BitmapConverter.Bitmap2BitmapImage(bmap);
-            }
-        }
-
-        public BitmapImage SetContrast(BitmapImage img)
-        {
-            Stopwatch stopwatch = new Stopwatch();
-
-            // Begin timing.
-            stopwatch.Start();
-
-            unsafe
-            {
-                double contrast = Contrast;
-                Bitmap bmap = BitmapConverter.BitmapImage2Bitmap(img);
-                contrast = (100.0 + contrast) / 100.0;
-                contrast *= contrast;
-                BitmapData bitmapData = bmap.LockBits(new System.Drawing.Rectangle(0, 0, bmap.Width, bmap.Height),
-                    ImageLockMode.ReadWrite, bmap.PixelFormat);
-
-                int bytesPerPixel = Bitmap.GetPixelFormatSize(bmap.PixelFormat) / 8;
-                int heightInPixels = bitmapData.Height;
-                int widthInBytes = bitmapData.Width * bytesPerPixel;
-                byte* PtrFirstPixel = (byte*)bitmapData.Scan0;
-
-                Parallel.For((long)0, heightInPixels, y =>
-               {
-                   byte* currentLine = PtrFirstPixel + (y * bitmapData.Stride);
-
-                   for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
-                   {
-                       double oldBlue = currentLine[x] / 255.0;
-                       oldBlue -= 0.5;
-                       oldBlue *= contrast;
-                       oldBlue += 0.5;
-                       oldBlue *= 255;
-                       if (oldBlue < 0) oldBlue = 0;
-                       if (oldBlue > 255) oldBlue = 255;
-
-                       double oldGreen = currentLine[x + 1] / 255.0;
-                       oldGreen -= 0.5;
-                       oldGreen *= contrast;
-                       oldGreen += 0.5;
-                       oldGreen *= 255;
-                       if (oldGreen < 0) oldGreen = 0;
-                       if (oldGreen > 255) oldGreen = 255;
-
-                       double oldRed = currentLine[x + 2] / 255.0;
-                       oldRed -= 0.5;
-                       oldRed *= contrast;
-                       oldRed += 0.5;
-                       oldRed *= 255;
-                       if (oldRed < 0) oldRed = 0;
-                       if (oldRed > 255) oldRed = 255;
-
-                       currentLine[x] = (byte)oldBlue;
-                       currentLine[x + 1] = (byte)oldGreen;
-                       currentLine[x + 2] = (byte)oldRed;
-                   }
-               });
-                bmap.UnlockBits(bitmapData);
-
-                // Stop timing.
-                stopwatch.Stop();
-
-                // Write result.
-                Console.WriteLine("Time elapsed for SetContrast: " + stopwatch.Elapsed);
-                return BitmapConverter.Bitmap2BitmapImage(bmap);
             }
         }
 
@@ -2139,9 +2041,19 @@ namespace SmartDots.ViewModel
             ScaleShapes.Clear();
             IsScaleDrawn = false;
             AgeReadingViewModel.AgeReadingEditorView.ScalePixels.Text = "0";
+            HideMeasureScalePanel();
             RefreshShapes();
-            AgeReadingViewModel.AgeReadingEditorView.MeasureScalePanel.Visibility = Visibility.Collapsed;
             Mode = EditorModeEnum.None;
+        }
+
+        public void HideMeasureScalePanel()
+        {
+            ScaleShapes.Clear();
+            AgeReadingViewModel.AgeReadingEditorView.MeasureScalePanel.Visibility = Visibility.Collapsed;
+            AgeReadingViewModel.AgeReadingEditorView.ScalePixels.Text = "0";
+            AgeReadingViewModel.AgeReadingEditorView.ScaleMilimeters.EditValue = 1;
+            MeasureUnit = "mm";
+
         }
 
         public void CancelScale()
@@ -2150,7 +2062,7 @@ namespace SmartDots.ViewModel
             IsScaleDrawn = false;
             AgeReadingViewModel.AgeReadingEditorView.ScalePixels.Text = "0";
             RefreshShapes();
-            AgeReadingViewModel.AgeReadingEditorView.MeasureScalePanel.Visibility = Visibility.Collapsed;
+            HideMeasureScalePanel();
             Mode = EditorModeEnum.None;
         }
 
@@ -2182,6 +2094,15 @@ namespace SmartDots.ViewModel
         public void Graphs_Click(object sender, RoutedEventArgs e)
         {
             AgeReadingViewModel.ToggleGraphs();
+        }
+
+        public void bReset_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
+        {
+            Brightness = 0;
+        }
+        public void cReset_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
+        {
+            Contrast = 0;
         }
     }
 }

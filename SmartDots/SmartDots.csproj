@@ -22,7 +22,7 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <PublishUrl>C:\Users\kdecoster\source\repos\SmartDots\SmartDots\publish\</PublishUrl>
+    <PublishUrl>C:\Users\kdecoster\source\repos\ices-eg\SmartDots\SmartDots\publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -36,13 +36,13 @@
     <UpdateUrl>https://raw.githubusercontent.com/ices-eg/SmartDots/master/SmartDots/publish/</UpdateUrl>
     <ProductName>SmartDots</ProductName>
     <PublisherName>ILVO</PublisherName>
-    <MinimumRequiredVersion>2.2.0.4</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.3.0.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>2.3.0.%2a</ApplicationVersion>
+    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationVersion>3.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -71,7 +71,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>CD39D121CEBB04ABC5594F92D8B777AB0D62CF80</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>6054F5EEC10CC150093C93AE25A94CD7A062B3C8</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>
@@ -81,7 +81,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>smartdots icon.ico</ApplicationIcon>
@@ -234,6 +234,7 @@
       <DependentUpon>SmartdotsSplashScreen.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\AsyncServerSocket.cs" />
+    <Compile Include="Helpers\ImageManipulator.cs" />
     <Compile Include="Helpers\BroadCasterCallback.cs" />
     <Compile Include="Helpers\BroadCasterClient.cs" />
     <Compile Include="Helpers\Cross.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="Helpers\LinkFinder.cs" />
     <Compile Include="Helpers\ScaleMeasureTool.cs" />
     <Compile Include="Helpers\ThreadTuple.cs" />
+    <Compile Include="Helpers\LarvaeUndoRedo.cs" />
     <Compile Include="Helpers\UndoRedo.cs" />
     <Compile Include="Helpers\WebAPI.cs" />
     <Compile Include="Helpers\WebApiEventArgs.cs" />
@@ -254,13 +256,19 @@
     <Compile Include="Model\Extension\Analysis.cs" />
     <Compile Include="Model\Extension\AnalysisRowObject.cs" />
     <Compile Include="Model\Extension\ConnectionInfo.cs" />
+    <Compile Include="Model\Extension\LarvaeDot.cs" />
     <Compile Include="Model\Extension\Folder.cs" />
     <Compile Include="Model\Extension\AnalysisParameter.cs" />
     <Compile Include="Model\Extension\LarvaeAnalysis.cs" />
+    <Compile Include="Model\Extension\LarvaeAnnotationParameterResult.cs" />
     <Compile Include="Model\Extension\LarvaeAnnotation.cs" />
+    <Compile Include="Model\Extension\LarvaeParameter.cs" />
     <Compile Include="Model\Extension\LarvaeFile.cs" />
+    <Compile Include="Model\Extension\LarvaeDevelopmentStage.cs" />
+    <Compile Include="Model\Extension\LarvaePresence.cs" />
     <Compile Include="Model\Extension\LarvaeQuality.cs" />
     <Compile Include="Model\Extension\LarvaeSample.cs" />
+    <Compile Include="Model\Extension\LarvaeLine.cs" />
     <Compile Include="Model\Extension\Maturity.cs" />
     <Compile Include="Model\Extension\MaturityAnalysis.cs" />
     <Compile Include="Model\Extension\MaturityAnnotation.cs" />
@@ -286,11 +294,15 @@
     <Compile Include="Model\Smartdots\AgeReading\DtoQuality.cs" />
     <Compile Include="Model\Smartdots\AgeReading\DtoSample.cs" />
     <Compile Include="Model\Smartdots\AgeReading\DtoUser.cs" />
-    <Compile Include="Model\Smartdots\Larvae\DtoMaturityAnalysis.cs" />
-    <Compile Include="Model\Smartdots\Larvae\DtoMaturityAnnotation.cs" />
-    <Compile Include="Model\Smartdots\Larvae\DtoMaturityFile.cs" />
-    <Compile Include="Model\Smartdots\Larvae\DtoMaturityLookupItem.cs" />
-    <Compile Include="Model\Smartdots\Larvae\DtoMaturitySample.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoLarvaeAnalysis.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoLarvaeAnnotationParameterResult.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoLarvaeDot.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoLarvaeLine.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoLarvaeParameter.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoLarvaeAnnotation.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoLarvaeFile.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoLarvaeLookupItem.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoLarvaeSample.cs" />
     <Compile Include="Model\Smartdots\Maturity\DtoMaturityAnalysis.cs" />
     <Compile Include="Model\Smartdots\Maturity\DtoMaturityAnnotation.cs" />
     <Compile Include="Model\Smartdots\Maturity\DtoMaturityFile.cs" />
@@ -401,7 +413,14 @@
     <Compile Include="View\UserControls\WindowsButton.xaml.cs">
       <DependentUpon>WindowsButton.xaml</DependentUpon>
     </Compile>
+    <Content Include="DefaultLarvaeLayout.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DefaultMaturityLayout.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\falsering.svg" />
+    <Resource Include="Resources\go-back-arrow.png" />
     <Resource Include="Resources\WindowButtonClose-Original.png" />
     <Resource Include="Resources\SmartDots.png" />
     <Resource Include="Resources\icons8-cog-48.png" />
@@ -744,9 +763,9 @@
     <Resource Include="Resources\size.png" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -787,7 +806,27 @@
     <Resource Include="Resources\Maximize.png" />
   </ItemGroup>
   <ItemGroup>
+    <PublishFile Include="DefaultLarvaeLayout.xml">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
     <PublishFile Include="DefaultLayout.xml">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="DefaultMaturityLayout.xml">
       <Visible>False</Visible>
       <Group>
       </Group>

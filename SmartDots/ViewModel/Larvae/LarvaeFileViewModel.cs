@@ -103,11 +103,11 @@ namespace SmartDots.ViewModel
 
             if (imagepath.StartsWith("http"))
             {
-                Helper.Log("filetimer.txt", $"Start downloading image {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
+                //Helper.Log("filetimer.txt", $"Start downloading image {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
 
                 var buffer = new WebClient().DownloadData(imagepath);
 
-                Helper.Log("filetimer.txt", $"Finished downloading image {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
+                //Helper.Log("filetimer.txt", $"Finished downloading image {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
 
 
                 using (var stream = new MemoryStream(buffer))
@@ -126,10 +126,10 @@ namespace SmartDots.ViewModel
                 };
             }
 
-            Helper.Log("filetimer.txt", $"End bitmap conversion {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
+            //Helper.Log("filetimer.txt", $"End bitmap conversion {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
 
             LarvaeViewModel.LarvaeEditorViewModel.LarvaeImage = bitmap;
-            LarvaeViewModel.LarvaeEditorViewModel.OriginalImage = bitmap;
+            LarvaeViewModel.LarvaeEditorViewModel.OriginalImage = BitmapConverter.BitmapImage2Bitmap(bitmap);
             LarvaeViewModel.LarvaeView.Opacity = 1;
 
             LarvaeViewModel.LarvaeStatusbarViewModel.IsFittingImage = true;
@@ -296,6 +296,8 @@ namespace SmartDots.ViewModel
 
             ChangingFile = true;
 
+            LarvaeViewModel.LarvaeEditorViewModel.HideMeasureScalePanel();
+
             LarvaeFile file = SelectedFile;
             LarvaeViewModel.LarvaeEditorViewModel.Brightness = 0;
             LarvaeViewModel.LarvaeEditorViewModel.Contrast = 0;
@@ -341,7 +343,6 @@ namespace SmartDots.ViewModel
 
                 //Helper.Log("filetimer.txt", $"End loading image{file.Path}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
 
-                LarvaeViewModel.LarvaeEditorViewModel.Mode = EditorModeEnum.Measure;
 
                 //Helper.DoAsync(SetNextPicture);
                 //AgeReadingViewModel.AgeReadingStatusbarViewModel.IsFittingImage = true;
@@ -667,7 +668,7 @@ namespace SmartDots.ViewModel
                 LarvaeViewModel.LarvaeView.FilePrevious.IsEnabled = true;
             }
 
-            if (index >= LarvaeFiles.Count - 1)
+            if (LarvaeFiles == null || index >= LarvaeFiles.Count - 1)
             {
                 LarvaeViewModel.LarvaeView.FileNext.IsEnabled = false;
             }

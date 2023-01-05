@@ -11,6 +11,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
              xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
+             xmlns:model="clr-namespace:SmartDots.Model"
              mc:Ignorable="d" 
              dx:ThemeManager.ThemeName="Office2016White"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -81,8 +82,8 @@
                         <dxg:CardView.CardRowTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Vertical">
-                                    <dxe:ImageEdit Source="{Binding Path=Value}" Height="150" MaxHeight="150" Stretch="Uniform" ShowMenu="False" Margin="-13,-13,-13,-25"  />
-                                    <TextBlock Text="Test image" Margin="0,25,0,0"></TextBlock>
+                                    <dxe:ImageEdit Source="{Binding Path=Data.ThumbnailPath}" Height="150" MaxHeight="150" Stretch="Uniform" ShowMenu="False" Margin="-13,-13,-13,-25"  />
+                                    <TextBlock Text="{Binding Path=Data.Name}" FontWeight="Bold" Margin="-10,30,0,-30"></TextBlock>
                                 </StackPanel>
 
                             </DataTemplate>
@@ -96,7 +97,10 @@
                                 <dxe:ImageEdit Source="{Binding Path=Value}" Height="150" MaxHeight="150" Stretch="Uniform" ShowMenu="False" Margin="-25,-13,-13,-13"  />
                             </DataTemplate>
                         </dxg:GridColumn.CellTemplate>-->
+						
                     </dxg:GridColumn>
+
+
 
 
                 </dxg:GridControl.Columns>

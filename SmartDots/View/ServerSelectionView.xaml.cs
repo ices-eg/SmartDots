@@ -103,7 +103,7 @@ namespace SmartDots.View
 
         private void LoadChoices()
         {
-            FieldAuth.ItemsSource = new HashSet<string> {AuthWindows, AuthUser, AuthToken};
+            FieldAuth.ItemsSource = new HashSet<string> { AuthWindows, AuthUser, AuthToken };
             var lastAuth = Properties.Settings.Default.LastAuthType;
             FieldAuth.SelectedItem = string.IsNullOrWhiteSpace(lastAuth) ? AuthToken : lastAuth;
 
@@ -177,14 +177,14 @@ namespace SmartDots.View
             return true;
         }
 
-        
+
 
         private async Task<ConnectionInfo> HandleConnect(ConnectionInfo c)
         {
             var tt = new ThreadTuple();
             tt.BeginAnimation += (o, args) => AnimateConnection("Connecting", tt.CancelToken);
             tt.BeginAction += (o, args) => c.ErrorMessage = DoConnect(c).ErrorMessage;
-            tt.OnError += (o, args) => PrintError(((Exception) args.Value).Message);
+            tt.OnError += (o, args) => PrintError(((Exception)args.Value).Message);
             await tt.Start();
 
             return c;
@@ -193,7 +193,7 @@ namespace SmartDots.View
         private WebApiResult<DtoUser> DoConnect(ConnectionInfo c)
         {
             var auth = new DtoUserAuthentication();
-            if(c.ApiUrl.ToLower().Trim() == "offline")
+            if (c.ApiUrl.ToLower().Trim() == "offline")
             {
                 //Global.API = new 
             }
@@ -203,7 +203,7 @@ namespace SmartDots.View
             }
             var connectionAttempt = Global.API.EstablishConnection(c.ApiUrl);
             if (!connectionAttempt.Succeeded)
-                return new WebApiResult<DtoUser> {ErrorMessage = connectionAttempt.ErrorMessage};
+                return new WebApiResult<DtoUser> { ErrorMessage = connectionAttempt.ErrorMessage };
 
             switch (c.AuthenticationType)
             {
@@ -287,11 +287,11 @@ namespace SmartDots.View
                 {
                     return;
                 }
-                item.IsAvailableOffline = false; 
+                item.IsAvailableOffline = false;
             }
 
             List<GridColumn> columns = new List<GridColumn>();
-            columns.AddRange(toReturn.Where(x => !x.ToUpper().Equals("ID")).Select(columnName => new GridColumn() { FieldName = columnName, HeaderTemplate = Resources["ColumnHeaderTemplate"] as DataTemplate, AllowSorting = DefaultBoolean.True, AllowBestFit = DefaultBoolean.True}));
+            columns.AddRange(toReturn.Where(x => !x.ToUpper().Equals("ID")).Select(columnName => new GridColumn() { FieldName = columnName, HeaderTemplate = Resources["ColumnHeaderTemplate"] as DataTemplate, AllowSorting = DefaultBoolean.True, AllowBestFit = DefaultBoolean.True }));
             //columns.Add(new GridColumn() { Header = "Is Available Offline", FieldName = "IsAvailableOffline", UnboundType = UnboundColumnType.Boolean, Style = Resources["AnalysisColumn"] as Style, AllowSorting = DefaultBoolean.True });
 
             Analyses.ItemsSource = itemsResult.Result;
@@ -338,27 +338,38 @@ namespace SmartDots.View
             var ae = new AnalysisEventArgs();
             var rowIndex = selection.GetSelectedRows()[0];
             ae.Analysis = Analyses.GetRow(rowIndex);
+            var apiResult = new WebApiResult<bool>();
+
             if (ae.Analysis.Purpose != null)
             {
-                switch (ae.Analysis.Purpose.Value.ToString().ToLower().Substring(0,3))
+                switch (ae.Analysis.Purpose.Value.ToString().ToLower().Substring(0, 3))
                 {
+                    // todo error handling
+
                     case "mat":
-                        Global.API.ToggleMaturityAnalysisUserProgress((Guid)ae.Analysis.ID);
+                        apiResult = Global.API.ToggleMaturityAnalysisUserProgress((Guid)ae.Analysis.ID);
                         break;
                     case "lar":
-                        Global.API.ToggleLarvaeAnalysisUserProgress((Guid)ae.Analysis.ID);
+                        apiResult = Global.API.ToggleLarvaeAnalysisUserProgress((Guid)ae.Analysis.ID);
                         break;
                     default:
-                        Global.API.ToggleAnalysisUserProgress((Guid)ae.Analysis.ID);
+                        apiResult = Global.API.ToggleAnalysisUserProgress((Guid)ae.Analysis.ID);
                         break;
                 }
             }
             else
             {
-                Global.API.ToggleAnalysisUserProgress((Guid)ae.Analysis.ID);
+                apiResult = Global.API.ToggleAnalysisUserProgress((Guid)ae.Analysis.ID);
             }
-            
+            if (!apiResult.Succeeded)
+            {
+                Helper.ShowWinUIMessageBox("Error toggling user progress from the Web API\n" + apiResult.ErrorMessage, "Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
             LoadGrid();
+
         }
 
         #region Interface
@@ -456,13 +467,13 @@ namespace SmartDots.View
             var item = JsonConvert.DeserializeObject<dynamic>(Analyses.SelectedItem.ToString());
             //if (item.Folder != null)
             //{
-                ButtonWorkOnline.IsEnabled = true;
+            ButtonWorkOnline.IsEnabled = true;
             //}
             //if (item.Folder != null)
             //{
             ButtonWorkOnline.IsEnabled = true;
             //}
-            
+
             if (item.UserProgress != null)
             {
                 var finishedAliases = new List<string>();
@@ -472,7 +483,7 @@ namespace SmartDots.View
                 finishedAliases.Add("done");
                 finishedAliases.Add("ready");
                 ButtonFinished.IsEnabled = true;
-                if (finishedAliases.Contains(((string) (item.UserProgress.ToString())).ToLower()))
+                if (finishedAliases.Contains(((string)(item.UserProgress.ToString())).ToLower()))
                 {
                     ButtonFinished.Label = "Reopen";
                 }
@@ -587,7 +598,7 @@ namespace SmartDots.View
                 Helper.ShowWinUIMessageBox(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            
+
         }
 
         private void ServerSelectionView_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -672,7 +683,7 @@ namespace SmartDots.View
 
         private void Analyses_StartSorting(object sender, RoutedEventArgs e)
         {
-            analysisSortInfo = ((GridControl) sender).SortInfo.FirstOrDefault();
+            analysisSortInfo = ((GridControl)sender).SortInfo.FirstOrDefault();
         }
     }
 }

@@ -18,17 +18,27 @@ namespace SmartDots.Helpers
     public static class Helper
     {
 
-        public static float Version { get; } = 2.4f;
+        public static float Version { get; } = 3.0f;
         
         public static void ShowWinUIMessageBox(string message, string caption, MessageBoxButton msgBoxButton, MessageBoxImage img, Exception e = null)
         {
             //Log("errors.txt", message + e?.StackTrace, e);
 
-            Application.Current.Dispatcher.Invoke((Action)delegate {
+            try
+            {
+                Application.Current.Dispatcher.Invoke((Action)delegate {
 
-                new WinUIMessageBoxService().Show(message, caption, msgBoxButton, img);
+                    new WinUIMessageBoxService().Show(message, caption, msgBoxButton, img);
 
-            });
+                });
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                throw;
+            }
+
+            
 
         }
 

@@ -36,18 +36,21 @@ namespace SmartDots.ViewModel
         private object lineColor;
         private object measureColor;
         private int lineWidth;
+        private int dotWidth;
         private int measureLineWidth;
         private int measureFontSize;
+        private LarvaeUndoRedo undoRedo;
         private ObservableCollection<Line> lineShapes = new ObservableCollection<Line>();
-        private ObservableCollection<Line> topLevelLineShapes = new ObservableCollection<Line>();
         private ObservableCollection<Line> scaleShapes = new ObservableCollection<Line>();
+        private ObservableCollection<Shape> dotShapes = new ObservableCollection<Shape>();
+
         private ObservableCollection<Line> originalMeasureShapes = new ObservableCollection<Line>();
         private ObservableCollection<Line> measureShapes = new ObservableCollection<Line>();
         private ObservableCollection<TextBlock> textShapes = new ObservableCollection<TextBlock>();
         private CombinedLine activeCombinedLine;
         private CombinedLine tempCombinedLine;
         private EditorModeEnum mode;
-        private BitmapImage originalImage;
+        private Bitmap originalImage;
         private bool shapeChangeFlag;
         private BitmapImage _larvaeImage;
         private int originalWidth;
@@ -60,6 +63,8 @@ namespace SmartDots.ViewModel
         private bool hideLines;
         private bool isScaleDrawn;
         private bool isMeasureDrawn;
+        private string measureUnit = "mm";
+
 
         public object LineColor
         {
@@ -91,6 +96,16 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public object DotWidth
+        {
+            get { return dotWidth; }
+            set
+            {
+                dotWidth = int.Parse(value.ToString());
+                RaisePropertyChanged("DotWidth");
+            }
+        }
+
         public object MeasureLineWidth
         {
             get { return measureLineWidth; }
@@ -111,6 +126,27 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public ObservableCollection<Line> LineShapes
+        {
+            get { return lineShapes; }
+            set
+            {
+                lineShapes = value;
+                RaisePropertyChanged("LineShapes");
+            }
+        }
+
+        public ObservableCollection<Shape> DotShapes
+        {
+            get { return dotShapes; }
+            set
+            {
+                dotShapes = value;
+                RaisePropertyChanged("DotShapes");
+            }
+        }
+
+
         public ObservableCollection<Line> ScaleShapes
         {
             get { return scaleShapes; }
@@ -121,13 +157,16 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public LarvaeUndoRedo UndoRedo
+        {
+            get { return undoRedo; }
+            set { undoRedo = value; }
+        }
+
         public ObservableCollection<Line> OriginalMeasureShapes
         {
             get { return originalMeasureShapes; }
-            set
-            {
-                originalMeasureShapes = value;
-            }
+            set { originalMeasureShapes = value; }
         }
 
         public ObservableCollection<Line> MeasureShapes
@@ -150,6 +189,63 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public bool CanDrawLine
+        {
+            get
+            {
+                return LarvaeViewModel?.LarvaeSampleViewModel?.SelectedSample != null
+                       && !LarvaeViewModel.LarvaeSampleViewModel.SelectedSample.IsReadOnly
+                       && LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters.Count == 1
+                       && LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0].Parameter.ShapeType
+                           ?.ToLower() == "line";
+            }
+        }
+
+        public bool CanDrawDot
+        {
+            get
+            {
+                return LarvaeViewModel?.LarvaeSampleViewModel?.SelectedSample != null
+                       && !LarvaeViewModel.LarvaeSampleViewModel.SelectedSample.IsReadOnly
+                       && LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters.Count == 1
+                       && LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0].Parameter.ShapeType
+                           ?.ToLower() == "dot";
+            }
+        }
+
+        public bool CanDelete
+        {
+            get
+            {
+                return LarvaeViewModel?.LarvaeSampleViewModel?.SelectedSample != null
+                       && !LarvaeViewModel.LarvaeSampleViewModel.SelectedSample.IsReadOnly
+                       && LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters.Count == 1;
+            }
+        }
+
+        public bool CanUndo
+        {
+            get
+            {
+                return LarvaeViewModel?.LarvaeSampleViewModel?.SelectedSample != null
+                       && !LarvaeViewModel.LarvaeSampleViewModel.SelectedSample.IsReadOnly
+                       && LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters.Count == 1;
+                //&& UndoRedo.U
+
+            }
+            set { }
+        }
+
+        public bool CanRedo
+        {
+            get
+            {
+                return LarvaeViewModel?.LarvaeSampleViewModel?.SelectedSample != null
+                       && !LarvaeViewModel.LarvaeSampleViewModel.SelectedSample.IsReadOnly
+                       && LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters.Count == 1;
+            }
+        }
+
         public EditorModeEnum Mode
         {
             get { return mode; }
@@ -158,11 +254,24 @@ namespace SmartDots.ViewModel
                 mode = value;
                 if (larvaeViewModel != null)
                 {
+                    LarvaeViewModel.LarvaeEditorView.LineButton.IsPressed = false;
+                    LarvaeViewModel.LarvaeEditorView.DotButton.IsPressed = false;
+                    LarvaeViewModel.LarvaeEditorView.DeleteBtn.IsChecked = false;
                     LarvaeViewModel.LarvaeEditorView.MeasureButton.IsPressed = false;
                     LarvaeViewModel.LarvaeEditorView.ScaleButton.IsPressed = false;
 
                     switch (value)
                     {
+                        case EditorModeEnum.DrawLine:
+                        case EditorModeEnum.MakingLine:
+                            LarvaeViewModel.LarvaeEditorView.LineButton.IsPressed = true;
+                            break;
+                        case EditorModeEnum.DrawDot:
+                            LarvaeViewModel.LarvaeEditorView.DotButton.IsPressed = true;
+                            break;
+                        case EditorModeEnum.Delete:
+                            LarvaeViewModel.LarvaeEditorView.DeleteBtn.IsChecked = true;
+                            break;
                         case EditorModeEnum.Measure:
                         case EditorModeEnum.MakingMeasure:
                             LarvaeViewModel.LarvaeEditorView.MeasureButton.IsPressed = true;
@@ -170,9 +279,17 @@ namespace SmartDots.ViewModel
                         case EditorModeEnum.DrawScale:
                             LarvaeViewModel.LarvaeEditorView.ScaleButton.IsPressed = true;
                             break;
+                        case EditorModeEnum.None:
+                            LarvaeViewModel.LarvaeEditorView.LineButton.IsPressed = false;
+                            LarvaeViewModel.LarvaeEditorView.DotButton.IsPressed = false;
+                            LarvaeViewModel.LarvaeEditorView.DeleteBtn.IsChecked = false;
+                            LarvaeViewModel.LarvaeEditorView.MeasureButton.IsPressed = false;
+                            LarvaeViewModel.EnableUI(true);
+                            break;
 
                     }
                 }
+
                 RaisePropertyChanged("Mode");
             }
         }
@@ -231,12 +348,12 @@ namespace SmartDots.ViewModel
             {
                 width = value;
                 LarvaeViewModel.LarvaeEditorView.ScrollViewer.HorizontalScrollBarVisibility = width >
-                                                                                                      LarvaeViewModel
-                                                                                                          .LarvaeEditorView
-                                                                                                          .ScrollViewer
-                                                                                                          .Width
-                    ? ScrollBarVisibility.Hidden
-                    : ScrollBarVisibility.Auto;
+                    LarvaeViewModel
+                        .LarvaeEditorView
+                        .ScrollViewer
+                        .Width
+                        ? ScrollBarVisibility.Hidden
+                        : ScrollBarVisibility.Auto;
                 RaisePropertyChanged("Width");
             }
         }
@@ -248,12 +365,12 @@ namespace SmartDots.ViewModel
             {
                 height = value;
                 LarvaeViewModel.LarvaeEditorView.ScrollViewer.VerticalScrollBarVisibility = height >
-                                                                                                    LarvaeViewModel
-                                                                                                        .LarvaeEditorView
-                                                                                                        .ScrollViewer
-                                                                                                        .Height
-                    ? ScrollBarVisibility.Hidden
-                    : ScrollBarVisibility.Auto;
+                    LarvaeViewModel
+                        .LarvaeEditorView
+                        .ScrollViewer
+                        .Height
+                        ? ScrollBarVisibility.Hidden
+                        : ScrollBarVisibility.Auto;
                 RaisePropertyChanged("Height");
             }
         }
@@ -270,6 +387,7 @@ namespace SmartDots.ViewModel
                     AdjustImage();
                     RaisePropertyChanged("LarvaeImage");
                 }
+
                 RaisePropertyChanged("Brightness");
             }
         }
@@ -285,11 +403,12 @@ namespace SmartDots.ViewModel
                     AdjustImage();
                     RaisePropertyChanged("LarvaeImage");
                 }
+
                 RaisePropertyChanged("Contrast");
             }
         }
 
-        public BitmapImage OriginalImage
+        public Bitmap OriginalImage
         {
             get { return originalImage; }
             set
@@ -297,8 +416,9 @@ namespace SmartDots.ViewModel
                 originalImage = value;
                 if (value != null)
                 {
-                    originalImage.Freeze();
-                    if (Global.API.Settings.AutoMeasureScale && (LarvaeViewModel.LarvaeFileViewModel.SelectedFile.Scale == null || LarvaeViewModel.LarvaeFileViewModel.SelectedFile.Scale == 0.0m))
+                    if (Global.API.Settings.AutoMeasureScale &&
+                        (LarvaeViewModel.LarvaeFileViewModel.SelectedFile.Scale == null ||
+                         LarvaeViewModel.LarvaeFileViewModel.SelectedFile.Scale == 0.0m))
                     {
                         AutoMeasureScale();
                     }
@@ -357,9 +477,17 @@ namespace SmartDots.ViewModel
         }
 
         public ObservableCollection<string> Units { get; set; } = new ObservableCollection<string>
-        { "µm", "mm", "cm" };
+            {"µm", "mm", "cm"};
 
-        public string MeasureUnit { get; set; } = "mm";
+        public string MeasureUnit
+        {
+            get { return measureUnit; }
+            set
+            {
+                measureUnit = value;
+                RaisePropertyChanged("MeasureUnit");
+            }
+        }
 
         public bool IsContextmenuOpen { get; set; }
         public System.Drawing.Rectangle ScaleRectangle { get; private set; }
@@ -414,7 +542,9 @@ namespace SmartDots.ViewModel
                     var updateFileResult = Global.API.UpdateLarvaeFile(dtofile);
                     if (!updateFileResult.Succeeded)
                     {
-                        Helper.ShowWinUIMessageBox("Error saving Larvae File to Web API\n" + updateFileResult.ErrorMessage, "Error", MessageBoxButton.OK,
+                        Helper.ShowWinUIMessageBox(
+                            "Error saving Larvae File to Web API\n" + updateFileResult.ErrorMessage, "Error",
+                            MessageBoxButton.OK,
                             MessageBoxImage.Error);
                         LarvaeViewModel.LarvaeEditorView.ScaleButton.IsEnabled = false;
                         return;
@@ -456,6 +586,10 @@ namespace SmartDots.ViewModel
         public void UpdateButtons()
         {
             RaisePropertyChanged("CanDrawLine");
+            RaisePropertyChanged("CanDrawDot");
+            RaisePropertyChanged("CanDelete");
+            RaisePropertyChanged("CanUndo");
+            RaisePropertyChanged("CanRedo");
             RaisePropertyChanged("ContextmenuVisibility");
         }
 
@@ -497,13 +631,65 @@ namespace SmartDots.ViewModel
         {
             LarvaeViewModel.LarvaeEditorView.Dispatcher.Invoke(() =>
             {
+                LineShapes = new ObservableCollection<Line>();
+                DotShapes = new ObservableCollection<Shape>();
+                float zoomfactor = LarvaeViewModel.LarvaeStatusbarViewModel.ZoomFactor;
+                ObservableCollection<Line> lines = new ObservableCollection<Line>();
+                ObservableCollection<Shape> dots = new ObservableCollection<Shape>();
 
+                foreach (var parameter in LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters)
+                {
+                    foreach (LarvaeLine l in parameter.Lines)
+                    {
+                        Line line = new Line()
+                        {
+                            X1 = (float)l.X1 * zoomfactor,
+                            Y1 = (float)l.Y1 * zoomfactor,
+                            X2 = (float)l.X2 * zoomfactor,
+                            Y2 = (float)l.Y2 * zoomfactor,
+                            Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(parameter.Parameter.Color)),
+                            StrokeThickness = (float)l.Width * zoomfactor,
+                            StrokeStartLineCap = PenLineCap.Round,
+                            StrokeEndLineCap = PenLineCap.Round
+
+                        };
+                        lines.Add(line);
+                    }
+
+                    foreach (LarvaeDot d in parameter.Dots)
+                    {
+
+                        SolidColorBrush brush = (SolidColorBrush)(new BrushConverter().ConvertFrom(parameter.Parameter.Color));
+
+                        Shape shape = new Ellipse()
+                        {
+                            Fill = brush,
+                            Width = (float)d.Width * zoomfactor,
+                            Height = (float)d.Width * zoomfactor,
+                            SnapsToDevicePixels = false
+
+                        };
+                        var left = (float)d.X * zoomfactor - (float)d.Width / 2 * zoomfactor;
+                        var top = (float)d.Y * zoomfactor - (float)d.Width / 2 * zoomfactor;
+                        Canvas.SetLeft(shape, left);
+                        Canvas.SetTop(shape, top);
+                        dots.Add(shape);
+                    }
+
+
+
+                }
 
                 RefreshMeasures();
 
 
+
+
+                LineShapes = lines;
+                DotShapes = dots;
                 ScaleShapes = ScaleShapes;
 
+                //CalculateAge();
             });
         }
 
@@ -698,11 +884,11 @@ namespace SmartDots.ViewModel
                 {
                     if (Brightness == 0 && Contrast == 0)
                     {
-                        LarvaeImage = OriginalImage;
+                        LarvaeImage = BitmapConverter.Bitmap2BitmapImage(OriginalImage);
                     }
                     else
                     {
-                        LarvaeImage = SetBrightness(SetContrast(OriginalImage));
+                        LarvaeImage = ImageManipulator.SetBrightnessContrast(new Bitmap(OriginalImage), Brightness, Contrast);
                     }
 
                 }
@@ -844,9 +1030,9 @@ namespace SmartDots.ViewModel
 
             if (e.ChangedButton == MouseButton.Left)
             {
-                if (LarvaeViewModel.LarvaeFileViewModel.SelectedFile.IsReadOnly && !(Mode == EditorModeEnum.DrawScale || Mode == EditorModeEnum.Measure || Mode == EditorModeEnum.MakingMeasure))
+                if (LarvaeViewModel.LarvaeSampleViewModel.SelectedSample.IsReadOnly && !(Mode == EditorModeEnum.DrawScale || Mode == EditorModeEnum.Measure || Mode == EditorModeEnum.MakingMeasure))
                 {
-                    new WinUIMessageBoxService().Show("The selected file is ReadOnly!", "Error", MessageBoxButton.OK,
+                    new WinUIMessageBoxService().Show("The selected sample is ReadOnly!", "Error", MessageBoxButton.OK,
                         MessageBoxImage.Error);
                     return;
                 }
@@ -859,6 +1045,12 @@ namespace SmartDots.ViewModel
                         break;
                     case EditorModeEnum.MakingLine:
                         MakeLine(e);
+                        break;
+                    case EditorModeEnum.DrawDot:
+                        DrawDot(e);
+                        break;
+                    case EditorModeEnum.Delete:
+                        DeleteLineOrDot(e);
                         break;
                     case EditorModeEnum.DrawScale:
                         DrawScale(e);
@@ -978,33 +1170,36 @@ namespace SmartDots.ViewModel
 
         private void DrawLine(MouseButtonEventArgs e)
         {
-            //if (LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation == null)
-            //{
-            //    if (!LarvaeViewModel.AgeReadingAnnotationViewModel.CanCreate) return;
-            //    LarvaeViewModel.AgeReadingAnnotationViewModel.NewAnnotation();
-            //    if (LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation == null) return;
-            //}
-            //if (LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any()) return;
+            if (!LarvaeViewModel.LarvaeOwnAnnotationViewModel.CanEdit) return;
+            if (LarvaeViewModel.LarvaeOwnAnnotationViewModel.Annotation == null)
+            {
+                LarvaeViewModel.LarvaeOwnAnnotationViewModel.CreateNewAnnotation();
+            }
+            if (LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters == null || LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters.Count > 1) return;
 
-            //LarvaeViewModel.EnableUI(false);
-            //CombinedLine temp = new CombinedLine();
-            //float zoomfactor = ZoomFactor;
-            //Model.Line l = new Model.Line()
-            //{
-            //    ID = Guid.NewGuid(),
-            //    Color = LineColor.ToString(),
-            //    X1 = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).X / zoomfactor),
-            //    X2 = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).X / zoomfactor),
-            //    Y1 = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).Y / zoomfactor),
-            //    Y2 = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).Y / zoomfactor),
-            //    Width = (int)LineWidth,
-            //    ParentCombinedLine = temp,
-            //    AnnotationID = LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ID,
-            //    LineIndex = 0
-            //};
-            //LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Add(temp);
-            //Mode = EditorModeEnum.MakingLine;
-            //AddLine(l);
+            if (LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0].Lines.Any()) return;
+
+            LarvaeViewModel.EnableUI(false);
+            float zoomfactor = LarvaeViewModel.LarvaeStatusbarViewModel.ZoomFactor;
+
+
+            var lapr = LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0];
+
+            LarvaeLine l = new LarvaeLine()
+            {
+                ID = Guid.NewGuid(),
+                X1 = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).X / zoomfactor),
+                X2 = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).X / zoomfactor),
+                Y1 = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).Y / zoomfactor),
+                Y2 = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).Y / zoomfactor),
+                Width = (int)LineWidth,
+                LineIndex = 0,
+
+            };
+
+            lapr.Lines.Add(l);
+            Mode = EditorModeEnum.MakingLine;
+            RefreshShapes();
         }
 
         private void MakeLine(MouseButtonEventArgs e)
@@ -1015,36 +1210,28 @@ namespace SmartDots.ViewModel
                 {
                     float zoomfactor = LarvaeViewModel.LarvaeStatusbarViewModel.ZoomFactor;
 
-                    //LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last()
-                    //        .Lines.Last()
-                    //        .X2
-                    //    = (int)(e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).X / zoomfactor);
-                    //LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last()
-                    //        .Lines.Last()
-                    //        .Y2
-                    //    = (int)(e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).Y / zoomfactor);
+                    LarvaeLine l = LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0].Lines.Last();
 
-                    //Model.Line l =
-                    //    LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last()
-                    //        .Lines.Last();
+                    l.X2 = (int)(e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).X / zoomfactor);
+                    l.Y2
+                        = (int)(e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).Y / zoomfactor);
 
-                    //Model.Line line = new Model.Line()
-                    //{
-                    //    ID = Guid.NewGuid(),
-                    //    Color = LineColor.ToString(),
-                    //    X1 = l.X2,
-                    //    X2 = l.X2,
-                    //    Y1 = l.Y2,
-                    //    Y2 = l.Y2,
-                    //    Width = (int)LineWidth,
-                    //    ParentCombinedLine =
-                    //        LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last(),
-                    //    AnnotationID = LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ID,
-                    //    LineIndex = LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation
-                    //                    .CombinedLines.Last().Lines.Last().LineIndex + 1
-                    //};
 
-                    //AddLine(line);
+                    LarvaeLine line = new LarvaeLine()
+                    {
+                        ID = Guid.NewGuid(),
+                        X1 = l.X2,
+                        X2 = l.X2,
+                        Y1 = l.Y2,
+                        Y2 = l.Y2,
+                        Width = (int)LineWidth,
+                        LineIndex = l.LineIndex + 1
+                    };
+
+                    LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0].Lines.Add(line);
+
+                    LarvaeViewModel.LarvaeOwnAnnotationViewModel.Annotation.RequiresSaving = true;
+                    RefreshShapes();
                 }
             }
             catch (Exception)
@@ -1058,32 +1245,25 @@ namespace SmartDots.ViewModel
         {
             try
             {
-                //if (LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any())
-                //{
-                //    LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last()
-                //        .Lines.RemoveAt(
-                //            LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last()
-                //                .Lines.Count -
-                //            1);
-                //    if (!LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last().Lines.Any())
-                //    {
-                //        LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Remove(
-                //            LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last());
-                //        ActiveCombinedLine = null;
-                //        Mode = EditorModeEnum.DrawLine;
-                //    }
-                //    else
-                //    {
-                //        Mode = EditorModeEnum.DrawDot;
-                //    }
+                if (LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0].Lines.Any())
+                {
+                    LarvaeLine last = LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0].Lines.Last();
 
-                //    RefreshShapes();
-                //    LarvaeViewModel.UpdateGraphs();
-                //    UpdateButtons();
-                //    LarvaeViewModel.AgeReadingAnnotationViewModel.RefreshActions();
+                    LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0].Lines.Remove(last);
+                    if (!LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0].Lines.Any())
+                    {
+                        Mode = EditorModeEnum.DrawLine;
+                    }
+                    else
+                    {
+                        Mode = EditorModeEnum.None;
+                    }
 
-                //    LarvaeViewModel.EnableUI(true);
-                //}
+                    RefreshShapes();
+                    UpdateButtons();
+
+                    LarvaeViewModel.EnableUI(true);
+                }
             }
             catch (Exception)
             {
@@ -1097,6 +1277,104 @@ namespace SmartDots.ViewModel
 
         }
 
+        private void DrawDot(MouseButtonEventArgs e)
+        {
+            if (LarvaeViewModel.LarvaeOwnAnnotationViewModel.Annotation == null) return;
+            if (!CanDrawDot) return;
+            //Tuple<LinePoint, double> closestPoint =
+            //    GetClosestLinePointWithDistance(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
+            //if (closestPoint != null)
+            //{
+            //    if (closestPoint.Item2 <= 50)
+            //    {
+            //        if (
+            //            !closestPoint.Item1.ParentCombinedLine.ContainsDotAt(new Point(closestPoint.Item1.X,
+            //                closestPoint.Item1.Y)))
+            //        {
+            float zoomfactor = LarvaeViewModel.LarvaeStatusbarViewModel.ZoomFactor;
+
+            Dot d = new Dot()
+            {
+                ID = Guid.NewGuid(),
+                X = (int)(e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).X / zoomfactor),
+                Y = (int)(e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).Y / zoomfactor),
+                Width = (int)DotWidth,
+                //Color = DotColor.ToString(),
+            };
+            //AddDot(closestPoint.Item1.ParentCombinedLine, d);
+            //UndoRedo.InsertInUnDoRedoForAddDot(d, d.ParentCombinedLine, this);
+            //ParentControl.UpdateAnnotations();
+            //        }
+            //    }
+            //}
+            UpdateButtons();
+        }
+
+        private void DeleteLineOrDot(MouseButtonEventArgs e)
+        {
+            //measures have priority
+            //var measure = GetClosesMeasure(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
+            //if (measure != null)
+            //{
+            //    OriginalMeasureShapes.Remove(measure);
+            //    UndoRedo.InsertInUnDoRedoForDeleteMeasure(measure, this);
+            //    RefreshMeasures();
+            //    return;
+            //}
+
+            //if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation == null) return;
+            //if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Count == 0) return;
+            //if (e.ChangedButton == MouseButton.Left &&
+            //    AgeReadingViewModel.AgeReadingAnnotationViewModel?.SelectedAnnotations.Count == 1 &&
+            //    AgeReadingViewModel.AgeReadingEditorView.Cursor == Cursors.Hand)
+            //{
+
+            //    Tuple<Dot, double> closestDot = new Tuple<Dot, double>(new Dot(), 100);
+
+            //    var allDots = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines[0].Dots;
+            //    closestDot = CalculateClosestDot(allDots,
+            //        e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
+            //    bool dotdeleted = false;
+            //    if (allDots.Count > 0 && closestDot.Item2 <= 20)
+            //    {
+            //        if (AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes.Any(x => x.IsFixed) &&
+            //            AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes.FirstOrDefault(x => x.IsFixed)
+            //                .Dots.Any(x => x.Location == closestDot.Item1.Location && x.IsFixed))
+            //        {
+            //            Helper.ShowWinUIMessageBox("Cannot delete a pinned Dot!", "Error", MessageBoxButton.OK,
+            //                MessageBoxImage.Error);
+            //            return;
+            //        }
+            //        AgeReadingViewModel.AgeReadingAnnotationViewModel?.WorkingAnnotation.CombinedLines[0].Dots.Remove(
+            //            closestDot.Item1);
+            //        closestDot.Item1.ParentCombinedLine =
+            //            AgeReadingViewModel.AgeReadingAnnotationViewModel?.WorkingAnnotation.CombinedLines[0];
+            //        UndoRedo.InsertInUnDoRedoForDeleteDot(closestDot.Item1, this);
+            //        ActiveCombinedLine = closestDot.Item1.ParentCombinedLine;
+            //        dotdeleted = true;
+            //    }
+            //    // Anders verwijder de lijn
+            //    else if (!dotdeleted)
+            //    {
+            //        if (AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes.Any(x => x.IsFixed) && ActiveCombinedLine.IsFixed)
+            //        {
+            //            Helper.ShowWinUIMessageBox("Cannot delete a pinned Line!", "Error", MessageBoxButton.OK,
+            //                MessageBoxImage.Error);
+            //            return;
+            //        }
+            //        AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Remove(
+            //            ActiveCombinedLine);
+            //        UndoRedo.InsertInUnDoRedoForDelete(ActiveCombinedLine, this);
+            //        ActiveCombinedLine = null;
+            //        AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Arrow;
+            //        Mode = EditorModeEnum.DrawLine;
+            //    }
+            //    AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsChanged = true;
+            //    RefreshShapes();
+            //}
+            //AgeReadingViewModel.AgeReadingAnnotationViewModel.RefreshActions();
+        }
+
 
         public void ParentCanvas_MouseMove(object sender, MouseEventArgs e)
         {
@@ -1104,16 +1382,15 @@ namespace SmartDots.ViewModel
             try
             {
 
-                //if (Mode == EditorModeEnum.MakingLine && LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any())
-                //{
-                //    LarvaeViewModel.LarvaeEditorView.Cursor = Cursors.Arrow;
-                //    LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last().Lines.Last().X2
-                //        = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).X / zoomfactor);
-                //    LarvaeViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last().Lines.Last().Y2
-                //        = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).Y / zoomfactor);
-                //    LineShapes.Last().X2 = (int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).X;
-                //    LineShapes.Last().Y2 = (int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).Y;
-                //}
+                if (Mode == EditorModeEnum.MakingLine && LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0].Lines.Any())
+                {
+                    var last = LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0].Lines.Last();
+                    LarvaeViewModel.LarvaeEditorView.Cursor = Cursors.Arrow;
+                    last.X2 = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).X / zoomfactor);
+                    last.Y2 = (int)((int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).Y / zoomfactor);
+                    LineShapes.Last().X2 = (int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).X;
+                    LineShapes.Last().Y2 = (int)e.GetPosition(LarvaeViewModel.LarvaeEditorView.ParentCanvas).Y;
+                }
 
 
                 if (Mode == EditorModeEnum.DrawScale && ScaleShapes.Any())
@@ -1155,6 +1432,28 @@ namespace SmartDots.ViewModel
             Mode = EditorModeEnum.DrawLine;
         }
 
+        public void DrawDotBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            Mode = EditorModeEnum.DrawDot;
+        }
+
+        public void DeleteBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            Mode = EditorModeEnum.Delete;
+        }
+
+        public void btnUndo_Click(object sender, RoutedEventArgs e)
+        {
+            UndoRedo.Undo();
+            UpdateButtons();
+        }
+
+        public void btnRedo_Click(object sender, RoutedEventArgs e)
+        {
+            UndoRedo.Redo();
+            UpdateButtons();
+        }
+
         public void AutoMeasureScale(bool buttonPressed = false)
         {
             if (!buttonPressed)
@@ -1194,13 +1493,17 @@ namespace SmartDots.ViewModel
 
         public void DeleteMeasureScale()
         {
-            LarvaeViewModel.LarvaeFileViewModel.SelectedFile.Scale = null;
-            ((dynamic)LarvaeViewModel.LarvaeFileView.FileList.FocusedRowData.Row).Scale = null;
-            LarvaeViewModel.LarvaeFileView.LarvaeFileGrid.RefreshData();
-            var dtofile = (DtoFile)Helper.ConvertType(LarvaeViewModel.LarvaeFileViewModel.SelectedFile, typeof(DtoFile));
-            var deleteResult = Global.API.UpdateFile(dtofile);
+            var dtofile = (DtoLarvaeFile)Helper.ConvertType(LarvaeViewModel.LarvaeFileViewModel.SelectedFile, typeof(DtoLarvaeFile));
+            dtofile.Scale = null;
+            var deleteResult = Global.API.UpdateLarvaeFile(dtofile);
             if (!deleteResult.Succeeded)
+            {
                 Helper.ShowWinUIMessageBox(deleteResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                LarvaeViewModel.LarvaeStatusbarViewModel.Info = $"Scale (px/mm): ?";
+            }
         }
 
         public void ClearScaleLine()
@@ -1251,9 +1554,18 @@ namespace SmartDots.ViewModel
             ScaleShapes.Clear();
             IsScaleDrawn = false;
             LarvaeViewModel.LarvaeEditorView.ScalePixels.Text = "0";
+            HideMeasureScalePanel();
             RefreshShapes();
-            LarvaeViewModel.LarvaeEditorView.MeasureScalePanel.Visibility = Visibility.Collapsed;
             Mode = EditorModeEnum.None;
+        }
+
+        public void HideMeasureScalePanel()
+        {
+            ScaleShapes.Clear();
+            LarvaeViewModel.LarvaeEditorView.MeasureScalePanel.Visibility = Visibility.Collapsed;
+            LarvaeViewModel.LarvaeEditorView.ScalePixels.Text = "0";
+            LarvaeViewModel.LarvaeEditorView.ScaleMilimeters.EditValue = 1;
+            MeasureUnit = "mm";
         }
 
         public void CancelScale()
@@ -1262,7 +1574,7 @@ namespace SmartDots.ViewModel
             IsScaleDrawn = false;
             LarvaeViewModel.LarvaeEditorView.ScalePixels.Text = "0";
             RefreshShapes();
-            LarvaeViewModel.LarvaeEditorView.MeasureScalePanel.Visibility = Visibility.Collapsed;
+            HideMeasureScalePanel();
             Mode = EditorModeEnum.None;
         }
 
@@ -1274,6 +1586,15 @@ namespace SmartDots.ViewModel
             Mode = EditorModeEnum.Measure;
             LarvaeViewModel.EnableUI(true);
 
+        }
+
+        public void bReset_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
+        {
+            Brightness = 0;
+        }
+        public void cReset_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
+        {
+            Contrast = 0;
         }
     }
 }

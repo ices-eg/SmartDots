@@ -48,7 +48,7 @@ namespace SmartDots.ViewModel
                 //EditAnnotationDialogViewModel.ShowNucleusColumn = analysis.ShowNucleusColumn;
                 //EditAnnotationDialogViewModel.ShowEdgeColumn = analysis.ShowEdgeColumn;
                 //EditAnnotationDialogViewModel.Parameters = analysis.AnalysisParameters;
-                LarvaeView.MainWindowViewModel.HeaderModule = "  MATURITY";
+                LarvaeView.MainWindowViewModel.HeaderModule = "  LARVAE";
                 LarvaeView.MainWindowViewModel.HeaderInfo = $"  {LarvaeAnalysis.HeaderInfo}";
                 RaisePropertyChanged("LarvaeAnalysis");
 
@@ -78,7 +78,7 @@ namespace SmartDots.ViewModel
             {
                 if (LarvaeSampleViewModel?.SelectedSample == null) return false;
                 return LarvaeSampleViewModel.SelectedSample.AllowApproveToggle;
-            } 
+            }
         }
 
         public string ApproveButtonText
@@ -165,22 +165,54 @@ namespace SmartDots.ViewModel
 
             //if (!LarvaeOwnAnnotationViewModel.LarvaeQualities.Any())
             //{
-                var larvaeQualityVocab = Global.API.GetVocab(analysisid, "aqm");
-                if (!larvaeQualityVocab.Succeeded)
-                {
-                    Helper.ShowWinUIMessageBox("Error loading Larvae quality vocab from the Web API", "Error", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                    return false;
-                }
-                
-                var larvaeQualities = new List<LarvaeQuality>();
-                foreach (var dtoLookup in larvaeQualityVocab.Result)
-                {
-                    larvaeQualities.Add((LarvaeQuality)Helper.ConvertType(dtoLookup, typeof(LarvaeQuality)));
-                }
+            var larvaeQualityVocab = Global.API.GetVocab(analysisid, "aql");
+            if (!larvaeQualityVocab.Succeeded)
+            {
+                Helper.ShowWinUIMessageBox("Error loading Larvae quality vocab from the Web API", "Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return false;
+            }
 
-                LarvaeOwnAnnotationViewModel.LarvaeQualities = larvaeQualities;
+            var larvaeQualities = new List<LarvaeQuality>();
+            foreach (var dtoLookup in larvaeQualityVocab.Result)
+            {
+                larvaeQualities.Add((LarvaeQuality)Helper.ConvertType(dtoLookup, typeof(LarvaeQuality)));
+            }
+
+            LarvaeOwnAnnotationViewModel.LarvaeQualities = larvaeQualities;
             //}
+
+            var larvaePresencesVocab = Global.API.GetVocab(analysisid, "lpr");
+            if (!larvaePresencesVocab.Succeeded)
+            {
+                Helper.ShowWinUIMessageBox("Error loading Larvae presence vocab from the Web API", "Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return false;
+            }
+
+            var larvaePresences = new List<LarvaePresence>();
+            foreach (var dtoLookup in larvaePresencesVocab.Result)
+            {
+                larvaePresences.Add((LarvaePresence)Helper.ConvertType(dtoLookup, typeof(LarvaePresence)));
+            }
+
+            LarvaeOwnAnnotationViewModel.LarvaePresences = larvaePresences;
+
+            var larvaeDevelopmentStageVocab = Global.API.GetVocab(analysisid, "lds");
+            if (!larvaeDevelopmentStageVocab.Succeeded)
+            {
+                Helper.ShowWinUIMessageBox("Error loading Larvae development stages vocab from the Web API", "Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return false;
+            }
+
+            var larvaeDevelopmentStages = new List<LarvaeDevelopmentStage>();
+            foreach (var dtoLookup in larvaeDevelopmentStageVocab.Result)
+            {
+                larvaeDevelopmentStages.Add((LarvaeDevelopmentStage)Helper.ConvertType(dtoLookup, typeof(LarvaeDevelopmentStage)));
+            }
+
+            LarvaeOwnAnnotationViewModel.LarvaeDevelopmentStages = larvaeDevelopmentStages;
 
 
             return true;
@@ -212,7 +244,12 @@ namespace SmartDots.ViewModel
                 {
                     larvaeSamples.Add((LarvaeSample)Helper.ConvertType(dtoLarvaeSamples, typeof(LarvaeSample)));
                 }
-                larvaeAnalysis.LarvaeSamples = larvaeSamples;
+                List<LarvaeParameter> larvaeParameters = new List<LarvaeParameter>();
+                foreach (var dtoLarvaeParameters in dtoLarvaeAnalysis.Result.LarvaeParameters)
+                {
+                    larvaeParameters.Add((LarvaeParameter)Helper.ConvertType(dtoLarvaeParameters, typeof(LarvaeParameter)));
+                }
+                larvaeAnalysis.LarvaeParameters = larvaeParameters;
                 //if (larvaeAnalysis.Folder == null)
                 //{
                 //    Helper.ShowWinUIMessageBox("Larvae analysis does not contain a folder", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -225,7 +262,10 @@ namespace SmartDots.ViewModel
                 //}
                 //analysis.AnalysisParameters = analysisParameters;
                 LarvaeAnalysis = larvaeAnalysis;
-                LarvaeSampleViewModel.LarvaeSamples = larvaeAnalysis.LarvaeSamples;
+                LarvaeSampleViewModel.LarvaeSamples = larvaeSamples;
+
+                // todo add parameters to larvaeviewmodel
+
                 LarvaeSampleViewModel.SetDynamicLarvaeSamples();
 
                 if (LarvaeSampleViewModel.LarvaeSamples.All(x => x.UserHasApproved))
@@ -351,7 +391,7 @@ namespace SmartDots.ViewModel
                 //    var dynFile = AgeReadingFileViewModel.CreateDynamicFile(selectedFile);
                 //    AgeReadingFileView.FileList.FocusedRowData.Row = dynFile;
                 //}
-                
+
                 //AgeReadingAnnotationViewModel.UpdateList();
                 //AgeReadingFileViewModel.UpdateList();
 
@@ -398,10 +438,10 @@ namespace SmartDots.ViewModel
                 {
                     CloseSplashScreen();
                 }
-                
-                
+
+
             }
-            
+
         }
 
         public bool SaveLayout()

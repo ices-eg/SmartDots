@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DevExpress.Xpf.Editors;
+using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.LookUp;
 using SmartDots.Helpers;
 using SmartDots.Model;
@@ -14,8 +15,11 @@ namespace SmartDots.ViewModel
     public class LarvaeOwnAnnotationViewModel : LarvaeBaseViewModel
     {
         private LarvaeAnnotation annotation;
+        private List<LarvaeAnnotationParameterResult> selectedParameters = new List<LarvaeAnnotationParameterResult>();
         private string propertyValues;
         private List<LarvaeQuality> larvaeQualities = new List<LarvaeQuality>();
+        private List<LarvaeDevelopmentStage> larvaeDevelopmentStages = new List<LarvaeDevelopmentStage>();
+        private List<LarvaePresence> larvaePresences = new List<LarvaePresence>();
         //private LarvaeQuality larvaeQuality;
 
 
@@ -24,19 +28,74 @@ namespace SmartDots.ViewModel
             get { return annotation; }
             set
             {
-                EmptyValues();
                 annotation = value;
-                GetAllPropertiesWithValues();
+
+                if (annotation != null)
+                {
+                    foreach (var param in LarvaeViewModel.LarvaeAnalysis.LarvaeParameters)
+                    {
+                        if (!annotation.LarvaeAnnotationParameterResult.Any(x => x.LarvaeParameterID == param.ID))
+                        {
+                            annotation.LarvaeAnnotationParameterResult.Add(new LarvaeAnnotationParameterResult()
+                            {
+                                ID = Guid.NewGuid(),
+                                LarvaeParameterID = param.ID,
+                                Parameter = LarvaeViewModel.LarvaeAnalysis.LarvaeParameters.FirstOrDefault(x => x.ID == param.ID),
+                                LarvaeAnnotationID = annotation.ID,
+                                Lines = new List<LarvaeLine>(),
+                                Dots = new List<LarvaeDot>()
+                            });
+                        }
+                    }
+                }
+
+                
 
 
                 RaisePropertyChanged("Annotation");
                 RaisePropertyChanged("LarvaeQuality");
-                RaisePropertyChanged("LarvaeSex");
-                RaisePropertyChanged("Larvae");
+                RaisePropertyChanged("LarvaeDevelopmentStage");
+                RaisePropertyChanged("AnalFinPresence");
+                RaisePropertyChanged("DorsalFinPresence");
+                RaisePropertyChanged("PelvicFinPresence");
                 RaisePropertyChanged("Comment");
                 RaisePropertyChanged("CanEdit");
+                LarvaeViewModel.LarvaeEditorViewModel.UpdateButtons();
+
                 LarvaeViewModel.Refresh();
             }
+        }
+
+        public List<LarvaeAnnotationParameterResult> SelectedParameters
+        {
+            get
+            {
+                return selectedParameters;
+            }
+            set
+            {
+                selectedParameters = value;
+                
+                RaisePropertyChanged("SelectedParameters");
+                UpdateSelectionMode();
+
+            }
+        }
+
+        public void UpdateSelectionMode()
+        {
+            if (selectedParameters != null && selectedParameters.Count == 1)
+            {
+                if (selectedParameters[0].Parameter.ShapeType.ToLower() == "dot")
+                {
+                    LarvaeViewModel.LarvaeEditorViewModel.Mode = EditorModeEnum.DrawDot;
+                }
+                else if (selectedParameters[0].Parameter.ShapeType.ToLower() == "line")
+                {
+                    LarvaeViewModel.LarvaeEditorViewModel.Mode = EditorModeEnum.DrawLine;
+                }
+            }
+            LarvaeViewModel.LarvaeEditorViewModel.UpdateButtons();
         }
 
         public bool CanEdit
@@ -52,6 +111,26 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public List<LarvaeDevelopmentStage> LarvaeDevelopmentStages
+        {
+            get { return larvaeDevelopmentStages; }
+            set
+            {
+                larvaeDevelopmentStages = value;
+                RaisePropertyChanged("LarvaeDevelopmentStages");
+            }
+        }
+
+        public List<LarvaePresence> LarvaePresences
+        {
+            get { return larvaePresences; }
+            set
+            {
+                larvaePresences = value;
+                RaisePropertyChanged("LarvaePresences");
+            }
+        }
+
         public List<LarvaeQuality> LarvaeQualities
         {
             get { return larvaeQualities; }
@@ -59,6 +138,66 @@ namespace SmartDots.ViewModel
             {
                 larvaeQualities = value;
                 RaisePropertyChanged("LarvaeQualities");
+            }
+        }
+
+        public LarvaeDevelopmentStage LarvaeDevelopmentStage
+        {
+            get { return LarvaeDevelopmentStages.FirstOrDefault(x => x.ID == Annotation?.DevelopmentStageID); }
+            set
+            {
+                if (Annotation == null)
+                {
+                    CreateNewAnnotation();
+                }
+                Annotation.DevelopmentStageID = LarvaeDevelopmentStages.FirstOrDefault(x => x.ID == value?.ID)?.ID;
+                Annotation.DevelopmentStage = LarvaeDevelopmentStages.FirstOrDefault(x => x.ID == value?.ID)?.Code;
+                RaisePropertyChanged("LarvaeDevelopmentStage");
+            }
+        }
+
+        public LarvaePresence AnalFinPresence
+        {
+            get { return LarvaePresences.FirstOrDefault(x => x.ID == Annotation?.AnalFinPresenceID); }
+            set
+            {
+                if (Annotation == null)
+                {
+                    CreateNewAnnotation();
+                }
+                Annotation.AnalFinPresenceID = LarvaePresences.FirstOrDefault(x => x.ID == value?.ID)?.ID;
+                Annotation.AnalFinPresence = LarvaePresences.FirstOrDefault(x => x.ID == value?.ID)?.Code;
+                RaisePropertyChanged("AnalFinPresence");
+            }
+        }
+
+        public LarvaePresence DorsalFinPresence
+        {
+            get { return LarvaePresences.FirstOrDefault(x => x.ID == Annotation?.DorsalFinPresenceID); }
+            set
+            {
+                if (Annotation == null)
+                {
+                    CreateNewAnnotation();
+                }
+                Annotation.DorsalFinPresenceID = LarvaePresences.FirstOrDefault(x => x.ID == value?.ID)?.ID;
+                Annotation.DorsalFinPresence = LarvaePresences.FirstOrDefault(x => x.ID == value?.ID)?.Code;
+                RaisePropertyChanged("DorsalFinPresence");
+            }
+        }
+
+        public LarvaePresence PelvicFinPresence
+        {
+            get { return LarvaePresences.FirstOrDefault(x => x.ID == Annotation?.PelvicFinPresenceID); }
+            set
+            {
+                if (Annotation == null)
+                {
+                    CreateNewAnnotation();
+                }
+                Annotation.PelvicFinPresenceID = LarvaePresences.FirstOrDefault(x => x.ID == value?.ID)?.ID;
+                Annotation.PelvicFinPresence = LarvaePresences.FirstOrDefault(x => x.ID == value?.ID)?.Code;
+                RaisePropertyChanged("PelvicFinPresence");
             }
         }
 
@@ -102,114 +241,7 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public void GetAllPropertiesWithValues()
-        {
-
-            LarvaeViewModel.LarvaeOwnAnnotationView.Grid.Dispatcher.Invoke(() =>
-            {
-                LarvaeViewModel.LarvaeOwnAnnotationView.Grid.RowDefinitions.Clear();
-                int rowHeight = 24;
-                int startpos = 0;
-                if (LarvaeViewModel.LarvaeSampleViewModel.SelectedSample.AnnotationProperties != null)
-                {
-                    foreach (KeyValuePair<string, string> pair in LarvaeViewModel.LarvaeSampleViewModel.SelectedSample.AnnotationProperties)
-                    {
-                        LarvaeViewModel.LarvaeOwnAnnotationView.Grid.RowDefinitions.Add(new RowDefinition()
-                        {
-                            Height = new GridLength(rowHeight)
-                        });
-
-                        Label key = new Label() { Content = pair.Key, Padding = new Thickness(0), FontWeight = FontWeights.Bold };
-                        Label value = new Label() { Content = pair.Value, Padding = new Thickness(0) };
-
-                        Grid.SetColumn(key, 0);
-                        Grid.SetRow(key, startpos);
-
-                        Grid.SetColumn(value, 1);
-                        Grid.SetRow(value, startpos);
-                        LarvaeViewModel.LarvaeOwnAnnotationView.Grid.Children.Add(key);
-                        LarvaeViewModel.LarvaeOwnAnnotationView.Grid.Children.Add(value);
-                        startpos++;
-                    }
-
-                }
-                //if (Annotation != null)
-                //{
-                LarvaeViewModel.LarvaeOwnAnnotationView.Grid.RowDefinitions.Add(new RowDefinition()
-                {
-                    Height = new GridLength(rowHeight)
-                });
-                LarvaeViewModel.LarvaeOwnAnnotationView.LarvaeSexesLookup.SetValue(Grid.RowProperty, startpos);
-
-                Label sexKey = new Label() { Content = "Sex", Padding = new Thickness(0), FontWeight = FontWeights.Bold };
-
-                Grid.SetColumn(sexKey, 0);
-                Grid.SetRow(sexKey, startpos);
-
-                LarvaeViewModel.LarvaeOwnAnnotationView.Grid.Children.Add(sexKey);
-                startpos++;
-
-                LarvaeViewModel.LarvaeOwnAnnotationView.Grid.RowDefinitions.Add(new RowDefinition()
-                {
-                    Height = new GridLength(rowHeight)
-                });
-                LarvaeViewModel.LarvaeOwnAnnotationView.MaturitiesLookup.SetValue(Grid.RowProperty, startpos);
-
-                Label larvaeKey = new Label() { Content = "Larvae", Padding = new Thickness(0), FontWeight = FontWeights.Bold };
-
-                Grid.SetColumn(larvaeKey, 0);
-                Grid.SetRow(larvaeKey, startpos);
-
-                LarvaeViewModel.LarvaeOwnAnnotationView.Grid.Children.Add(larvaeKey);
-                startpos++;
-
-
-                LarvaeViewModel.LarvaeOwnAnnotationView.Grid.RowDefinitions.Add(new RowDefinition()
-                {
-                    Height = new GridLength(rowHeight)
-                });
-                LarvaeViewModel.LarvaeOwnAnnotationView.LarvaeQualitiesLookup.SetValue(Grid.RowProperty, startpos);
-
-                Label qualityKey = new Label() { Content = "Quality", Padding = new Thickness(0), FontWeight = FontWeights.Bold };
-
-                Grid.SetColumn(qualityKey, 0);
-                Grid.SetRow(qualityKey, startpos);
-
-                LarvaeViewModel.LarvaeOwnAnnotationView.Grid.Children.Add(qualityKey);
-                startpos++;
-
-                LarvaeViewModel.LarvaeOwnAnnotationView.Grid.RowDefinitions.Add(new RowDefinition()
-                {
-                    Height = new GridLength(rowHeight * 3)
-                });
-                LarvaeViewModel.LarvaeOwnAnnotationView.LarvaeComments.SetValue(Grid.RowProperty, startpos);
-
-                Label commentsKey = new Label() { Content = "Comments", Padding = new Thickness(0), FontWeight = FontWeights.Bold };
-
-                Grid.SetColumn(commentsKey, 0);
-                Grid.SetRow(commentsKey, startpos);
-
-                LarvaeViewModel.LarvaeOwnAnnotationView.Grid.Children.Add(commentsKey);
-                startpos++;
-
-                LarvaeViewModel.LarvaeOwnAnnotationView.Grid.RowDefinitions.Add(new RowDefinition()
-                {
-                    Height = new GridLength(28)
-                });
-                //}
-            });
-        }
-
-        public void EmptyValues()
-        {
-            LarvaeViewModel.LarvaeOwnAnnotationView.Grid.Dispatcher.Invoke(() =>
-            {
-                foreach (var label in LarvaeViewModel.LarvaeOwnAnnotationView.Grid.Children.OfType<Label>().ToList())
-                {
-                    LarvaeViewModel.LarvaeOwnAnnotationView.Grid.Children.Remove(label);
-                }
-            });
-        }
+        
 
         public void CreateNewAnnotation()
         {
@@ -308,11 +340,10 @@ namespace SmartDots.ViewModel
 
         public void ToggleApprove()
         {
-            if (Annotation == null || (Annotation.LarvaeID == null || Annotation.SexID == null || Annotation.LarvaeQualityID == null ||
-                                       Annotation.LarvaeID == Guid.Empty || Annotation.SexID == Guid.Empty || Annotation.LarvaeQualityID == Guid.Empty
+            if (Annotation == null || (Annotation.LarvaeQualityID == null || Annotation.LarvaeQualityID == Guid.Empty
                 ))
             {
-                Helper.ShowWinUIMessageBox("Error toggling approved state for annotation\n" + "Please make sure to fill in the required fields first: Sex, Larvae, Quality", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Helper.ShowWinUIMessageBox("Error toggling approved state for annotation\n" + "Please make sure to fill in the required fields first: Anal, Dorsal and Pelvic fin presences, Development stage, Quality", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             Annotation.IsApproved = !Annotation.IsApproved;
@@ -320,6 +351,81 @@ namespace SmartDots.ViewModel
             {
                 SaveAnnotation();
             }
+        }
+
+        public void AnnotateRadio_Change(object sender, RoutedEventArgs e)
+        {
+            var radio = ((RadioButton) e.OriginalSource);
+            if (radio.Name == "AnnotateRadio" && radio.IsChecked == true)
+            {
+                // code to annotate
+                LarvaeViewModel.LarvaeOwnAnnotationView.AnnotationGrid.SelectionMode = MultiSelectMode.None;
+            }
+            else if (radio.Name == "ShowRadio" && radio.IsChecked == true)
+            {
+                // code to show annotations
+                LarvaeViewModel.LarvaeOwnAnnotationView.AnnotationGrid.SelectionMode = MultiSelectMode.MultipleRow;
+            }
+        }
+
+        public void GridControl_OnSelectionChanged(object sender, GridSelectionChangedEventArgs e)
+        {
+            //AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine = null;
+            //AgeReadingViewModel.AgeReadingAnnotationView.CreatorColumn.Visible = true;
+            //AgeReadingViewModel.AgeReadingAnnotationView.CreatorColorColumn.Visible = false;
+            //AgeReadingViewModel.AgeReadingAnnotationView.CreatorColorColumn.VisibleIndex = 2;
+
+            //if (SelectedAnnotations.Count == 1)
+            //{
+            //    WorkingAnnotation = SelectedAnnotations[0];
+
+            //    foreach (var combinedline in WorkingAnnotation.CombinedLines)
+            //    {
+            //        combinedline.RecalculatePoints();
+            //        combinedline.CalculateDotIndices();
+            //    }
+            //    try
+            //    {
+            //        AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine = WorkingAnnotation?.CombinedLines.FirstOrDefault();
+            //    }
+            //    catch (Exception)
+            //    {
+            //        // ignored
+            //    }
+            //}
+            //else
+            //{
+            //    WorkingAnnotation = null;
+
+            //    if (SelectedAnnotations.Count > 1)
+            //    {
+
+            //        if (Global.API.Settings != null && !Global.API.Settings.IgnoreMultiUserColor)
+            //        {
+            //            AgeReadingViewModel.AgeReadingAnnotationView.CreatorColumn.Visible = false;
+            //            AgeReadingViewModel.AgeReadingAnnotationView.CreatorColorColumn.Visible = true;
+            //            foreach (var annotation in Outcomes.Where(x => string.IsNullOrEmpty(x.MultiUserColor)))
+            //            {
+            //                if (annotation.LabTechnicianID != null)
+            //                {
+            //                    if (!Helper.MultiUserDotColorsDict.ContainsKey((Guid)annotation.LabTechnicianID))
+            //                    {
+            //                        Helper.MultiUserDotColorsDict.Add((Guid)annotation.LabTechnicianID, Helper.MultiUserDotColors.FirstOrDefault(x => !Helper.MultiUserDotColorsDict.Select(y => y.Value).Contains(x)));
+            //                    }
+            //                    annotation.MultiUserColor = Helper.MultiUserDotColorsDict.FirstOrDefault(x => x.Key == (Guid)annotation.LabTechnicianID).Value;
+            //                }
+            //            }
+            //        }
+            //    }
+
+
+
+            //    AgeReadingViewModel.AgeReadingEditorViewModel.UndoRedo.EmptyStacks();
+            //    AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
+            //}
+            LarvaeViewModel.LarvaeEditorViewModel.UndoRedo.EmptyStacks();
+            LarvaeViewModel.LarvaeEditorViewModel.UpdateButtons();
+            //AgeReadingViewModel.AgeReadingEditorViewModel.RefreshShapes();
         }
     }
 }

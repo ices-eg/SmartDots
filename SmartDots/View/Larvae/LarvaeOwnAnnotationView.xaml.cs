@@ -26,21 +26,29 @@ namespace SmartDots.View
     /// </summary>
     public partial class LarvaeOwnAnnotationView : UserControl
     {
-        private LarvaeOwnAnnotationViewModel maturityOwnAnnotationViewModel;
+        private LarvaeOwnAnnotationViewModel larvaeOwnAnnotationViewModel;
 
         public LarvaeOwnAnnotationViewModel LarvaeOwnAnnotationViewModel
         {
-            get { return maturityOwnAnnotationViewModel; }
-            set { maturityOwnAnnotationViewModel = value; }
+            get { return larvaeOwnAnnotationViewModel; }
+            set { larvaeOwnAnnotationViewModel = value; }
         }
 
         public LarvaeOwnAnnotationView(LarvaeViewModel maturityViewModel)
         {
             InitializeComponent();
-            maturityOwnAnnotationViewModel = (LarvaeOwnAnnotationViewModel)base.DataContext;
-            maturityOwnAnnotationViewModel.LarvaeViewModel = maturityViewModel;
+            larvaeOwnAnnotationViewModel = (LarvaeOwnAnnotationViewModel)base.DataContext;
+            larvaeOwnAnnotationViewModel.LarvaeViewModel = maturityViewModel;
         }
 
-        
+        private void AnnotationGrid_SelectionChanged(object sender, GridSelectionChangedEventArgs e)
+        {
+            larvaeOwnAnnotationViewModel.UpdateSelectionMode();
+        }
+
+        private void AnnotationGrid_SelectedItemChanged(object sender, SelectedItemChangedEventArgs e)
+        {
+            larvaeOwnAnnotationViewModel.UpdateSelectionMode();
+        }
     }
 }

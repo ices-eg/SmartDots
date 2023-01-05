@@ -291,8 +291,8 @@ namespace SmartDots.ViewModel
                 var savennotationResult = Global.API.SaveMaturityAnnotation(dtoMaturityAnnotation);
                 if (!savennotationResult.Succeeded)
                 {
-                    Helper.ShowWinUIMessageBox("Error Saving Maturity annotation\n" + savennotationResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     MaturityViewModel.CloseSplashScreen();
+                    Helper.ShowWinUIMessageBox("Error Saving Maturity annotation\n" + savennotationResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 

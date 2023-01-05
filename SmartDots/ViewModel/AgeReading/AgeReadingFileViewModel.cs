@@ -308,7 +308,7 @@ namespace SmartDots.ViewModel
                 };
             }
             AgeReadingViewModel.AgeReadingEditorViewModel.OtolithImage = bitmap;
-            AgeReadingViewModel.AgeReadingEditorViewModel.OriginalImage = bitmap;
+            AgeReadingViewModel.AgeReadingEditorViewModel.OriginalImage = BitmapConverter.BitmapImage2Bitmap(bitmap);
             AgeReadingViewModel.AgeReadingView.Opacity = 1;
             AgeReadingViewModel.AgeReadingView.WinFormBrightness.Visibility = Visibility.Visible;
             AgeReadingViewModel.AgeReadingView.WinFormRedness.Visibility = Visibility.Visible;

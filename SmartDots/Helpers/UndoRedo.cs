@@ -4,7 +4,7 @@ using SmartDots.ViewModel;
 
 namespace SmartDots.Helpers
 {
-    interface IUndoRedoCommand
+    public interface IUndoRedoCommand
     {
         void Execute();
         void UnExecute();

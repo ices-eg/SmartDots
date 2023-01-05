@@ -1,0 +1,221 @@
+﻿<XtraSerializer version="1.0" application="DockLayoutManager">
+  <property name="#LayoutVersion" isnull="true" />
+  <property name="$DockLayoutManager" iskey="true" value="DockLayoutManager">
+    <property name="AllowFloatGroupTransparency">false</property>
+    <property name="EnableWin32Compatibility">true</property>
+    <property name="FloatingMode">Desktop</property>
+    <property name="Items" iskey="true" value="14">
+      <property name="Item1" isnull="true" iskey="true">
+        <property name="Orientation">Horizontal</property>
+        <property name="SerializableSelectedTabPageIndex">-1</property>
+        <property name="Margin">0,5,0,0</property>
+        <property name="Padding">0,0,0,0</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">LayoutGroup</property>
+        <property name="ParentName" isnull="true" />
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">dockItem1</property>
+      </property>
+      <property name="Item2" isnull="true" iskey="true">
+        <property name="Orientation">Vertical</property>
+        <property name="SerializableSelectedTabPageIndex">-1</property>
+        <property name="ItemWidth">111.862359890299*</property>
+        <property name="Margin">2,0,2,0</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">LayoutGroup</property>
+        <property name="ParentName">dockItem1</property>
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">DockingPanels</property>
+      </property>
+      <property name="Item3" isnull="true" iskey="true">
+        <property name="SerializableSelectedTabPageIndex">0</property>
+        <property name="ItemHeight">0.935729184791065*</property>
+        <property name="ItemWidth">Auto</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">TabbedGroup</property>
+        <property name="ParentName">DockingPanels</property>
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">dockItem5</property>
+      </property>
+      <property name="Item4" isnull="true" iskey="true">
+        <property name="SerializableFloatingBounds">0,0,0,0</property>
+        <property name="SerializableFloatingOffset">0,0</property>
+        <property name="AllowClose">false</property>
+        <property name="AllowHide">false</property>
+        <property name="IsActive">false</property>
+        <property name="ItemHeight">0.890345758484182*</property>
+        <property name="ItemWidth">Auto</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">LayoutPanel</property>
+        <property name="ParentName">dockItem5</property>
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">OtolithPanel</property>
+        <property name="Caption" type="System.String">Files</property>
+      </property>
+      <property name="Item5" isnull="true" iskey="true">
+        <property name="SerializableFloatingBounds">0,0,0,0</property>
+        <property name="SerializableFloatingOffset">0,0</property>
+        <property name="AllowDock">true</property>
+        <property name="AllowHide">false</property>
+        <property name="AllowMaximize">false</property>
+        <property name="AllowSizing">false</property>
+        <property name="FloatSize">404.333333333334,155</property>
+        <property name="IsActive">false</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">LayoutPanel</property>
+        <property name="ParentName">dockItem5</property>
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">Adjustments</property>
+        <property name="Visibility">Visible</property>
+        <property name="Caption" type="System.String">Adjustments</property>
+      </property>
+      <property name="Item6" isnull="true" iskey="true">
+        <property name="SerializableFloatingBounds">0,0,0,0</property>
+        <property name="SerializableFloatingOffset">0,0</property>
+        <property name="AllowClose">false</property>
+        <property name="AllowHide">false</property>
+        <property name="FloatSize">327.333333333333,231.75</property>
+        <property name="IsActive">true</property>
+        <property name="ItemHeight">0.56601836258859*</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">LayoutPanel</property>
+        <property name="ParentName">DockingPanels</property>
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">AnnotationPanel</property>
+        <property name="Caption" type="System.String">Annotations</property>
+      </property>
+      <property name="Item7" isnull="true" iskey="true">
+        <property name="SerializableFloatingBounds">0,0,0,0</property>
+        <property name="SerializableFloatingOffset">0,0</property>
+        <property name="AllowClose">false</property>
+        <property name="AllowHide">false</property>
+        <property name="FloatSize">175,230.770247344309</property>
+        <property name="IsActive">false</property>
+        <property name="ItemHeight">226.999999999999</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">LayoutPanel</property>
+        <property name="ParentName">DockingPanels</property>
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">SamplePanel</property>
+        <property name="Caption" type="System.String">Sample</property>
+      </property>
+      <property name="Item8" isnull="true" iskey="true">
+        <property name="SerializableSelectedTabPageIndex">0</property>
+        <property name="FloatSize">404.333333333334,517</property>
+        <property name="ItemHeight">0.631273489043816*</property>
+        <property name="ItemWidth">*</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">TabbedGroup</property>
+        <property name="ParentName">DockingPanels</property>
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">dockItem2</property>
+      </property>
+      <property name="Item9" isnull="true" iskey="true">
+        <property name="SerializableFloatingBounds">0,0,0,0</property>
+        <property name="SerializableFloatingOffset">0,0</property>
+        <property name="AllowHide">false</property>
+        <property name="IsActive">false</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">LayoutPanel</property>
+        <property name="ParentName">dockItem2</property>
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">BrightnessPanel</property>
+        <property name="Visibility">Visible</property>
+        <property name="Caption" type="System.String">Brightness</property>
+      </property>
+      <property name="Item10" isnull="true" iskey="true">
+        <property name="SerializableFloatingBounds">0,0,0,0</property>
+        <property name="SerializableFloatingOffset">0,0</property>
+        <property name="AllowHide">false</property>
+        <property name="IsActive">false</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">LayoutPanel</property>
+        <property name="ParentName">dockItem2</property>
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">RednessPanel</property>
+        <property name="Visibility">Visible</property>
+        <property name="Caption" type="System.String">Redness</property>
+      </property>
+      <property name="Item11" isnull="true" iskey="true">
+        <property name="SerializableFloatingBounds">0,0,0,0</property>
+        <property name="SerializableFloatingOffset">0,0</property>
+        <property name="AllowHide">false</property>
+        <property name="FloatSize">408.333333333334,1038</property>
+        <property name="IsActive">false</property>
+        <property name="ItemWidth">115.203761755486*</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">LayoutPanel</property>
+        <property name="ParentName">dockItem2</property>
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">GrowthPanel</property>
+        <property name="Visibility">Visible</property>
+        <property name="Caption" type="System.String">Growth</property>
+      </property>
+      <property name="Item12" isnull="true" iskey="true">
+        <property name="MDILocation">0,0</property>
+        <property name="MDISize">NaN,NaN</property>
+        <property name="SerializableFloatingBounds">0,0,0,0</property>
+        <property name="SerializableFloatingOffset">0,0</property>
+        <property name="IsActive">false</property>
+        <property name="ItemWidth">312.933878354215*</property>
+        <property name="Padding">2,0,2,0</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true" />
+        <property name="TypeName">DocumentPanel</property>
+        <property name="ParentName">dockItem1</property>
+        <property name="ParentCollectionName" isnull="true" />
+        <property name="Name">paneDocument1</property>
+        <property name="SerializableMDIBounds">0,0,NaN,NaN</property>
+        <property name="Caption" type="System.String">Document</property>
+      </property>
+      <property name="Item13" isnull="true" iskey="true">
+        <property name="FloatLocation">1721,264</property>
+        <property name="SerializableZOrder">0</property>
+        <property name="ShouldRestoreOnActivate">false</property>
+        <property name="SerializableSelectedTabPageIndex">-1</property>
+        <property name="FloatSize">200,200</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true">
+          <property name="FloatState">Normal</property>
+          <property name="PreviousFloatState">Normal</property>
+        </property>
+        <property name="TypeName">FloatGroup</property>
+        <property name="ParentName" isnull="true" />
+        <property name="ParentCollectionName">$FloatGroups</property>
+        <property name="DocumentPanel.RestoreBounds" OwnerType="DevExpress.Xpf.Docking.DocumentPanel" DependencyPropertyType="System.Windows.Rect">0,0,0,0</property>
+        <property name="Name">dockItem3</property>
+      </property>
+      <property name="Item14" isnull="true" iskey="true">
+        <property name="FloatLocation">1631,-2</property>
+        <property name="SerializableZOrder">0</property>
+        <property name="ShouldRestoreOnActivate">false</property>
+        <property name="SerializableSelectedTabPageIndex">-1</property>
+        <property name="FloatSize">290,100</property>
+        <property name="SerializableDockSituation" iskey="true" value="0" />
+        <property name="SerializationInfo" isnull="true" iskey="true">
+          <property name="FloatState">Normal</property>
+          <property name="PreviousFloatState">Normal</property>
+        </property>
+        <property name="TypeName">FloatGroup</property>
+        <property name="ParentName" isnull="true" />
+        <property name="ParentCollectionName">$FloatGroups</property>
+        <property name="DocumentPanel.RestoreBounds" OwnerType="DevExpress.Xpf.Docking.DocumentPanel" DependencyPropertyType="System.Windows.Rect">0,0,0,0</property>
+        <property name="Name">dockItem4</property>
+        <property name="MinWidth">290</property>
+      </property>
+    </property>
+    <property name="ManualClosedPanelsBarVisibility">false</property>
+    <property name="RestoreLayoutOptions.FloatPanelsRestoreOffset" OwnerType="DevExpress.Xpf.Docking.RestoreLayoutOptions" DependencyPropertyType="System.Windows.Point">-1,34</property>
+  </property>
+</XtraSerializer>

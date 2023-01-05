@@ -15,7 +15,7 @@
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="600"
-        dx:ThemeManager.ThemeName="Office2016White">
+            dx:ThemeManager.ThemeName="Office2016White">
     <UserControl.DataContext>
         <viewModel:LarvaeEditorViewModel></viewModel:LarvaeEditorViewModel>
     </UserControl.DataContext>
@@ -83,9 +83,75 @@
         <StackPanel x:Name="EditorStackPanel"  DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch" Orientation="Horizontal" Background="{StaticResource BrushSmartFishFairBlue2}">
 
 
-            
 
-           
+
+            <userControls:SDButton x:Name="LineButton" Glyph="../../Resources/edit-6-32.png" ButtonToolTip="Draw line" IsToggleButton="True" IsEnabled="{Binding CanDrawLine}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="DrawLineBtn_Checked"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </userControls:SDButton>
+            <dxb:PopupMenu x:Name="LineMenu">
+                <dxb:PopupMenu.Items>
+                    <dxb:BarItemMenuHeader Content="Line Settings"/>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Width" EditValue="{Binding LineWidth, Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:SpinEditSettings MaxValue="18" MinValue="1" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                </dxb:PopupMenu.Items>
+            </dxb:PopupMenu>
+
+            <userControls:SDButton x:Name="DotButton" Glyph="../../Resources/dot.png" ButtonToolTip="Draw dot" IsToggleButton="True" IsEnabled="{Binding CanDrawDot}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="DrawDotBtn_Checked"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </userControls:SDButton>
+            <dxb:PopupMenu x:Name="DotMenu">
+                <dxb:PopupMenu.Items>
+                    <dxb:BarItemMenuHeader Content="Dot Settings"/>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Width" Name="DotWidth" EditValue="{Binding DotWidth,Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:SpinEditSettings MaxValue="75" MinValue="2" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                </dxb:PopupMenu.Items>
+            </dxb:PopupMenu>
+
+
+            <RadioButton x:Name="DeleteBtn" Style="{StaticResource {x:Type ToggleButton}}" IsEnabled="{Binding CanDelete}" ToolTip="Delete" >
+                <Image Source="../../Resources/delete-32.png" Width="22" Height="22"/>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="DeleteBtn_Checked"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </RadioButton>
+
+            <StackPanel Width="28" Height="33" Margin="0" dxdove:DockPane.HitTestType="Header"/>
+
+            <Button x:Name="btnUndo" Style="{StaticResource SDButtonBase}" IsEnabled="{Binding CanUndo}" ToolTip="Undo" >
+                <Image Source="../../Resources/Undo.png" Width="22" Height="22"/>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnUndo_Click"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+
+            <Button x:Name="btnRedo" Style="{StaticResource SDButtonBase}" IsEnabled="{Binding CanRedo}" ToolTip="Redo" >
+                <Image Source="../../Resources/Redo.png" Width="22" Height="22"/>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="btnRedo_Click"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+            <StackPanel Width="28" Height="33" Margin="0" dxdove:DockPane.HitTestType="Header"/>
+
 
             <userControls:SDFullDropDownButton Glyph="../../Resources/scalelength32.png" x:Name="ScaleButton" ButtonToolTip="Set scale" IsEnabled="{Binding CanMeasure}"/>
             <dxb:PopupMenu x:Name="ScaleContextMenu">
@@ -98,7 +164,7 @@
                 </dxb:PopupMenu.Items>
             </dxb:PopupMenu>
 
-            <userControls:SDButton Glyph="../../Resources/tape-measure-2-32.png" x:Name="MeasureButton" IsEnabled="{Binding CanMeasure}" ButtonToolTip="Measure tool" IsPressed="True"  />
+            <userControls:SDButton Glyph="../../Resources/tape-measure-2-32.png" x:Name="MeasureButton" IsEnabled="{Binding CanMeasure}" ButtonToolTip="Measure tool"  />
             <dxb:PopupMenu x:Name="MeasureContextMenu">
                 <dxb:PopupMenu.Items>
                     <dxb:BarItemMenuHeader Content="Measure Settings"/>
@@ -109,19 +175,20 @@
                     </dxb:BarEditItem>
                     <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Width" EditValue="{Binding MeasureLineWidth, Mode=TwoWay}">
                         <dxb:BarEditItem.EditSettings>
-                            <dxe:SpinEditSettings MaxValue="6" MinValue="1" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                            <dxe:SpinEditSettings MaxValue="18" MinValue="1" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
                         </dxb:BarEditItem.EditSettings>
                     </dxb:BarEditItem>
                     <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Font size" EditValue="{Binding MeasureFontSize, Mode=TwoWay}">
                         <dxb:BarEditItem.EditSettings>
-                            <dxe:SpinEditSettings MaxValue="24" MinValue="6" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                            <dxe:SpinEditSettings MaxValue="72" MinValue="6" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
                         </dxb:BarEditItem.EditSettings>
                     </dxb:BarEditItem>
                 </dxb:PopupMenu.Items>
             </dxb:PopupMenu>
 
 
-            
+
+
             <StackPanel Width="2000" Margin="0" Height="33" Background="{StaticResource BrushSmartFishFairBlue2}" dxdove:DockPane.HitTestType="Header"></StackPanel>
         </StackPanel>
         <dxb:BarManager AllowCustomization="False" DockPanel.Dock="Top" VerticalAlignment="Top" dx:ThemeManager.Theme="Office2016Colorful">
@@ -145,6 +212,13 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </dxb:BarEditItem>
+                <dxb:BarButtonItem x:Name="bReset" ToolTip="Reset brightness" Alignment="Near" Glyph="../../Resources/go-back-arrow.png" GlyphSize="Small">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="ItemClick">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="bReset_ItemClick"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </dxb:BarButtonItem>
                 <dxb:BarStaticItem x:Name="ContrastLabel" Alignment="Far" Content="Contrast"></dxb:BarStaticItem>
 
                 <dxb:BarEditItem x:Name="ContrastSlider" Alignment="Far" EditWidth="191" Focusable="True" EditValue="{Binding Contrast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
@@ -164,13 +238,22 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </dxb:BarEditItem>
+                <dxb:BarButtonItem x:Name="cReset" ToolTip="Reset contrast" Alignment="Far" Glyph="../../Resources/go-back-arrow.png" GlyphSize="Small">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="ItemClick">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="cReset_ItemClick"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </dxb:BarButtonItem>
             </dxb:BarManager.Items>
             <dxb:BarManager.Bars>
                 <dxb:Bar UseWholeRow="True" AllowCustomizationMenu="False" AllowHide="False" AllowQuickCustomization="False" GlyphSize="Large" IsStatusBar="True">
                     <dxb:BarStaticItemLink BarItemName="BrightnessLabel"/>
                     <dxb:BarEditItemLink BarItemName="BrightnessSlider" ></dxb:BarEditItemLink>
+                    <dxb:BarButtonItemLink BarItemName="bReset"/>
                     <dxb:BarStaticItemLink BarItemName="ContrastLabel"/>
                     <dxb:BarEditItemLink BarItemName="ContrastSlider" ></dxb:BarEditItemLink>
+                    <dxb:BarButtonItemLink BarItemName="cReset"/>
                 </dxb:Bar>
             </dxb:BarManager.Bars>
         </dxb:BarManager>
@@ -196,6 +279,22 @@
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <Canvas x:Name="ScaleCanvas">
+                                            </Canvas>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding LineShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="LineShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas x:Name="LineCanvas">
+                                            </Canvas>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding DotShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="DotShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas x:Name="DotCanvas">
                                             </Canvas>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>

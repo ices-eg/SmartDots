@@ -109,12 +109,12 @@
                     </dxb:BarEditItem>
                     <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Width" EditValue="{Binding MeasureLineWidth, Mode=TwoWay}">
                         <dxb:BarEditItem.EditSettings>
-                            <dxe:SpinEditSettings MaxValue="6" MinValue="1" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                            <dxe:SpinEditSettings MaxValue="18" MinValue="1" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
                         </dxb:BarEditItem.EditSettings>
                     </dxb:BarEditItem>
                     <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Font size" EditValue="{Binding MeasureFontSize, Mode=TwoWay}">
                         <dxb:BarEditItem.EditSettings>
-                            <dxe:SpinEditSettings MaxValue="24" MinValue="6" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                            <dxe:SpinEditSettings MaxValue="72" MinValue="6" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
                         </dxb:BarEditItem.EditSettings>
                     </dxb:BarEditItem>
                 </dxb:PopupMenu.Items>
@@ -145,6 +145,13 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </dxb:BarEditItem>
+                <dxb:BarButtonItem x:Name="bReset" ToolTip="Reset brightness" Alignment="Near" Glyph="../../Resources/go-back-arrow.png" GlyphSize="Small">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="ItemClick">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="bReset_ItemClick"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </dxb:BarButtonItem>
                 <dxb:BarStaticItem x:Name="ContrastLabel" Alignment="Far" Content="Contrast"></dxb:BarStaticItem>
 
                 <dxb:BarEditItem x:Name="ContrastSlider" Alignment="Far" EditWidth="191" Focusable="True" EditValue="{Binding Contrast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
@@ -164,13 +171,22 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </dxb:BarEditItem>
+                <dxb:BarButtonItem x:Name="cReset" ToolTip="Reset contrast" Alignment="Far" Glyph="../../Resources/go-back-arrow.png" GlyphSize="Small">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="ItemClick">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="cReset_ItemClick"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </dxb:BarButtonItem>
             </dxb:BarManager.Items>
             <dxb:BarManager.Bars>
                 <dxb:Bar UseWholeRow="True" AllowCustomizationMenu="False" AllowHide="False" AllowQuickCustomization="False" GlyphSize="Large" IsStatusBar="True">
                     <dxb:BarStaticItemLink BarItemName="BrightnessLabel"/>
                     <dxb:BarEditItemLink BarItemName="BrightnessSlider" ></dxb:BarEditItemLink>
+                    <dxb:BarButtonItemLink BarItemName="bReset"/>
                     <dxb:BarStaticItemLink BarItemName="ContrastLabel"/>
                     <dxb:BarEditItemLink BarItemName="ContrastSlider" ></dxb:BarEditItemLink>
+                    <dxb:BarButtonItemLink BarItemName="cReset"/>
                 </dxb:Bar>
             </dxb:BarManager.Bars>
         </dxb:BarManager>

@@ -5,12 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewModel="clr-namespace:SmartDots.ViewModel"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-             xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-             xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
              mc:Ignorable="d" 
              dx:ThemeManager.ThemeName="Office2016White"
              d:DesignHeight="200" d:DesignWidth="400">

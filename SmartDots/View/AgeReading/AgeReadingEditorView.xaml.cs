@@ -76,6 +76,5 @@ namespace SmartDots.View
         {
             AgeReadingEditorViewModel.IsContextmenuOpen = true;
         }
-
     }
 }

@@ -10,15 +10,24 @@ namespace SmartDots.Model
         public Guid UserID { get; set; }
         public string User { get; set; }
         public DateTime Date { get; set; }
-        public Guid? SexID { get; set; }
-        public string Sex { get; set; }
-        public Guid? LarvaeID { get; set; }
-        public string Larvae { get; set; }
         public Guid? LarvaeQualityID { get; set; }
         public string LarvaeQuality { get; set; }
-        public bool IsApproved { get; set; }
-        public bool RequiresSaving { get; set; }
+        public Guid? AnalFinPresenceID { get; set; }
+        public string AnalFinPresence { get; set; }
+        public Guid? PelvicFinPresenceID { get; set; }
+        public string PelvicFinPresence { get; set; }
+        public Guid? DorsalFinPresenceID { get; set; }
+        public string DorsalFinPresence { get; set; }
+        public Guid? DevelopmentStageID { get; set; }
+        public string DevelopmentStage { get; set; }
+
         public string Comments { get; set; }
+        public bool RequiresSaving { get; set; }
+
+        public bool IsApproved { get; set; }
+
+        public LarvaeSample LarvaeSample { get; set; }
+        public List<LarvaeAnnotationParameterResult> LarvaeAnnotationParameterResult { get; set; }
 
         public string ApprovedPicture
         {

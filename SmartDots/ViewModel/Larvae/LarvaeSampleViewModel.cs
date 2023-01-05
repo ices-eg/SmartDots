@@ -96,6 +96,14 @@ namespace SmartDots.ViewModel
                     {
                         annotation.LarvaeQuality = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeQualities
                             .FirstOrDefault(x => x.ID == annotation.LarvaeQualityID)?.Code;
+                        annotation.DevelopmentStage = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeDevelopmentStages
+                            .FirstOrDefault(x => x.ID == annotation.DevelopmentStageID)?.Code;
+                        annotation.AnalFinPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
+                            .FirstOrDefault(x => x.ID == annotation.AnalFinPresenceID)?.Code;
+                        annotation.DorsalFinPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
+                            .FirstOrDefault(x => x.ID == annotation.DorsalFinPresenceID)?.Code;
+                        annotation.PelvicFinPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
+                            .FirstOrDefault(x => x.ID == annotation.PelvicFinPresenceID)?.Code;
                     }
 
                     var ownAnnotation = selectedSample.Annotations.FirstOrDefault(x => x.UserID == Global.API.CurrentUser.ID);
@@ -240,8 +248,6 @@ namespace SmartDots.ViewModel
 
                     sample.Files = temp.Files;
 
-                    sample.AnnotationProperties = temp.AnnotationProperties;
-
                     var dynSample = DynamicSamples.FirstOrDefault(x => x.ID == sample.ID);
 
                     dynSample.StatusRank = sample.StatusRank;
@@ -260,21 +266,11 @@ namespace SmartDots.ViewModel
                         }
                     }
 
-                    var larvaeFiles = new ObservableCollection<LarvaeFile>();
-                    foreach (var file in temp.Files)
-                    {
-                        larvaeFiles.Add((LarvaeFile)Helper.ConvertType(file, typeof(LarvaeFile)));
-                    }
+                    var larvaeFiles = temp.Files;
+
                     sample.Files = larvaeFiles;
 
-                    var larvaeAnnotations = new ObservableCollection<LarvaeAnnotation>();
-                    if (temp.Annotations != null)
-                    {
-                        foreach (var annotation in temp.Annotations)
-                        {
-                            larvaeAnnotations.Add((LarvaeAnnotation)Helper.ConvertType(annotation, typeof(LarvaeAnnotation)));
-                        }
-                    }
+                    var larvaeAnnotations = temp.Annotations;
                     
                     sample.Annotations = larvaeAnnotations;
 
@@ -312,6 +308,17 @@ namespace SmartDots.ViewModel
             var sampleResult = (LarvaeSample)Helper.ConvertType(sample.Result, typeof(LarvaeSample));
             sampleResult.ConvertDbFiles(sample.Result.Files.ToList());
             sampleResult.ConvertDbAnnotations(sample.Result.Annotations.ToList());
+
+            foreach (var an in sampleResult.Annotations)
+            {
+                foreach (var apr in an.LarvaeAnnotationParameterResult)
+                {
+                    apr.File = sampleResult.Files.FirstOrDefault(x => x.ID == apr.LarvaeFileID);
+                    apr.Parameter =
+                        LarvaeViewModel.LarvaeAnalysis.LarvaeParameters.FirstOrDefault(x =>
+                            x.ID == apr.LarvaeParameterID);
+                }
+            }
 
             return sampleResult;
         }

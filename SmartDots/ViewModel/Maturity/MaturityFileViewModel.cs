@@ -103,11 +103,11 @@ namespace SmartDots.ViewModel
 
             if (imagepath.StartsWith("http"))
             {
-                Helper.Log("filetimer.txt", $"Start downloading image {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
+                //Helper.Log("filetimer.txt", $"Start downloading image {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
 
                 var buffer = new WebClient().DownloadData(imagepath);
 
-                Helper.Log("filetimer.txt", $"Finished downloading image {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
+                //Helper.Log("filetimer.txt", $"Finished downloading image {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
 
 
                 using (var stream = new MemoryStream(buffer))
@@ -126,10 +126,10 @@ namespace SmartDots.ViewModel
                 };
             }
 
-            Helper.Log("filetimer.txt", $"End bitmap conversion {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
+            //Helper.Log("filetimer.txt", $"End bitmap conversion {imagepath}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
 
             MaturityViewModel.MaturityEditorViewModel.MaturityImage = bitmap;
-            MaturityViewModel.MaturityEditorViewModel.OriginalImage = bitmap;
+            MaturityViewModel.MaturityEditorViewModel.OriginalImage = BitmapConverter.BitmapImage2Bitmap(bitmap);
             MaturityViewModel.MaturityView.Opacity = 1;
 
             MaturityViewModel.MaturityStatusbarViewModel.IsFittingImage = true;
@@ -295,6 +295,8 @@ namespace SmartDots.ViewModel
             }
 
             ChangingFile = true;
+
+            MaturityViewModel.MaturityEditorViewModel.HideMeasureScalePanel();
 
             MaturityFile file = SelectedFile;
             MaturityViewModel.MaturityEditorViewModel.Brightness = 0;
@@ -667,7 +669,7 @@ namespace SmartDots.ViewModel
                 MaturityViewModel.MaturityView.FilePrevious.IsEnabled = true;
             }
 
-            if (index >= MaturityFiles.Count - 1)
+            if (MaturityFiles == null || index >= MaturityFiles.Count - 1)
             {
                 MaturityViewModel.MaturityView.FileNext.IsEnabled = false;
             }

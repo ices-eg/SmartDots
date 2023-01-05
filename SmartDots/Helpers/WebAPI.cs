@@ -151,7 +151,7 @@ namespace SmartDots.Helpers
                 var temp = Task.Run(() => PerformCallAsync<t>(path)).Result;
                 timer.Stop();
                 //Helper.Log("webapi.txt", path + Environment.NewLine + JsonConvert.SerializeObject(temp));
-                Helper.Log("timer.txt", $"{path}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
+                //Helper.Log("timer.txt", $"{path}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
                 return temp;
             }
             catch (Exception ex)
@@ -183,7 +183,7 @@ namespace SmartDots.Helpers
 
                 var response = task.Result;
 
-                Helper.Log("timer.txt", $"{path}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
+                //Helper.Log("timer.txt", $"{path}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
 
 
                 //Helper.Log("webapi.txt", path + Environment.NewLine + JsonConvert.SerializeObject(response));

@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using SmartDots.ViewModel;
 
 namespace SmartDots.View
@@ -22,7 +23,11 @@ namespace SmartDots.View
             maturityEditorViewModel = (LarvaeEditorViewModel)base.DataContext;
             maturityEditorViewModel.LarvaeViewModel = maturityViewModel;
 
-            //DeleteBtn.Checked += DeleteBtn_Checked;
+            LineButton.ToggleStateChanged += LineButton_ToggleStateChanged;
+            LineButton.ContextButtonClick += (sender, args) => LineMenu.ShowPopup(LineButton);
+
+            DotButton.ToggleStateChanged += DotButton_ToggleStateChanged;
+            DotButton.ContextButtonClick += (sender, args) => DotMenu.ShowPopup(DotButton);
 
             ScaleButton.PrimaryButtonClick += (sender, args) => maturityEditorViewModel.AutoMeasureScale(true);
             ScaleButton.ContextButtonClick += (sender, args) => ScaleContextMenu.ShowPopup(ScaleButton);
@@ -50,5 +55,15 @@ namespace SmartDots.View
         //        e.Cancel = true;
         //    }
         //}
+
+        private void LineButton_ToggleStateChanged(object sender, System.EventArgs e)
+        {
+            LarvaeEditorViewModel.DrawLineBtn_Checked(sender, new RoutedEventArgs());
+        }
+
+        private void DotButton_ToggleStateChanged(object sender, System.EventArgs e)
+        {
+            LarvaeEditorViewModel.DrawDotBtn_Checked(sender, new RoutedEventArgs());
+        }
     }
 }

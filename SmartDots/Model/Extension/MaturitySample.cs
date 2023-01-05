@@ -18,7 +18,6 @@ namespace SmartDots.Model
         public bool IsReadOnly { get; set; }
         public bool AllowApproveToggle { get; set; }
         public bool UserHasApproved { get; set; }
-        public DtoFolder Folder { get; set; }
         public ObservableCollection<MaturityFile> Files { get; set; }
         public ObservableCollection<MaturityAnnotation> Annotations { get; set; }
 

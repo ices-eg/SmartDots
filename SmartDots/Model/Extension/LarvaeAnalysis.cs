@@ -7,7 +7,8 @@ namespace SmartDots.Model
     {
         public Guid ID { get; set; }
         public string HeaderInfo { get; set; }
-        public List<LarvaeSample> LarvaeSamples { get; set; }
+        public List<LarvaeSample> LarvaeSamples { get; set; } = new List<LarvaeSample>();
+        public List<LarvaeParameter> LarvaeParameters { get; set; } = new List<LarvaeParameter>();
 
 
     }

@@ -47,7 +47,7 @@ namespace SmartDots.ViewModel
         private CombinedLine activeCombinedLine;
         private CombinedLine tempCombinedLine;
         private EditorModeEnum mode;
-        private BitmapImage originalImage;
+        private Bitmap originalImage;
         private bool shapeChangeFlag;
         private BitmapImage _maturityImage;
         private int originalWidth;
@@ -60,6 +60,7 @@ namespace SmartDots.ViewModel
         private bool hideLines;
         private bool isScaleDrawn;
         private bool isMeasureDrawn;
+        private string measureUnit = "mm";
 
         public object LineColor
         {
@@ -289,7 +290,7 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public BitmapImage OriginalImage
+        public Bitmap OriginalImage
         {
             get { return originalImage; }
             set
@@ -297,7 +298,6 @@ namespace SmartDots.ViewModel
                 originalImage = value;
                 if (value != null)
                 {
-                    originalImage.Freeze();
                     if (Global.API.Settings.AutoMeasureScale && (MaturityViewModel.MaturityFileViewModel.SelectedFile.Scale == null || MaturityViewModel.MaturityFileViewModel.SelectedFile.Scale == 0.0m))
                     {
                         AutoMeasureScale();
@@ -359,7 +359,18 @@ namespace SmartDots.ViewModel
         public ObservableCollection<string> Units { get; set; } = new ObservableCollection<string>
         { "µm", "mm", "cm" };
 
-        public string MeasureUnit { get; set; } = "mm";
+        public string MeasureUnit
+        {
+            get
+            {
+                return measureUnit;
+            }
+            set
+            {
+                measureUnit = value;
+                RaisePropertyChanged("MeasureUnit");
+            }
+        }
 
         public bool IsContextmenuOpen { get; set; }
         public System.Drawing.Rectangle ScaleRectangle { get; private set; }
@@ -698,11 +709,12 @@ namespace SmartDots.ViewModel
                 {
                     if (Brightness == 0 && Contrast == 0)
                     {
-                        MaturityImage = OriginalImage;
+                        MaturityImage = BitmapConverter.Bitmap2BitmapImage(OriginalImage);
                     }
                     else
                     {
-                        MaturityImage = SetBrightness(SetContrast(OriginalImage));
+                        //MaturityImage = SetBrightness(SetContrast(OriginalImage));
+                        MaturityImage = ImageManipulator.SetBrightnessContrast(new Bitmap(OriginalImage), Brightness, Contrast);
                     }
 
                 }
@@ -714,114 +726,7 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public BitmapImage SetBrightness(BitmapImage img)
-        {
-            unsafe
-            {
-                double brightness = Brightness;
-                Bitmap bmap = BitmapConverter.BitmapImage2Bitmap(img);
-                BitmapData bitmapData = bmap.LockBits(new System.Drawing.Rectangle(0, 0, bmap.Width, bmap.Height),
-                    ImageLockMode.ReadWrite, bmap.PixelFormat);
 
-                int bytesPerPixel = Bitmap.GetPixelFormatSize(bmap.PixelFormat) / 8;
-                int heightInPixels = bitmapData.Height;
-                int widthInBytes = bitmapData.Width * bytesPerPixel;
-                byte* PtrFirstPixel = (byte*)bitmapData.Scan0;
-
-                Parallel.For((long)0, heightInPixels, y =>
-               {
-                   byte* currentLine = PtrFirstPixel + (y * bitmapData.Stride);
-
-                   for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
-                   {
-                       double oldBlue = currentLine[x] + brightness;
-                       if (oldBlue < 0) oldBlue = 1;
-                       if (oldBlue > 255) oldBlue = 255;
-
-                       double oldGreen = currentLine[x + 1] + brightness;
-                       if (oldGreen < 0) oldGreen = 1;
-                       if (oldGreen > 255) oldGreen = 255;
-
-                       double oldRed = currentLine[x + 2] + brightness;
-                       if (oldRed < 0) oldRed = 1;
-                       if (oldRed > 255) oldRed = 255;
-
-                       currentLine[x] = (byte)oldBlue;
-                       currentLine[x + 1] = (byte)oldGreen;
-                       currentLine[x + 2] = (byte)oldRed;
-                   }
-               });
-                bmap.UnlockBits(bitmapData);
-                return BitmapConverter.Bitmap2BitmapImage(bmap);
-            }
-        }
-
-        public BitmapImage SetContrast(BitmapImage img)
-        {
-            Stopwatch stopwatch = new Stopwatch();
-
-            // Begin timing.
-            stopwatch.Start();
-
-            unsafe
-            {
-                double contrast = Contrast;
-                Bitmap bmap = BitmapConverter.BitmapImage2Bitmap(img);
-                contrast = (100.0 + contrast) / 100.0;
-                contrast *= contrast;
-                BitmapData bitmapData = bmap.LockBits(new System.Drawing.Rectangle(0, 0, bmap.Width, bmap.Height),
-                    ImageLockMode.ReadWrite, bmap.PixelFormat);
-
-                int bytesPerPixel = Bitmap.GetPixelFormatSize(bmap.PixelFormat) / 8;
-                int heightInPixels = bitmapData.Height;
-                int widthInBytes = bitmapData.Width * bytesPerPixel;
-                byte* PtrFirstPixel = (byte*)bitmapData.Scan0;
-
-                Parallel.For((long)0, heightInPixels, y =>
-               {
-                   byte* currentLine = PtrFirstPixel + (y * bitmapData.Stride);
-
-                   for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
-                   {
-                       double oldBlue = currentLine[x] / 255.0;
-                       oldBlue -= 0.5;
-                       oldBlue *= contrast;
-                       oldBlue += 0.5;
-                       oldBlue *= 255;
-                       if (oldBlue < 0) oldBlue = 0;
-                       if (oldBlue > 255) oldBlue = 255;
-
-                       double oldGreen = currentLine[x + 1] / 255.0;
-                       oldGreen -= 0.5;
-                       oldGreen *= contrast;
-                       oldGreen += 0.5;
-                       oldGreen *= 255;
-                       if (oldGreen < 0) oldGreen = 0;
-                       if (oldGreen > 255) oldGreen = 255;
-
-                       double oldRed = currentLine[x + 2] / 255.0;
-                       oldRed -= 0.5;
-                       oldRed *= contrast;
-                       oldRed += 0.5;
-                       oldRed *= 255;
-                       if (oldRed < 0) oldRed = 0;
-                       if (oldRed > 255) oldRed = 255;
-
-                       currentLine[x] = (byte)oldBlue;
-                       currentLine[x + 1] = (byte)oldGreen;
-                       currentLine[x + 2] = (byte)oldRed;
-                   }
-               });
-                bmap.UnlockBits(bitmapData);
-
-                // Stop timing.
-                stopwatch.Stop();
-
-                // Write result.
-                Console.WriteLine("Time elapsed for SetContrast: " + stopwatch.Elapsed);
-                return BitmapConverter.Bitmap2BitmapImage(bmap);
-            }
-        }
 
 
         public void ScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -1194,13 +1099,18 @@ namespace SmartDots.ViewModel
 
         public void DeleteMeasureScale()
         {
-            MaturityViewModel.MaturityFileViewModel.SelectedFile.Scale = null;
-            ((dynamic)MaturityViewModel.MaturityFileView.FileList.FocusedRowData.Row).Scale = null;
-            MaturityViewModel.MaturityFileView.MaturityFileGrid.RefreshData();
-            var dtofile = (DtoFile)Helper.ConvertType(MaturityViewModel.MaturityFileViewModel.SelectedFile, typeof(DtoFile));
-            var deleteResult = Global.API.UpdateFile(dtofile);
+            var dtofile = (DtoMaturityFile)Helper.ConvertType(MaturityViewModel.MaturityFileViewModel.SelectedFile, typeof(DtoMaturityFile));
+            dtofile.Scale = null;
+            var deleteResult = Global.API.UpdateMaturityFile(dtofile);
             if (!deleteResult.Succeeded)
+            {
                 Helper.ShowWinUIMessageBox(deleteResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                MaturityViewModel.MaturityStatusbarViewModel.Info = $"Scale (px/mm): ?";
+            }
+
         }
 
         public void ClearScaleLine()
@@ -1251,9 +1161,19 @@ namespace SmartDots.ViewModel
             ScaleShapes.Clear();
             IsScaleDrawn = false;
             MaturityViewModel.MaturityEditorView.ScalePixels.Text = "0";
+            HideMeasureScalePanel();
             RefreshShapes();
-            MaturityViewModel.MaturityEditorView.MeasureScalePanel.Visibility = Visibility.Collapsed;
             Mode = EditorModeEnum.None;
+        }
+
+        public void HideMeasureScalePanel()
+        {
+            ScaleShapes.Clear();
+            MaturityViewModel.MaturityEditorView.MeasureScalePanel.Visibility = Visibility.Collapsed;
+            MaturityViewModel.MaturityEditorView.ScalePixels.Text = "0";
+            MaturityViewModel.MaturityEditorView.ScaleMilimeters.EditValue = 1;
+            MeasureUnit = "mm";
+
         }
 
         public void CancelScale()
@@ -1262,7 +1182,7 @@ namespace SmartDots.ViewModel
             IsScaleDrawn = false;
             MaturityViewModel.MaturityEditorView.ScalePixels.Text = "0";
             RefreshShapes();
-            MaturityViewModel.MaturityEditorView.MeasureScalePanel.Visibility = Visibility.Collapsed;
+            HideMeasureScalePanel();
             Mode = EditorModeEnum.None;
         }
 
@@ -1274,6 +1194,15 @@ namespace SmartDots.ViewModel
             Mode = EditorModeEnum.Measure;
             MaturityViewModel.EnableUI(true);
 
+        }
+
+        public void bReset_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
+        {
+            Brightness = 0;
+        }
+        public void cReset_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
+        {
+            Contrast = 0;
         }
     }
 }

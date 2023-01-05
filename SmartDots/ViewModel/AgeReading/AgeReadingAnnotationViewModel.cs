@@ -1186,5 +1186,7 @@ namespace SmartDots.ViewModel
         {
             e.Handled = true;
         }
+
+        
     }
 }
