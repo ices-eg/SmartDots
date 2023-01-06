@@ -38,7 +38,7 @@ Press connect
 
 ### Event overview
 If authentication succeeded, you will see a list of Analyses/Activities/Events.
-Double-Click on a event row (or select a row and press Analyze at the bottom) to go to the Age rReading module
+Double-Click on a event row (or select a row and press Analyze at the bottom) to go to the Age Reading module
 
 ![alt tag](https://webapi.smartfisheries.be/images/sd2.png)
 
