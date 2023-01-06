@@ -26,23 +26,22 @@ https://github.com/ices-eg/SmartDots/raw/master/SmartDots/Portable/SmartDots3.0.
 ## Demo
 You can try out the features of SmartDots in a demo environment.
 
-### Login with the following settings:
-
-Web API: https://<span></span>webapi.smartfisheries.be/api/demo
-
-Security: User credentials
-
-User: userX   (Where X is any number from 0-30. Example: user4)
-
-Password: pwdX (Where X is the same number used for the user. Example: pwd4)
+### Login
+Use the following settings:
+- Web API: https://<span></span>webapi.smartfisheries.be/api/demo
+- Security: User credentials
+- User: userX   (Where X is any number from 0-30. Example: user4)
+- Password: pwdX (Where X is the same number used for the user. Example: pwd4)
+Press connect
 
 ![alt tag](https://webapi.smartfisheries.be/images/sd1.png)
 
-### Press connect
+### Event overview
 If authentication succeeded, you will see a list of Analyses/Activities/Events
-
+Double-Click any AgeReading row (or select and press Analyze at the bottom) to go to the Age Reading module
 ![alt tag](https://webapi.smartfisheries.be/images/sd2.png)
 
-### Double-Click any AgeReading row (or select and press Analyze at the bottom) to go to the Age Reading screen
+### Age reading module
+Select a sample and start annotation otholiths
 
 ![alt tag](https://webapi.smartfisheries.be/images/sd3.png)
