@@ -32,6 +32,7 @@ Use the following settings:
 - Security: User credentials
 - User: userX   (Where X is any number from 0-30. Example: user4)
 - Password: pwdX (Where X is the same number used for the user. Example: pwd4)
+
 Press connect
 
 ![alt tag](https://webapi.smartfisheries.be/images/sd1.png)
