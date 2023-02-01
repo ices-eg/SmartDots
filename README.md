@@ -17,7 +17,7 @@ https://github.com/ices-eg/SmartDots/raw/master/SmartDots/publish/setup.exe
 Use this option when you are experiencing firewall/antivirus issues. This version will not have these issues, however it will also not check for updates. When you want to update to the latest version, you will have to download it again.
 
 You can download the portable version here:
-https://github.com/ices-eg/SmartDots/raw/master/SmartDots/Portable/SmartDots2.3.zip
+https://github.com/ices-eg/SmartDots/raw/master/SmartDots/Portable/SmartDots3.0.zip
 
 1) Download the .zip-file
 2) Unzip to a location of choice
@@ -26,23 +26,24 @@ https://github.com/ices-eg/SmartDots/raw/master/SmartDots/Portable/SmartDots2.3.
 ## Demo
 You can try out the features of SmartDots in a demo environment.
 
-### Login with the following settings:
+### Login
+Use the following settings:
+- Web API: https://<span></span>webapi.smartfisheries.be/api/demo
+- Security: User credentials
+- User: userX   (Where X is any number from 0-30. Example: user4)
+- Password: pwdX (Where X is the same number used for the user. Example: pwd4)
 
-Web API: https://<span></span>webapi.smartfisheries.be/api/demo
+Press connect
 
-Security: User credentials
+![alt tag](https://webapi.smartfisheries.be/images/sd1.png)
 
-User: userX   (Where X is any number from 0-30. Example: user4)
+### Event overview
+If authentication succeeded, you will see a list of Analyses/Activities/Events.
+Double-Click on a event row (or select a row and press Analyze at the bottom) to go to the Age Reading module
 
-Password: pwdX (Where X is the same number used for the user. Example: pwd4)
+![alt tag](https://webapi.smartfisheries.be/images/sd2.png)
 
-![alt tag](http://193.190.112.136/smartdots/smartdots-auth-demo.PNG "SmartDots login")
+### Age Reading module
+Select a sample and start annotation otholiths
 
-### Press connect
-If authentication succeeded, you will see a list of Analyses/Activities/Events
-
-![alt tag](http://193.190.112.136/smartdots/smartdots-activities-demo.PNG "SmartDots login")
-
-### Double-Click any row (or select and press Age Reading at the bottom) to go to the Age Reading screen
-
-![alt tag](http://193.190.112.136/smartdots/smartdots-agereading-demo.PNG "SmartDots login")
+![alt tag](https://webapi.smartfisheries.be/images/sd3.png)
