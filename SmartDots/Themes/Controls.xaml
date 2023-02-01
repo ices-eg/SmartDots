@@ -457,6 +457,14 @@
         </Rectangle>
     </DataTemplate>
 
+	<DataTemplate x:Key="ParameterColorColumn">
+		<Rectangle Margin="5,2, 5 ,2" StrokeThickness="1" Stroke="#333" Height="17">
+			<Rectangle.Fill>
+				<SolidColorBrush Color="{Binding Data.ParameterColor}"/>
+			</Rectangle.Fill>
+		</Rectangle>
+	</DataTemplate>
+
     <DataTemplate x:Key="CreatorColumn">
         <StackPanel Orientation="Horizontal">
             <Rectangle Margin="5,2, 5 ,2" StrokeThickness="1" Stroke="#333" Width="25" Height="17" HorizontalAlignment="Left">
@@ -464,7 +472,7 @@
                     <SolidColorBrush Color="{Binding Data.MultiUserColor}"/>
                 </Rectangle.Fill>
             </Rectangle>
-            <TextBlock Text="{Binding Data.LabTechnician}" VerticalAlignment="Center" ></TextBlock>
+            <TextBlock Text="{Binding Data.User}" VerticalAlignment="Center" ></TextBlock>
         </StackPanel>
         
     </DataTemplate>
@@ -710,10 +718,10 @@
     </Style>
 
 
-    <Style TargetType="{x:Type dxb:PopupMenu}">
+    <!--<Style TargetType="{x:Type dxb:PopupMenu}">
         <Setter Property="dxb:BarManager.ShowGlyphsInPopupMenus" Value="False"/>
         <Setter Property="MinWidth" Value="150"/>
-    </Style>
+    </Style>-->
 
     <Style TargetType="{x:Type dxb:BarItemMenuHeader}">
         <Setter Property="ItemStyle">

@@ -18,9 +18,11 @@ namespace SmartDots.ViewModel
     {
         //private bool toolsetVisibile = true;
         private bool waitState;
+        private bool loadingAnalysis;
         private bool isListening;
         private string headerInfo;
         private string sampleAlias;
+        private string activeTab;
 
         private LarvaeAnalysis larvaeAnalysis;
 
@@ -48,11 +50,28 @@ namespace SmartDots.ViewModel
                 //EditAnnotationDialogViewModel.ShowNucleusColumn = analysis.ShowNucleusColumn;
                 //EditAnnotationDialogViewModel.ShowEdgeColumn = analysis.ShowEdgeColumn;
                 //EditAnnotationDialogViewModel.Parameters = analysis.AnalysisParameters;
-                LarvaeView.MainWindowViewModel.HeaderModule = "  LARVAE";
+                if (larvaeAnalysis.Type.ToLower().Contains("egg"))
+                {
+                    LarvaeView.MainWindowViewModel.HeaderModule = "  EGG";
+                }
+                else
+                {
+                    LarvaeView.MainWindowViewModel.HeaderModule = "  LARVAE";
+                }
+
                 LarvaeView.MainWindowViewModel.HeaderInfo = $"  {LarvaeAnalysis.HeaderInfo}";
                 RaisePropertyChanged("LarvaeAnalysis");
 
-                LarvaeView.LarvaeViewModel.LarvaeSampleViewModel.LarvaeSamples = larvaeAnalysis.LarvaeSamples;
+                LarvaeEditorViewModel.RaisePropertyChanged("LarvaeButtonsVisibility");
+                LarvaeEditorViewModel.RaisePropertyChanged("EggButtonsVisibility");
+                LarvaeOwnAnnotationViewModel.RaisePropertyChanged("LarvaeColumnsVisibility");
+                LarvaeOwnAnnotationViewModel.RaisePropertyChanged("LarvaeColumnsVisibility");
+                LarvaeOwnAnnotationViewModel.RaisePropertyChanged("EggColumnsVisibility");
+                LarvaeOwnAnnotationViewModel.RaisePropertyChanged("ExtraRowSize");
+                LarvaeAllAnnotationViewModel.RaisePropertyChanged("IsLarvaeAnalysis");
+                LarvaeAllAnnotationViewModel.RaisePropertyChanged("IsEggAnalysis");
+
+                LarvaeSampleViewModel.LarvaeSamples = larvaeAnalysis.LarvaeSamples;
             }
         }
 
@@ -72,6 +91,12 @@ namespace SmartDots.ViewModel
             set { waitState = value; }
         }
 
+        public bool LoadingAnalysis
+        {
+            get { return loadingAnalysis; }
+            set { loadingAnalysis = value; }
+        }
+
         public bool CanToggleApprove
         {
             get
@@ -88,6 +113,21 @@ namespace SmartDots.ViewModel
                 if (LarvaeOwnAnnotationViewModel?.Annotation == null) return "APPROVE";
                 if (!LarvaeOwnAnnotationViewModel.Annotation.IsApproved) return "APPROVE";
                 return "UNAPPROVE";
+            }
+        }
+
+        public string ActiveTab
+        {
+            get { return activeTab; }
+            set
+            {
+                if (activeTab != value && (value == "AnnotationOwn" || value == "AnnotationAll"))
+                {
+                    activeTab = value;
+                    RaisePropertyChanged("ActiveTab");
+                    LarvaeEditorViewModel.UpdateButtons();
+                    LarvaeEditorViewModel.RefreshShapes();
+                }
             }
         }
 
@@ -160,29 +200,12 @@ namespace SmartDots.ViewModel
             Helper.ShowWinUIMessageBox(e.Error.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, e.Error);
         }
 
-        public bool LoadLookups(Guid analysisid)
+        public bool LoadLookups(Guid analysisid, string type)
         {
+            var typeLetter = type.ToLower().Contains("lar") ? "l" : "e";
 
-            //if (!LarvaeOwnAnnotationViewModel.LarvaeQualities.Any())
-            //{
-            var larvaeQualityVocab = Global.API.GetVocab(analysisid, "aql");
-            if (!larvaeQualityVocab.Succeeded)
-            {
-                Helper.ShowWinUIMessageBox("Error loading Larvae quality vocab from the Web API", "Error", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                return false;
-            }
 
-            var larvaeQualities = new List<LarvaeQuality>();
-            foreach (var dtoLookup in larvaeQualityVocab.Result)
-            {
-                larvaeQualities.Add((LarvaeQuality)Helper.ConvertType(dtoLookup, typeof(LarvaeQuality)));
-            }
-
-            LarvaeOwnAnnotationViewModel.LarvaeQualities = larvaeQualities;
-            //}
-
-            var larvaePresencesVocab = Global.API.GetVocab(analysisid, "lpr");
+            var larvaePresencesVocab = Global.API.GetVocab(analysisid, $"{typeLetter}pr");
             if (!larvaePresencesVocab.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error loading Larvae presence vocab from the Web API", "Error", MessageBoxButton.OK,
@@ -198,7 +221,23 @@ namespace SmartDots.ViewModel
 
             LarvaeOwnAnnotationViewModel.LarvaePresences = larvaePresences;
 
-            var larvaeDevelopmentStageVocab = Global.API.GetVocab(analysisid, "lds");
+            var larvaeQualityVocab = Global.API.GetVocab(analysisid, $"{typeLetter}aq");
+            if (!larvaeQualityVocab.Succeeded)
+            {
+                Helper.ShowWinUIMessageBox("Error loading Larvae quality vocab from the Web API", "Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return false;
+            }
+
+            var larvaeQualities = new List<LarvaeEggQuality>();
+            foreach (var dtoLookup in larvaeQualityVocab.Result)
+            {
+                larvaeQualities.Add((LarvaeEggQuality)Helper.ConvertType(dtoLookup, typeof(LarvaeEggQuality)));
+            }
+
+            LarvaeOwnAnnotationViewModel.LarvaeQualities = larvaeQualities;
+
+            var larvaeDevelopmentStageVocab = Global.API.GetVocab(analysisid, $"{typeLetter}ds");
             if (!larvaeDevelopmentStageVocab.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error loading Larvae development stages vocab from the Web API", "Error", MessageBoxButton.OK,
@@ -214,36 +253,91 @@ namespace SmartDots.ViewModel
 
             LarvaeOwnAnnotationViewModel.LarvaeDevelopmentStages = larvaeDevelopmentStages;
 
+            var larvaeSpeciesVocab = Global.API.GetVocab(analysisid, $"{typeLetter}sp");
+            if (!larvaeSpeciesVocab.Succeeded)
+            {
+                Helper.ShowWinUIMessageBox("Error loading Larvae species vocab from the Web API", "Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return false;
+            }
+
+            var larvaeSpecies = new List<LarvaeSpecies>();
+            foreach (var dtoLookup in larvaeSpeciesVocab.Result)
+            {
+                larvaeSpecies.Add((LarvaeSpecies)Helper.ConvertType(dtoLookup, typeof(LarvaeSpecies)));
+            }
+
+            LarvaeOwnAnnotationViewModel.LarvaeSpecies = larvaeSpecies;
+
+            if (type.ToLower().Contains("egg"))
+            {
+                var eggEmbryoSizeVocab = Global.API.GetVocab(analysisid, "ees");
+                if (!eggEmbryoSizeVocab.Succeeded)
+                {
+                    Helper.ShowWinUIMessageBox("Error loading Egg embryo size vocab from the Web API", "Error", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return false;
+                }
+
+                var embryoSizes = new List<EggEmbryoSize>();
+                foreach (var dtoLookup in eggEmbryoSizeVocab.Result)
+                {
+                    embryoSizes.Add((EggEmbryoSize)Helper.ConvertType(dtoLookup, typeof(EggEmbryoSize)));
+                }
+
+                LarvaeOwnAnnotationViewModel.EggEmbryoSizes = embryoSizes;
+
+                var eggYolkSegmentationVocab = Global.API.GetVocab(analysisid, "eys");
+                if (!eggYolkSegmentationVocab.Succeeded)
+                {
+                    Helper.ShowWinUIMessageBox("Error loading Egg yolk segmentation vocab from the Web API", "Error", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return false;
+                }
+
+                var eggYolkSegmentations = new List<EggYolkSegmentation>();
+                foreach (var dtoLookup in eggYolkSegmentationVocab.Result)
+                {
+                    eggYolkSegmentations.Add((EggYolkSegmentation)Helper.ConvertType(dtoLookup, typeof(EggYolkSegmentation)));
+                }
+
+                LarvaeOwnAnnotationViewModel.EggYolkSegmentations = eggYolkSegmentations;
+            }
 
             return true;
         }
 
 
 
-        public bool LoadLarvaeAnalysis(Guid larvaeAnalysisid)
+        public bool LoadLarvaeAnalysis(Guid larvaeAnalysisid, string type)
         {
             try
             {
+                LoadingAnalysis = true;
                 ShowWaitSplashScreen();
-                if (!LoadLookups(larvaeAnalysisid))
-                {
-                    Helper.ShowWinUIMessageBox("Unable to load larvae lookups", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
-                }
-                var dtoLarvaeAnalysis = Global.API.GetLarvaeAnalysis(larvaeAnalysisid);
+                Helper.MultiUserColorsDict.Clear();
+
+                var dtoLarvaeAnalysis = Global.API.GetLarvaeAnalysis(larvaeAnalysisid, type);
                 if (!dtoLarvaeAnalysis.Succeeded)
                 {
                     CloseSplashScreen();
-                    Helper.ShowWinUIMessageBox("Error loading larvae analysis from the Web API\n" + dtoLarvaeAnalysis.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Helper.ShowWinUIMessageBox("Error loading analysis from the Web API\n" + dtoLarvaeAnalysis.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }
 
                 var larvaeAnalysis = (LarvaeAnalysis)Helper.ConvertType(dtoLarvaeAnalysis.Result, typeof(LarvaeAnalysis));
+                if (!LoadLookups(larvaeAnalysisid, larvaeAnalysis.Type))
+                {
+                    Helper.ShowWinUIMessageBox("Unable to load lookups", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
                 List<LarvaeSample> larvaeSamples = new List<LarvaeSample>();
                 foreach (var dtoLarvaeSamples in dtoLarvaeAnalysis.Result.LarvaeSamples)
                 {
                     larvaeSamples.Add((LarvaeSample)Helper.ConvertType(dtoLarvaeSamples, typeof(LarvaeSample)));
                 }
+
+                larvaeAnalysis.LarvaeSamples = larvaeSamples;
                 List<LarvaeParameter> larvaeParameters = new List<LarvaeParameter>();
                 foreach (var dtoLarvaeParameters in dtoLarvaeAnalysis.Result.LarvaeParameters)
                 {
@@ -262,9 +356,7 @@ namespace SmartDots.ViewModel
                 //}
                 //analysis.AnalysisParameters = analysisParameters;
                 LarvaeAnalysis = larvaeAnalysis;
-                LarvaeSampleViewModel.LarvaeSamples = larvaeSamples;
-
-                // todo add parameters to larvaeviewmodel
+                //LarvaeSampleViewModel.LarvaeSamples = larvaeSamples;
 
                 LarvaeSampleViewModel.SetDynamicLarvaeSamples();
 
@@ -294,11 +386,13 @@ namespace SmartDots.ViewModel
 
                 }
 
+                LoadingAnalysis = false;
                 return true;
 
             }
             catch (Exception e)
             {
+                LoadingAnalysis = false;
                 CloseSplashScreen();
                 Helper.ShowWinUIMessageBox(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, e);
                 return false;
@@ -421,7 +515,7 @@ namespace SmartDots.ViewModel
                 try
                 {
                     ShowWaitSplashScreen();
-                    var webapiresult = Global.API.ToggleLarvaeAnalysisUserProgress(LarvaeAnalysis.ID);
+                    var webapiresult = Global.API.ToggleLarvaeAnalysisUserProgress(LarvaeAnalysis.ID, LarvaeViewModel.LarvaeAnalysis.Type);
                     if (!webapiresult.Succeeded)
                     {
 
@@ -481,23 +575,19 @@ namespace SmartDots.ViewModel
 
         public void EnableUI(bool enabled)
         {
-            //AgeReadingEditorView.EditorStackPanel.IsEnabled = enabled;
-            //AgeReadingFileView.IsEnabled = enabled;
-            //AgeReadingAnnotationView.IsEnabled = enabled;
-            //AgeReadingSampleView.IsEnabled = enabled;
-            //AgeReadingView.Adjustments.IsEnabled = enabled;
-            //AgeReadingView.BrightnessPanel.IsEnabled = enabled;
-            //AgeReadingView.RednessPanel.IsEnabled = enabled;
-            //AgeReadingView.GrowthPanel.IsEnabled = enabled;
-            //AgeReadingView.CollectionAppBar.IsEnabled = enabled;
-            //AgeReadingView.btnFileSettings.IsEnabled = enabled;
-            //AgeReadingStatusbarView.imgZoomSlider.IsEnabled = enabled;
-            //AgeReadingStatusbarView.btn200Percent.IsEnabled = enabled;
-            //AgeReadingStatusbarView.btn150Percent.IsEnabled = enabled;
-            //AgeReadingStatusbarView.btn100Percent.IsEnabled = enabled;
-            //AgeReadingStatusbarView.btn50Percent.IsEnabled = enabled;
-            //AgeReadingStatusbarView.btn25Percent.IsEnabled = enabled;
-            //AgeReadingStatusbarView.btnFit.IsEnabled = enabled;
+            LarvaeView.Next.IsEnabled = enabled;
+            LarvaeView.FileNext.IsEnabled = enabled;
+            LarvaeView.Previous.IsEnabled = enabled;
+            LarvaeView.FilePrevious.IsEnabled = enabled;
+            LarvaeView.btnApprove.IsEnabled = enabled;
+            LarvaeEditorView.EditorStackPanel.IsEnabled = enabled;
+            LarvaeFileView.IsEnabled = enabled;
+            LarvaeOwnAnnotationView.IsEnabled = enabled;
+            LarvaeAllAnnotationView.IsEnabled = enabled;
+            LarvaeSampleView.IsEnabled = enabled;
+            LarvaeEditorView.Adjustments.IsEnabled = enabled;
+            LarvaeStatusbarView.IsEnabled = enabled;
+
             WaitState = !enabled;
         }
 
@@ -593,6 +683,14 @@ namespace SmartDots.ViewModel
             //dialog.ShowDialog();
         }
 
+        public void LarvaeAnnotationOwn_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ActiveTab = "AnnotationOwn";
+        }
 
+        public void LarvaeAnnotationAll_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ActiveTab = "AnnotationAll";
+        }
     }
 }

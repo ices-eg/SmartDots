@@ -163,7 +163,15 @@ namespace SmartDots.ViewModel
             }
             else if (e.Analysis.Purpose != null && e.Analysis.Purpose.ToString().ToLower().Substring(0, 3).Equals("lar"))
             {
-                if (LarvaeControl.LarvaeViewModel.LoadLarvaeAnalysis(Guid.Parse(e.Analysis.ID.ToString())))
+                if (LarvaeControl.LarvaeViewModel.LoadLarvaeAnalysis(Guid.Parse(e.Analysis.ID.ToString()), "Larvae"))
+                {
+                    SetActiveControl(LarvaeControl);
+                }
+
+            }
+            else if (e.Analysis.Purpose != null && e.Analysis.Purpose.ToString().ToLower().Substring(0, 3).Equals("egg"))
+            {
+                if (LarvaeControl.LarvaeViewModel.LoadLarvaeAnalysis(Guid.Parse(e.Analysis.ID.ToString()), "Egg"))
                 {
                     SetActiveControl(LarvaeControl);
                 }

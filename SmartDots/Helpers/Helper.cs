@@ -100,7 +100,7 @@ namespace SmartDots.Helpers
             var targetProps = targetType.GetProperties().Where(x => x.CanWrite).ToList();
             foreach (var prop in targetProps)
             {
-                var propMatch = sourceProps.FirstOrDefault(x => x.Name == prop.Name);
+                var propMatch = sourceProps.FirstOrDefault(x => x.Name.ToLower() == prop.Name.ToLower());
                 if (propMatch == null) continue;
                 try
                 {
@@ -114,7 +114,7 @@ namespace SmartDots.Helpers
             var targetFields = targetType.GetFields().Where(x => x.IsPublic).ToList();
             foreach (var prop in targetFields)
             {
-                var propMatch = sourceFields.FirstOrDefault(x => x.Name == prop.Name);
+                var propMatch = sourceFields.FirstOrDefault(x => x.Name.ToLower() == prop.Name.ToLower());
                 if (propMatch == null) continue;
                 try
                 {
@@ -167,7 +167,7 @@ namespace SmartDots.Helpers
             return new Size(formattedText.Width, formattedText.Height);
         }
 
-        public static List<string> MultiUserDotColors { get; } = new List<string>() { 
+        public static List<string> MultiUserColors { get; } = new List<string>() { 
             "#00FFFF",
             "#FFFF00",
             "#FF0000",
@@ -196,7 +196,7 @@ namespace SmartDots.Helpers
             "#80DD80",
         };
 
-        public static Dictionary<Guid, string> MultiUserDotColorsDict { get; } = new Dictionary<Guid, string>();
+        public static Dictionary<Guid, string> MultiUserColorsDict { get; } = new Dictionary<Guid, string>();
 
         public static bool FolderExists(string path)
         {

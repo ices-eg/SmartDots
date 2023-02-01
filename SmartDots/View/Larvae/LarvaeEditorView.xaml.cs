@@ -29,6 +29,9 @@ namespace SmartDots.View
             DotButton.ToggleStateChanged += DotButton_ToggleStateChanged;
             DotButton.ContextButtonClick += (sender, args) => DotMenu.ShowPopup(DotButton);
 
+            CircleButton.ToggleStateChanged += CircleButton_ToggleStateChanged;
+            CircleButton.ContextButtonClick += (sender, args) => CircleMenu.ShowPopup(CircleButton);
+
             ScaleButton.PrimaryButtonClick += (sender, args) => maturityEditorViewModel.AutoMeasureScale(true);
             ScaleButton.ContextButtonClick += (sender, args) => ScaleContextMenu.ShowPopup(ScaleButton);
             ContextMeasureAutomatic.ItemClick += (sender, args) => maturityEditorViewModel.AutoMeasureScale(true);
@@ -64,6 +67,11 @@ namespace SmartDots.View
         private void DotButton_ToggleStateChanged(object sender, System.EventArgs e)
         {
             LarvaeEditorViewModel.DrawDotBtn_Checked(sender, new RoutedEventArgs());
+        }
+
+        private void CircleButton_ToggleStateChanged(object sender, System.EventArgs e)
+        {
+            LarvaeEditorViewModel.DrawCircleBtn_Checked(sender, new RoutedEventArgs());
         }
     }
 }

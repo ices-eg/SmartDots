@@ -238,7 +238,7 @@ namespace SmartDots.ViewModel
         {
             try
             {
-                Helper.MultiUserDotColorsDict.Clear();
+                Helper.MultiUserColorsDict.Clear();
 
                 if (!LoadQualities())
                 {

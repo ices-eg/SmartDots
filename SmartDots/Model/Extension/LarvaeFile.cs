@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartDots.Model
 {
+    [Serializable]
     public class LarvaeFile
     {
         public Guid ID { get; set; }

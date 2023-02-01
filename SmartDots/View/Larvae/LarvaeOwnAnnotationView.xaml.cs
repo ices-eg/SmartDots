@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
-using DevExpress.Xpf.Layout.Core.Selection;
+using SmartDots.Helpers;
 using SmartDots.Model;
 using SmartDots.ViewModel;
 using SmartDots.ViewModel.AgeReading;
@@ -49,6 +50,12 @@ namespace SmartDots.View
         private void AnnotationGrid_SelectedItemChanged(object sender, SelectedItemChangedEventArgs e)
         {
             larvaeOwnAnnotationViewModel.UpdateSelectionMode();
+        }
+
+        private void AnnotationGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            AnnotationList.BestFitColumns();
+
         }
     }
 }

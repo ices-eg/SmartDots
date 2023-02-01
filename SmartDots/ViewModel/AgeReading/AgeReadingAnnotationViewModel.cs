@@ -75,12 +75,9 @@ namespace SmartDots.ViewModel
                 return selectedAnnotations; }
             set
             {
-                
                 selectedAnnotations = value;
-
                 RefreshActions();
                 AgeReadingViewModel.AgeReadingEditorViewModel.UndoRedo.EmptyStacks();
-
                 AgeReadingViewModel.AgeReadingEditorViewModel.RefreshShapes();
             }
         }
@@ -97,7 +94,6 @@ namespace SmartDots.ViewModel
                     RefreshActions();
                     AgeReadingViewModel.UpdateGraphs();
                 }
-                
             }
         }
 
@@ -937,11 +933,11 @@ namespace SmartDots.ViewModel
                         {
                             if (annotation.LabTechnicianID != null)
                             {
-                                if (!Helper.MultiUserDotColorsDict.ContainsKey((Guid)annotation.LabTechnicianID))
+                                if (!Helper.MultiUserColorsDict.ContainsKey((Guid)annotation.LabTechnicianID))
                                 {
-                                    Helper.MultiUserDotColorsDict.Add((Guid)annotation.LabTechnicianID, Helper.MultiUserDotColors.FirstOrDefault(x => !Helper.MultiUserDotColorsDict.Select(y => y.Value).Contains(x)));
+                                    Helper.MultiUserColorsDict.Add((Guid)annotation.LabTechnicianID, Helper.MultiUserColors.FirstOrDefault(x => !Helper.MultiUserColorsDict.Select(y => y.Value).Contains(x)));
                                 }
-                                annotation.MultiUserColor = Helper.MultiUserDotColorsDict.FirstOrDefault(x => x.Key == (Guid)annotation.LabTechnicianID).Value;
+                                annotation.MultiUserColor = Helper.MultiUserColorsDict.FirstOrDefault(x => x.Key == (Guid)annotation.LabTechnicianID).Value;
                             }
                         }
                     }

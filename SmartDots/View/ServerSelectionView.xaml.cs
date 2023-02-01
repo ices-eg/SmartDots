@@ -350,7 +350,10 @@ namespace SmartDots.View
                         apiResult = Global.API.ToggleMaturityAnalysisUserProgress((Guid)ae.Analysis.ID);
                         break;
                     case "lar":
-                        apiResult = Global.API.ToggleLarvaeAnalysisUserProgress((Guid)ae.Analysis.ID);
+                        apiResult = Global.API.ToggleLarvaeAnalysisUserProgress((Guid)ae.Analysis.ID, "Larvae");
+                        break;
+                    case "egg":
+                        apiResult = Global.API.ToggleLarvaeAnalysisUserProgress((Guid)ae.Analysis.ID, "Egg");
                         break;
                     default:
                         apiResult = Global.API.ToggleAnalysisUserProgress((Guid)ae.Analysis.ID);

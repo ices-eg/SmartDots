@@ -2,6 +2,7 @@
 
 namespace SmartDots.Model
 {
+    [Serializable]
     public class LarvaeDevelopmentStage
     {
         public Guid ID { get; set; }

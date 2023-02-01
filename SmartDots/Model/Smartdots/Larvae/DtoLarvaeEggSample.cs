@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartDots.Model
 {
-    public class DtoLarvaeSample
+    public class DtoLarvaeEggSample
     {
         public Guid ID { get; set; }
         public string StatusCode { get; set; }
@@ -14,7 +14,7 @@ namespace SmartDots.Model
         public bool AllowApproveToggle { get; set; }
         public bool UserHasApproved { get; set; }
 
-        public List<DtoLarvaeFile> Files { get; set; }
-        public List<DtoLarvaeAnnotation> Annotations { get; set; }
+        public List<DtoLarvaeEggFile> Files { get; set; }
+        public List<DtoLarvaeEggAnnotation> Annotations { get; set; }
     }
 }

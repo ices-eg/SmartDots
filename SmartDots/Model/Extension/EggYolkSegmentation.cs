@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace SmartDots.Model
 {
-    public class DtoLarvaeLookupItem
+    public class EggYolkSegmentation
     {
         public Guid ID { get; set; }
         public string Code { get; set; }

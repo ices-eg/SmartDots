@@ -52,5 +52,10 @@ namespace SmartDots.Model
             }
             return points;
         }
+
+        public double Distance()
+        {
+            return Math.Pow(Math.Pow(X2 - X1, 2) + Math.Pow(Y2 - Y1, 2), 0.5);
+        }
     }
 }

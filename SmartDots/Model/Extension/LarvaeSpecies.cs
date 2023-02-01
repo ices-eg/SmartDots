@@ -3,7 +3,7 @@
 namespace SmartDots.Model
 {
     [Serializable]
-    public class LarvaePresence
+    public class LarvaeSpecies
     {
         public Guid ID { get; set; }
         public string Code { get; set; }

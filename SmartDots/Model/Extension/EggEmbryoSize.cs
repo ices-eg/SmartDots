@@ -2,7 +2,7 @@
 
 namespace SmartDots.Model
 {
-    public class LarvaeQuality
+    public class EggEmbryoSize
     {
         public Guid ID { get; set; }
         public string Code { get; set; }

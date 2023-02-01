@@ -280,13 +280,12 @@ namespace SmartDots.ViewModel
         {
             ToolbarVisibility = Visibility.Collapsed;
             if (canAttachDetachSampleVisibility == Visibility.Visible && (CanDetach || NeedsSampleLink)) ToolbarVisibility = Visibility.Visible;
-            if (ShowNavButtons) ToolbarVisibility = Visibility.Visible;
+            //if (ShowNavButtons) ToolbarVisibility = Visibility.Visible;
         }
 
         public void LoadImage(string imagepath)
         {
             var bitmap = new BitmapImage();
-
 
             if (imagepath.StartsWith("http"))
             {
@@ -775,7 +774,7 @@ namespace SmartDots.ViewModel
 
         public void FileSettings()
         {
-            AgeReadingViewModel.AgeReadingFileView.ShowNavBtns.EditValue = Properties.Settings.Default.ShowFileNavButtons;
+            AgeReadingViewModel.AgeReadingFileView.ShowNavBtns.EditValue = false;
 
             ToggleFileOptions(true);
         }
@@ -785,8 +784,8 @@ namespace SmartDots.ViewModel
             ToggleFileOptions(false);
 
             // code for saving the usersetting
-            Properties.Settings.Default.ShowFileNavButtons = (bool) AgeReadingViewModel.AgeReadingFileView.ShowNavBtns.EditValue;
-            ShowNavButtons = (bool) AgeReadingViewModel.AgeReadingFileView.ShowNavBtns.EditValue;
+            Properties.Settings.Default.ShowFileNavButtons = false;
+            ShowNavButtons = false;
 
             Properties.Settings.Default.Save();
             RefreshToolbarVisibility();

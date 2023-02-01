@@ -1108,6 +1108,7 @@ namespace SmartDots.ViewModel
             }
             else
             {
+                MaturityViewModel.MaturityFileViewModel.SelectedFile.Scale = null;
                 MaturityViewModel.MaturityStatusbarViewModel.Info = $"Scale (px/mm): ?";
             }
 

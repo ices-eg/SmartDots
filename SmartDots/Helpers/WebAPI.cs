@@ -345,28 +345,28 @@ namespace SmartDots.Helpers
             return PerformCall<List<DtoMaturityLookupItem>>("getvocab?token=" + CurrentUser.Token + "&codeType=" + code);
         }
 
-        WebApiResult<DtoLarvaeAnalysis> ISmartDotsAPI.GetLarvaeAnalysis(Guid id)
+        WebApiResult<DtoLarvaeEggAnalysis> ISmartDotsAPI.GetLarvaeAnalysis(Guid id, string type)
         {
-            return PerformCall<DtoLarvaeAnalysis>("getlarvaeanalysis?token=" + CurrentUser.Token + "&id=" + id);
+            return PerformCall<DtoLarvaeEggAnalysis>("getlarvaeegganalysis?token=" + CurrentUser.Token + "&type=" + type + "&id=" + id);
         }
 
-        public WebApiResult<DtoLarvaeSample> GetLarvaeSample(Guid id)
+        public WebApiResult<DtoLarvaeEggSample> GetLarvaeSample(Guid id, string type)
         {
-            return PerformCall<DtoLarvaeSample>("getlarvaesample?token=" + CurrentUser.Token + "&id=" + id);
+            return PerformCall<DtoLarvaeEggSample>("getlarvaeeggsample?token=" + CurrentUser.Token + "&id=" + id + "&type=" + type);
         }
 
-        public WebApiResult<DtoLarvaeSample> SaveLarvaeAnnotation(DtoLarvaeAnnotation annotation)
+        public WebApiResult<DtoLarvaeEggSample> SaveLarvaeAnnotation(string type, DtoLarvaeEggAnnotation eggAnnotation)
         {
-            return PerformPost<DtoLarvaeSample, DtoLarvaeAnnotation>("savelarvaeannotation?token=" + CurrentUser.Token, annotation);
+            return PerformPost<DtoLarvaeEggSample, DtoLarvaeEggAnnotation>("savelarvaeeggannotation?token=" + CurrentUser.Token + "&type=" + type, eggAnnotation);
         }
 
-        public WebApiResult<bool> UpdateLarvaeFile(DtoLarvaeFile file)
+        public WebApiResult<bool> UpdateLarvaeFile(string type, DtoLarvaeEggFile file)
         {
-            return PerformPost<bool, DtoLarvaeFile>("updatelarvaefile?token=" + CurrentUser.Token, file);
+            return PerformPost<bool, DtoLarvaeEggFile>("updatelarvaeeggfile?token=" + CurrentUser.Token + "&type=" + type, file);
         }
-        public WebApiResult<bool> ToggleLarvaeAnalysisUserProgress(Guid analysisid)
+        public WebApiResult<bool> ToggleLarvaeAnalysisUserProgress(Guid analysisid, string type)
         {
-            return PerformPost<bool, Guid>("togglelarvaeanalysisuserprogress?token=" + CurrentUser.Token, analysisid);
+            return PerformPost<bool, Guid>("togglelarvaeegganalysisuserprogress?token=" + CurrentUser.Token + "&type=" + type, analysisid);
         }
     }
 }

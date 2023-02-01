@@ -160,7 +160,7 @@
 
             <StackPanel Width="28" Height="33" Margin="0" dxdove:DockPane.HitTestType="Header"/>
 
-            <Button x:Name="btnUndo" Style="{StaticResource SDButtonBase}" IsEnabled="{Binding CanUndo}" ToolTip="Undo" >
+            <Button x:Name="btnUndo" Style="{StaticResource SDButtonBase}" IsEnabled="{Binding CanUndo}" ToolTip="Undo">
                 <Image Source="../../Resources/Undo.png" Width="22" Height="22"/>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">

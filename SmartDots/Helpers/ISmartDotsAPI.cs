@@ -44,11 +44,11 @@ namespace SmartDots.Helpers
         WebApiResult<bool> UpdateMaturityFile(DtoMaturityFile file);
         WebApiResult<bool> ToggleMaturityAnalysisUserProgress(Guid analysisid);
 
-        WebApiResult<DtoLarvaeAnalysis> GetLarvaeAnalysis(Guid id);
-        WebApiResult<DtoLarvaeSample> GetLarvaeSample(Guid id);
-        WebApiResult<DtoLarvaeSample> SaveLarvaeAnnotation(DtoLarvaeAnnotation annotation);
-        WebApiResult<bool> UpdateLarvaeFile(DtoLarvaeFile file);
-        WebApiResult<bool> ToggleLarvaeAnalysisUserProgress(Guid analysisid);
+        WebApiResult<DtoLarvaeEggAnalysis> GetLarvaeAnalysis(Guid id, string type);
+        WebApiResult<DtoLarvaeEggSample> GetLarvaeSample(Guid id, string type);
+        WebApiResult<DtoLarvaeEggSample> SaveLarvaeAnnotation(string type, DtoLarvaeEggAnnotation eggAnnotation);
+        WebApiResult<bool> UpdateLarvaeFile(string type, DtoLarvaeEggFile file);
+        WebApiResult<bool> ToggleLarvaeAnalysisUserProgress(Guid analysisid, string type);
 
     }
 }

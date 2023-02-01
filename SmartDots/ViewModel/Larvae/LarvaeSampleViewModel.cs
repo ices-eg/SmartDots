@@ -48,8 +48,9 @@ namespace SmartDots.ViewModel
                     if (SelectedSample?.ID != dynamicSamples[0]?.ID)
                     {
                         SelectedSample = LarvaeSamples.FirstOrDefault(x => x.ID == dynamicSamples[0].ID);
-                        LoadSample();
                     }
+                    LoadSample();
+
 
                 }
 
@@ -64,7 +65,6 @@ namespace SmartDots.ViewModel
             get { return selectedSample; }
             set
             {
-                LarvaeViewModel.Save();
                 ChangingSample = true;
                 selectedSample = value;
                 RaisePropertyChanged("SelectedSample");
@@ -94,8 +94,10 @@ namespace SmartDots.ViewModel
                 {
                     foreach (var annotation in selectedSample.Annotations)
                     {
-                        annotation.LarvaeQuality = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeQualities
-                            .FirstOrDefault(x => x.ID == annotation.LarvaeQualityID)?.Code;
+                        annotation.Species = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeSpecies
+                            .FirstOrDefault(x => x.ID == annotation.SpeciesID)?.Code;
+                        annotation.Quality = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeQualities
+                            .FirstOrDefault(x => x.ID == annotation.QualityID)?.Code;
                         annotation.DevelopmentStage = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeDevelopmentStages
                             .FirstOrDefault(x => x.ID == annotation.DevelopmentStageID)?.Code;
                         annotation.AnalFinPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
@@ -104,13 +106,24 @@ namespace SmartDots.ViewModel
                             .FirstOrDefault(x => x.ID == annotation.DorsalFinPresenceID)?.Code;
                         annotation.PelvicFinPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
                             .FirstOrDefault(x => x.ID == annotation.PelvicFinPresenceID)?.Code;
+                        annotation.EmbryoPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
+                            .FirstOrDefault(x => x.ID == annotation.EmbryoPresenceID)?.Code;
+                        annotation.EmbryoSize = LarvaeViewModel.LarvaeOwnAnnotationViewModel.EggEmbryoSizes
+                            .FirstOrDefault(x => x.ID == annotation.EmbryoSizeID)?.Code;
+                        annotation.YolkSegmentation = LarvaeViewModel.LarvaeOwnAnnotationViewModel.EggYolkSegmentations
+                            .FirstOrDefault(x => x.ID == annotation.YolkSegmentationID)?.Code;
+                        annotation.OilGlobulePresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
+                            .FirstOrDefault(x => x.ID == annotation.OilGlobulePresenceID)?.Code;
                     }
 
                     var ownAnnotation = selectedSample.Annotations.FirstOrDefault(x => x.UserID == Global.API.CurrentUser.ID);
                     LarvaeViewModel.LarvaeOwnAnnotationViewModel.Annotation = ownAnnotation;
 
-                    LarvaeViewModel.LarvaeAllAnnotationViewModel.Annotations = selectedSample.Annotations;
+                    LarvaeViewModel.LarvaeAllAnnotationViewModel.LarvaeAnnotationParameterResult = new ObservableCollection<LarvaeAnnotationParameterResult>(selectedSample.Annotations.SelectMany(x => x.LarvaeAnnotationParameterResult));
+
                     LarvaeViewModel.LarvaeAllAnnotationView.AnnotationList.BestFitColumns();
+
+
                 }
 
                 ChangingSample = false;
@@ -197,28 +210,18 @@ namespace SmartDots.ViewModel
 
         public void SampleList_BeforeLayoutRefresh(object sender, CancelRoutedEventArgs e)
         {
-            //if (AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes.Any() &&
-            //    !AgeReadingViewModel.AgeReadingFileViewModel.LoadingFolder &&
-            //    AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null &&
-            //    AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation?.QualityID == null &&
-            //    !AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.IsFixed
-            //    )
-            //{
-            //    //savechecks
-            //    if (!AgeReadingViewModel.AgeReadingAnnotationViewModel.EditAnnotation())
-            //        //AgeReadingViewModel.SaveAnnotations();
-            //        return;
-            //}
-
-            //else
-            //{
-            //    AgeReadingViewModel.SaveAnnotations();
-            //}
+            if (LarvaeViewModel.LarvaeOwnAnnotationViewModel?.Annotation != null && LarvaeViewModel.LarvaeOwnAnnotationViewModel.Annotation.RequiresSaving)
+            {
+                LarvaeViewModel.LarvaeOwnAnnotationViewModel.SaveAnnotation();
+            }
         }
 
         public void SampleList_FocusedRowChanged(object sender, FocusedRowChangedEventArgs e)
         {
-            LoadSample();
+            if (!LarvaeViewModel.LoadingAnalysis)
+            {
+                LoadSample();
+            }
         }
 
         public void LoadSample()
@@ -298,7 +301,7 @@ namespace SmartDots.ViewModel
 
         public LarvaeSample GetLarvaeSample(Guid sampleid)
         {
-            var sample = Global.API.GetLarvaeSample(sampleid);
+            var sample = Global.API.GetLarvaeSample(sampleid, LarvaeViewModel.LarvaeAnalysis.Type);
             if (!sample.Succeeded)
             {
                 Helper.ShowWinUIMessageBox("Error loading Larvae sample from Web API\n" + sample.ErrorMessage, "Error", MessageBoxButton.OK,
@@ -319,7 +322,7 @@ namespace SmartDots.ViewModel
                             x.ID == apr.LarvaeParameterID);
                 }
             }
-
+            // todo calculate result
             return sampleResult;
         }
 

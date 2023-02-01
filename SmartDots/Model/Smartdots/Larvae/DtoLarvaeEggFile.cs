@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartDots.Model
 {
-    public class DtoLarvaeFile
+    public class DtoLarvaeEggFile
     {
         public Guid ID { get; set; }
         public string Path { get; set; }

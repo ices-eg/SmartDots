@@ -201,5 +201,17 @@ namespace SmartDots.Properties {
                 this["ShowFileNavButtons"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int CircleWidth {
+            get {
+                return ((int)(this["CircleWidth"]));
+            }
+            set {
+                this["CircleWidth"] = value;
+            }
+        }
     }
 }

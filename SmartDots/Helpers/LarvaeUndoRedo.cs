@@ -58,17 +58,25 @@ namespace SmartDots.Helpers
 
         #region UndoHelperFunctions
 
-        public void InsertInUnDoRedoForAddLine(LarvaeLine l, LarvaeEditorViewModel editor)
+        public void InsertInUnDoRedoForAddLine(List<LarvaeLine> l, LarvaeEditorViewModel editor)
         {
-            IUndoRedoCommand cmd = new AddLarvaeLineCommand(l, editor);
+            IUndoRedoCommand cmd = new AddLarvaeLineCommand(new List<LarvaeLine>(l), editor);
             _Undocommands.Push(cmd);
             _Redocommands.Clear();
             CheckStacks();
         }
 
-        public void InsertInUnDoRedoForAddDot(Dot d, CombinedLine cl, LarvaeEditorViewModel editor)
+        public void InsertInUnDoRedoForAddDot(LarvaeDot d, LarvaeEditorViewModel editor)
         {
             IUndoRedoCommand cmd = new AddLarvaeDotCommand(d, editor);
+            _Undocommands.Push(cmd);
+            _Redocommands.Clear();
+            CheckStacks();
+        }
+
+        public void InsertInUnDoRedoForAddCircle(LarvaeCircle c, LarvaeEditorViewModel editor)
+        {
+            IUndoRedoCommand cmd = new AddLarvaeCircleCommand(c, editor);
             _Undocommands.Push(cmd);
             _Redocommands.Clear();
             CheckStacks();
@@ -82,9 +90,9 @@ namespace SmartDots.Helpers
             CheckStacks();
         }
 
-        public void InsertInUnDoRedoForDelete(Line l, LarvaeEditorViewModel editor)
+        public void InsertInUnDoRedoForDelete(List<LarvaeLine> l, LarvaeEditorViewModel editor)
         {
-            IUndoRedoCommand cmd = new DeleteLarvaeMeasureCommand(l, editor);
+            IUndoRedoCommand cmd = new DeleteLarvaeLineCommand(l, editor);
             _Undocommands.Push(cmd);
             _Redocommands.Clear();
             CheckStacks();
@@ -93,6 +101,14 @@ namespace SmartDots.Helpers
         public void InsertInUnDoRedoForDeleteDot(LarvaeDot d, LarvaeEditorViewModel editor)
         {
             IUndoRedoCommand cmd = new DeleteLarvaeDotCommand(d, editor);
+            _Undocommands.Push(cmd);
+            _Redocommands.Clear();
+            CheckStacks();
+        }
+
+        public void InsertInUnDoRedoForDeleteCircle(LarvaeCircle c, LarvaeEditorViewModel editor)
+        {
+            IUndoRedoCommand cmd = new DeleteLarvaeCircleCommand(c, editor);
             _Undocommands.Push(cmd);
             _Redocommands.Clear();
             CheckStacks();
@@ -110,12 +126,12 @@ namespace SmartDots.Helpers
 
     class AddLarvaeLineCommand : IUndoRedoCommand
     {
-        private LarvaeLine line;
+        private List<LarvaeLine> lines;
         private LarvaeEditorViewModel editor;
 
-        public AddLarvaeLineCommand(LarvaeLine l, LarvaeEditorViewModel e)
+        public AddLarvaeLineCommand(List<LarvaeLine> l, LarvaeEditorViewModel e)
         {
-            line = l;
+            lines = l;
             editor = e;
         }
 
@@ -123,16 +139,14 @@ namespace SmartDots.Helpers
 
         public void Execute()
         {
-            //if (editor.LarvaeViewModel.LarvaeOwnAnnotationViewModel.Annotation.LarvaeAnnotationParameterResult.CombinedLines.Find(x => x.Equals(combinedLine)) == null)
-            //{
-            //    editor.LarvaeViewModel.LarvaeOwnAnnotationViewModel.Annotation.CombinedLines.Add(combinedLine);
-            //}
-            //editor.AddLine(line);
+            
+            editor.AddLine(new List<LarvaeLine>(lines));
+            
         }
 
         public void UnExecute()
         {
-            //editor.RemoveLine(line);
+            editor.RemoveLine(new List<LarvaeLine>(lines));
 
             //if (editor.LarvaeViewModel.LarvaeOwnAnnotationViewModel.WorkingAnnotation.CombinedLines.Find(x => x.Equals(combinedLine)).Lines.Count == 0)
             //{
@@ -145,11 +159,10 @@ namespace SmartDots.Helpers
 
     class AddLarvaeDotCommand : IUndoRedoCommand
     {
-        private Dot dot;
-        private CombinedLine combinedLine;
+        private LarvaeDot dot;
         private LarvaeEditorViewModel editor;
 
-        public AddLarvaeDotCommand(Dot d, LarvaeEditorViewModel e)
+        public AddLarvaeDotCommand(LarvaeDot d, LarvaeEditorViewModel e)
         {
             dot = d;
             editor = e;
@@ -159,16 +172,42 @@ namespace SmartDots.Helpers
 
         public void Execute()
         {
-            //editor.AddDot(combinedLine, dot);
+            editor.AddDot(dot);
         }
 
         public void UnExecute()
         {
-            //editor.RemoveDot(combinedLine, dot);
+            editor.RemoveDot(dot);
         }
 
         #endregion
     }
+
+    class AddLarvaeCircleCommand : IUndoRedoCommand
+    {
+        private LarvaeCircle circle;
+        private LarvaeEditorViewModel editor;
+
+        public AddLarvaeCircleCommand(LarvaeCircle c, LarvaeEditorViewModel e)
+        {
+            circle = c;
+            editor = e;
+        }
+
+        #region ICommand Members
+
+        public void Execute()
+        {
+            editor.AddCircle(circle);
+        }
+
+        public void UnExecute()
+        {
+            editor.RemoveCircle(circle);
+        }
+        #endregion
+    }
+
 
     class AddLarvaeMeasureCommand : IUndoRedoCommand
     {
@@ -213,6 +252,7 @@ namespace SmartDots.Helpers
 
         public void Execute()
         {
+            editor.RemoveLine(new List<LarvaeLine>(lines));
             //editor.LarvaeViewModel.LarvaeAnnotationViewModel.WorkingAnnotation.CombinedLines.Remove(combinedLine);
             //editor.ActiveCombinedLine = null;
             //editor.LarvaeViewModel.LarvaeAnnotationViewModel.WorkingAnnotation.IsChanged = true;
@@ -221,6 +261,7 @@ namespace SmartDots.Helpers
 
         public void UnExecute()
         {
+            editor.AddLine(new List<LarvaeLine>(lines));
             //editor.LarvaeViewModel.LarvaeAnnotationViewModel.WorkingAnnotation.CombinedLines.Add(combinedLine);
             //editor.ActiveCombinedLine = combinedLine;
             //editor.LarvaeViewModel.LarvaeAnnotationViewModel.WorkingAnnotation.IsChanged = true;
@@ -244,6 +285,8 @@ namespace SmartDots.Helpers
 
         public void Execute()
         {
+            editor.RemoveDot(dot);
+
             //dot.ParentCombinedLine.Dots.Remove(dot);
             //editor.ActiveCombinedLine = dot.ParentCombinedLine;
             //editor.LarvaeViewModel.LarvaeAnnotationViewModel.WorkingAnnotation.IsChanged = true;
@@ -252,10 +295,37 @@ namespace SmartDots.Helpers
 
         public void UnExecute()
         {
+            editor.AddDot(dot);
+
             //dot.ParentCombinedLine.Dots.Add(dot);
             //editor.ActiveCombinedLine = dot.ParentCombinedLine;
             //editor.LarvaeViewModel.LarvaeAnnotationViewModel.WorkingAnnotation.IsChanged = true;
             //editor.RefreshShapes();
+        }
+        #endregion
+    }
+
+    class DeleteLarvaeCircleCommand : IUndoRedoCommand
+    {
+        private LarvaeCircle circle;
+        private LarvaeEditorViewModel editor;
+
+        public DeleteLarvaeCircleCommand(LarvaeCircle c, LarvaeEditorViewModel e)
+        {
+            circle = c;
+            editor = e;
+        }
+
+        #region ICommand Members
+
+        public void Execute()
+        {
+            editor.RemoveCircle(circle);
+        }
+
+        public void UnExecute()
+        {
+            editor.AddCircle(circle);
         }
         #endregion
     }

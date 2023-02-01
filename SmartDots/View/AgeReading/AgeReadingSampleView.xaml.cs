@@ -14,7 +14,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
-using DevExpress.Xpf.Layout.Core.Selection;
 using SmartDots.Model;
 using SmartDots.ViewModel;
 using SmartDots.ViewModel.AgeReading;

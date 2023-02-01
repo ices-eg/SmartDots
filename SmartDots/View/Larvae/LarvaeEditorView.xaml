@@ -85,7 +85,7 @@
 
 
 
-            <userControls:SDButton x:Name="LineButton" Glyph="../../Resources/edit-6-32.png" ButtonToolTip="Draw line" IsToggleButton="True" IsEnabled="{Binding CanDrawLine}">
+            <userControls:SDButton x:Name="LineButton" Glyph="../../Resources/edit-6-32.png" ButtonToolTip="Draw line" IsToggleButton="True" IsEnabled="{Binding CanDrawLine}" Visibility="{Binding LarvaeButtonsVisibility, UpdateSourceTrigger=PropertyChanged}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="DrawLineBtn_Checked"/>
@@ -103,7 +103,7 @@
                 </dxb:PopupMenu.Items>
             </dxb:PopupMenu>
 
-            <userControls:SDButton x:Name="DotButton" Glyph="../../Resources/dot.png" ButtonToolTip="Draw dot" IsToggleButton="True" IsEnabled="{Binding CanDrawDot}">
+            <userControls:SDButton x:Name="DotButton" Glyph="../../Resources/dot.png" ButtonToolTip="Draw dot" IsToggleButton="True" IsEnabled="{Binding CanDrawDot}" Visibility="{Binding LarvaeButtonsVisibility, UpdateSourceTrigger=PropertyChanged}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="DrawDotBtn_Checked"/>
@@ -114,6 +114,24 @@
                 <dxb:PopupMenu.Items>
                     <dxb:BarItemMenuHeader Content="Dot Settings"/>
                     <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Width" Name="DotWidth" EditValue="{Binding DotWidth,Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:SpinEditSettings MaxValue="75" MinValue="2" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                </dxb:PopupMenu.Items>
+            </dxb:PopupMenu>
+
+            <userControls:SDButton x:Name="CircleButton" Glyph="../../Resources/circle.png" ButtonToolTip="Draw circle" IsToggleButton="True" IsEnabled="{Binding CanDrawCircle}" Visibility="{Binding EggButtonsVisibility, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="DrawCircleBtn_Checked"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </userControls:SDButton>
+            <dxb:PopupMenu x:Name="CircleMenu">
+                <dxb:PopupMenu.Items>
+                    <dxb:BarItemMenuHeader Content="Circle Settings"/>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Width" Name="CircleWidth" EditValue="{Binding CircleWidth,Mode=TwoWay}">
                         <dxb:BarEditItem.EditSettings>
                             <dxe:SpinEditSettings MaxValue="75" MinValue="2" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
                         </dxb:BarEditItem.EditSettings>
@@ -153,7 +171,7 @@
             <StackPanel Width="28" Height="33" Margin="0" dxdove:DockPane.HitTestType="Header"/>
 
 
-            <userControls:SDFullDropDownButton Glyph="../../Resources/scalelength32.png" x:Name="ScaleButton" ButtonToolTip="Set scale" IsEnabled="{Binding CanMeasure}"/>
+            <userControls:SDFullDropDownButton Glyph="../../Resources/scalelength32.png" x:Name="ScaleButton" ButtonToolTip="Set scale" IsEnabled="{Binding CanSetScale}"/>
             <dxb:PopupMenu x:Name="ScaleContextMenu">
                 <dxb:PopupMenu.Items>
                     <dxb:BarItemMenuHeader Content="Set scale"/>
@@ -191,7 +209,7 @@
 
             <StackPanel Width="2000" Margin="0" Height="33" Background="{StaticResource BrushSmartFishFairBlue2}" dxdove:DockPane.HitTestType="Header"></StackPanel>
         </StackPanel>
-        <dxb:BarManager AllowCustomization="False" DockPanel.Dock="Top" VerticalAlignment="Top" dx:ThemeManager.Theme="Office2016Colorful">
+        <dxb:BarManager x:Name="Adjustments" AllowCustomization="False" DockPanel.Dock="Top" VerticalAlignment="Top" dx:ThemeManager.Theme="Office2016Colorful">
             <dxb:BarManager.Items>
                 <dxb:BarStaticItem x:Name="BrightnessLabel" Alignment="Near" Content="Brightness"></dxb:BarStaticItem>
 
@@ -295,6 +313,14 @@
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <Canvas x:Name="DotCanvas">
+                                            </Canvas>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding CircleShapes, UpdateSourceTrigger=PropertyChanged}" x:Name="CircleShapesContainer" Height="{Binding Height}" Width="{Binding Width}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas x:Name="CircleCanvas">
                                             </Canvas>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>

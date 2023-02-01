@@ -74,6 +74,14 @@ namespace SmartDots.Model
 
         public string LabTechnician { get; set; }
 
+        public string User
+        {
+            get
+            {
+                return LabTechnician;
+            }
+        }
+
         public string PinPicture
         {
             get

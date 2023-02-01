@@ -67,20 +67,14 @@ namespace SmartDots.View
 
         private void FilePrevious_Click(object sender, RoutedEventArgs e)
         {
-            LarvaeViewModel.LarvaeFileView.FileList.MovePrevCell();
+            LarvaeViewModel.LarvaeFileView.FileList.MovePrevRow();
         }
 
         private void FileNext_Click(object sender, RoutedEventArgs e)
         {
             FileNext.UpdateLayout();
-            LarvaeViewModel.LarvaeFileView.FileList.MoveNextCell();
+            LarvaeViewModel.LarvaeFileView.FileList.MoveNextRow();
         }
-
-        private void FileNext_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-
-        }
-
 
         //private void DockLayoutManager_OnDockOperationCompleted(object sender, DockOperationCompletedEventArgs e)
         //{

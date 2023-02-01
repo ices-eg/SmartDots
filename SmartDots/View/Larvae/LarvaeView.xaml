@@ -121,7 +121,7 @@
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>-->
                                 </Button>
-                                <Button Style="{StaticResource SDWhiteButtonBase}" x:Name="FileNext" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Next Image" Click="FileNext_Click" ClickMode="Release" MouseDown="FileNext_MouseDown" >
+                                <Button Style="{StaticResource SDWhiteButtonBase}" x:Name="FileNext" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Next Image" Click="FileNext_Click" ClickMode="Release" >
                                     <Image Source="../../Resources/icons8-arrow-100.png" Width="16" Height="16"  >
 
                                     </Image>
@@ -135,7 +135,7 @@
                         </dxdo:LayoutPanel.ControlBoxContent>
                     </dxdo:LayoutPanel>
                     <dxdo:TabbedGroup ItemWidth="*" ItemHeight="1*" x:Name="AnnotationTabGroup" SelectedTabIndex="0">
-                        <dxdo:LayoutPanel TabIndex="0" x:Name="LarvaeAnnotationOwn" TabCaption="OWN" Caption="Annotation" ItemWidth="Auto" ItemHeight="2*" AllowClose="False" AllowHide="False" AllowMove="True">
+                        <dxdo:LayoutPanel TabIndex="0" x:Name="LarvaeAnnotationOwn" TabCaption="OWN" Caption="Annotation" ItemWidth="Auto" ItemHeight="2*" AllowClose="False" AllowHide="False" AllowMove="False" AllowFloat="False" AllowDock="False" AllowDrop="False" AllowDrag="False" >
                             <ContentControl Content="{Binding LarvaeOwnAnnotationView}"></ContentControl>
                             <dxdo:LayoutPanel.ControlBoxContent>
                                 <DockPanel>
@@ -144,10 +144,21 @@
                                     </Button>
                                 </DockPanel>
                             </dxdo:LayoutPanel.ControlBoxContent>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="GotFocus">
+                                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="LarvaeAnnotationOwn_GotFocus"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
                         </dxdo:LayoutPanel>
-                        <dxdo:LayoutPanel TabIndex="1" x:Name="LarvaeAnnotationsAll" TabCaption="ALL" Caption="Annotations" ItemWidth="Auto" ItemHeight="1*" AllowClose="False" AllowHide="False" AllowMove="True">
+                        <dxdo:LayoutPanel TabIndex="1" x:Name="LarvaeAnnotationsAll" TabCaption="ALL" Caption="Annotations" ItemWidth="Auto" ItemHeight="1*" AllowClose="False" AllowHide="False" AllowMove="False" AllowFloat="False" AllowDock="False" AllowDrop="False" AllowDrag="False">
                             <ContentControl Content="{Binding LarvaeAllAnnotationView}"></ContentControl>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="GotFocus">
+                                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="LarvaeAnnotationAll_GotFocus"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
                         </dxdo:LayoutPanel>
+                        
                     </dxdo:TabbedGroup>
 
                     

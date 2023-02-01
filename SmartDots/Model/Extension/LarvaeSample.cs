@@ -7,6 +7,7 @@ using SmartDots.Helpers;
 
 namespace SmartDots.Model
 {
+    [Serializable]
     public class LarvaeSample
     {
         public Guid ID { get; set; }
@@ -29,7 +30,7 @@ namespace SmartDots.Model
         }
 
 
-        public void ConvertDbFiles(List<DtoLarvaeFile> dbFiles)
+        public void ConvertDbFiles(List<DtoLarvaeEggFile> dbFiles)
         {
             var result = new ObservableCollection<LarvaeFile>();
             foreach (var file in dbFiles)
@@ -50,7 +51,7 @@ namespace SmartDots.Model
             Files = result;
         }
 
-        public void ConvertDbAnnotations(List<DtoLarvaeAnnotation> dbAnnotations)
+        public void ConvertDbAnnotations(List<DtoLarvaeEggAnnotation> dbAnnotations)
         {
             var result = new ObservableCollection<LarvaeAnnotation>();
             foreach (var annotation in dbAnnotations)
@@ -60,12 +61,17 @@ namespace SmartDots.Model
                     ID = annotation.ID,
                     Date = annotation.Date,
                     Comments = annotation.Comments,
-                    LarvaeQualityID = annotation.LarvaeQualityID,
+                    QualityID = annotation.QualityID,
+                    SpeciesID = annotation.SpeciesID,
                     AnalFinPresenceID = annotation.AnalFinPresenceID,
                     DorsalFinPresenceID = annotation.DorsalFinPresenceID,
                     PelvicFinPresenceID = annotation.PelvicFinPresenceID,
                     DevelopmentStageID = annotation.DevelopmentStageID,
-                    LarvaeSampleID = annotation.LarvaeSampleID,
+                    LarvaeEggSampleID = annotation.LarvaeEggSampleID,
+                    EmbryoPresenceID = annotation.EmbryoPresenceID,
+                    EmbryoSizeID = annotation.EmbryoSizeID,
+                    YolkSegmentationID = annotation.YolkSegmentationID,
+                    OilGlobulePresenceID = annotation.OilGlobulePresenceID,
                     UserID = annotation.UserID,
                     User = annotation.User,
                     IsApproved = annotation.IsApproved,
@@ -111,6 +117,20 @@ namespace SmartDots.Model
                                 Y = dot.Y,
                                 Width = dot.Width
                             });
+                        }
+
+                        if(apr.Circle != null)
+                        {
+                            apResult.Circle = new LarvaeCircle()
+                            {
+                                ID = apr.Circle.ID,
+                                AnnotationParameterResultID = apr.Circle.AnnotationParameterResultID,
+                                X1 = apr.Circle.X1,
+                                Y1 = apr.Circle.Y1,
+                                X2 = apr.Circle.X2,
+                                Y2 = apr.Circle.Y2,
+                                Width = apr.Circle.Width,
+                            };
                         }
 
                         temp.LarvaeAnnotationParameterResult.Add(apResult);

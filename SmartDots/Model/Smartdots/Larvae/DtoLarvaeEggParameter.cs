@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartDots.Model
 {
-    public partial class DtoLarvaeParameter
+    public partial class DtoLarvaeEggParameter
     {
         public Guid ID { get; set; }
         public string Name { get; set; }
