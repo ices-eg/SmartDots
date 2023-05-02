@@ -31,48 +31,61 @@ namespace SmartDots.View
             IcesSharePoint.ItemClick += (sender, args) => ViewModel.OpenIcesSharePoint();
             IcesUserHandbooks.ItemClick += (sender, args) => ViewModel.OpenManualsLink();
             IcesTrainingVideos.ItemClick += (sender, args) => ViewModel.OpenIcesTrainingVideos();
+            IcesUserFeedback.ItemClick += (sender, args) => ViewModel.OpenIcesUserFeedback();
+            IcesAreas.ItemClick += (sender, args) => ViewModel.OpenIcesAreas();
             GitHub.ItemClick += (sender, args) => ViewModel.OpenGitHub();
             About.ItemClick += (sender, args) => OpenAbout();
+
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(ExHandler);
+
             
-            try
-            {
-                //WaitState = true
-                //var arguments = new string[2];
-                //string server = "";
-                //Guid? analysisid = null;
-                //if (App.Args != null)
-                //{
-                //    arguments = App.Args[0].Split(';')[1].Split(',');
 
-                //        server = arguments[0];
-                //    analysisid = Guid.Parse(arguments[1]);
-                //}
+            //try
+            //{
+            //    //WaitState = true
+            //    //var arguments = new string[2];
+            //    //string server = "";
+            //    //Guid? analysisid = null;
+            //    //if (App.Args != null)
+            //    //{
+            //    //    arguments = App.Args[0].Split(';')[1].Split(',');
 
-                //if (AgeReadingViewModel.Connect(server))
-                //{
-                //    if (AgeReadingViewModel.Authenticate())
-                //    {
-                //        AgeReadingViewModel.LoadAnalysis(analysisid);
-                //    }
-                //}
-            }
-            catch (Exception e)
-            {
-                // ignored
-            }
-            try
-            {
-                //broadCasterClient = new BroadCasterClient();
-            }
-            catch (Exception e)
-            {
-                // ignored
-            }
+            //    //        server = arguments[0];
+            //    //    analysisid = Guid.Parse(arguments[1]);
+            //    //}
+
+            //    //if (AgeReadingViewModel.Connect(server))
+            //    //{
+            //    //    if (AgeReadingViewModel.Authenticate())
+            //    //    {
+            //    //        AgeReadingViewModel.LoadAnalysis(analysisid);
+            //    //    }
+            //    //}
+            //}
+            //catch (Exception e)
+            //{
+            //    // ignored
+            //}
+            //try
+            //{
+            //    //broadCasterClient = new BroadCasterClient();
+            //}
+            //catch (Exception e)
+            //{
+            //    // ignored
+            //}
+        }
+
+        static void ExHandler(object sender, UnhandledExceptionEventArgs args)
+        {
+            Exception e = (Exception)args.ExceptionObject;
+            Helper.Log("errors.txt", "Web API connection error", e, true);
         }
 
         private void OpenAbout()
         {
-            AboutWindow w = new AboutWindow(Helper.Version.ToString().Replace(",","."));
+            AboutWindow w = new AboutWindow(Helper.Version.ToString("0.0").Replace(",","."));
             w.ShowDialog();
             //Window win2 = new Window();
             //win2.
@@ -100,7 +113,6 @@ namespace SmartDots.View
                     Maximize.Visibility = Visibility.Collapsed;
                     Restore.Visibility = Visibility.Visible;
                     return;
-
                 default:
                     BorderThickness = new Thickness(2);
                     Maximize.Visibility = Visibility.Visible;

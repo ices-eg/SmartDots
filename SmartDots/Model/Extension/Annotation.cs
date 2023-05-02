@@ -160,13 +160,7 @@ namespace SmartDots.Model
 
         public bool HasAq3()
         {
-            return Quality != null && Quality.Code.ToLower().Trim().Equals("aq3");
+            return Quality != null && new List<string>() { "AQ3", "QS3" }.Contains(Quality.Code.ToUpper().Trim());
         }
-
-        //public bool IsValidOutcome()
-        //{
-        //    var aq1Id = Guid.Parse("0BA0FC71-3EC4-424F-A6BA-A158FE8E3157");
-        //    return IsHistoric() || QualityID == aq1Id;
-        //}
     }
 }

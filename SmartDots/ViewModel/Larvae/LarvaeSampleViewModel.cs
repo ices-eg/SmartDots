@@ -29,11 +29,6 @@ namespace SmartDots.ViewModel
         private LarvaeSample selectedSample;
         private bool changingFile;
 
-
-        public LarvaeSampleViewModel()
-        {
-        }
-
         public List<LarvaeSample> LarvaeSamples { get; set; }
 
 
@@ -50,13 +45,9 @@ namespace SmartDots.ViewModel
                         SelectedSample = LarvaeSamples.FirstOrDefault(x => x.ID == dynamicSamples[0].ID);
                     }
                     LoadSample();
-
-
                 }
 
                 RaisePropertyChanged("DynamicSamples");
-
-
             }
         }
 
@@ -69,71 +60,48 @@ namespace SmartDots.ViewModel
                 selectedSample = value;
                 RaisePropertyChanged("SelectedSample");
                 LarvaeViewModel.RaisePropertyChanged("CanToggleApprove");
-                if (LarvaeViewModel.LarvaeView != null)
-                {
-                    //AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes = selectedFile.BoundOutcomes ??
-                    // new ObservableCollection<Annotation>();
-                    //AgeReadingViewModel.AgeReadingEditorViewModel.OriginalMeasureShapes = new ObservableCollection<Line>();
-                    //AgeReadingViewModel.AgeReadingEditorViewModel.TextShapes = new ObservableCollection<TextBlock>();
-                    //AgeReadingViewModel.AgeReadingView.BrightnessSlider.EditValue = 0;
-                    //AgeReadingViewModel.AgeReadingEditorViewModel.Brightness = 0;
-                    //AgeReadingViewModel.AgeReadingView.ContrastSlider.EditValue = 0;
-                    //AgeReadingViewModel.AgeReadingEditorViewModel.Contrast = 0;
-                    //AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine = null;
-                }
-
-
-                
-
-
                 LarvaeViewModel.LarvaeFileViewModel.LarvaeFiles = selectedSample.Files;
 
-                
+                LarvaeViewModel.LarvaeEditorViewModel.UndoRedo?.EmptyStacks();
+                LarvaeViewModel.LarvaeEditorViewModel.UpdateButtons();
 
                 if (selectedSample.Annotations != null)
                 {
                     foreach (var annotation in selectedSample.Annotations)
                     {
-                        annotation.Species = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeSpecies
-                            .FirstOrDefault(x => x.ID == annotation.SpeciesID)?.Code;
-                        annotation.Quality = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeQualities
-                            .FirstOrDefault(x => x.ID == annotation.QualityID)?.Code;
-                        annotation.DevelopmentStage = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeDevelopmentStages
-                            .FirstOrDefault(x => x.ID == annotation.DevelopmentStageID)?.Code;
-                        annotation.AnalFinPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
-                            .FirstOrDefault(x => x.ID == annotation.AnalFinPresenceID)?.Code;
-                        annotation.DorsalFinPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
-                            .FirstOrDefault(x => x.ID == annotation.DorsalFinPresenceID)?.Code;
-                        annotation.PelvicFinPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
-                            .FirstOrDefault(x => x.ID == annotation.PelvicFinPresenceID)?.Code;
-                        annotation.EmbryoPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
-                            .FirstOrDefault(x => x.ID == annotation.EmbryoPresenceID)?.Code;
-                        annotation.EmbryoSize = LarvaeViewModel.LarvaeOwnAnnotationViewModel.EggEmbryoSizes
-                            .FirstOrDefault(x => x.ID == annotation.EmbryoSizeID)?.Code;
-                        annotation.YolkSegmentation = LarvaeViewModel.LarvaeOwnAnnotationViewModel.EggYolkSegmentations
-                            .FirstOrDefault(x => x.ID == annotation.YolkSegmentationID)?.Code;
-                        annotation.OilGlobulePresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
-                            .FirstOrDefault(x => x.ID == annotation.OilGlobulePresenceID)?.Code;
+                        //annotation.Species = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeSpecies
+                        //    .FirstOrDefault(x => x.ID == annotation.SpeciesID)?.Code;
+                        //annotation.Quality = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeQualities
+                        //    .FirstOrDefault(x => x.ID == annotation.QualityID)?.Code;
+                        //annotation.DevelopmentStage = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaeDevelopmentStages
+                        //    .FirstOrDefault(x => x.ID == annotation.DevelopmentStageID)?.Code;
+                        //annotation.AnalFinPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
+                        //    .FirstOrDefault(x => x.ID == annotation.AnalFinPresenceID)?.Code;
+                        //annotation.DorsalFinPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
+                        //    .FirstOrDefault(x => x.ID == annotation.DorsalFinPresenceID)?.Code;
+                        //annotation.PelvicFinPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
+                        //    .FirstOrDefault(x => x.ID == annotation.PelvicFinPresenceID)?.Code;
+                        //annotation.EmbryoPresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
+                        //    .FirstOrDefault(x => x.ID == annotation.EmbryoPresenceID)?.Code;
+                        //annotation.EmbryoSize = LarvaeViewModel.LarvaeOwnAnnotationViewModel.EggEmbryoSizes
+                        //    .FirstOrDefault(x => x.ID == annotation.EmbryoSizeID)?.Code;
+                        //annotation.YolkSegmentation = LarvaeViewModel.LarvaeOwnAnnotationViewModel.EggYolkSegmentations
+                        //    .FirstOrDefault(x => x.ID == annotation.YolkSegmentationID)?.Code;
+                        //annotation.OilGlobulePresence = LarvaeViewModel.LarvaeOwnAnnotationViewModel.LarvaePresences
+                        //    .FirstOrDefault(x => x.ID == annotation.OilGlobulePresenceID)?.Code;
                     }
 
                     var ownAnnotation = selectedSample.Annotations.FirstOrDefault(x => x.UserID == Global.API.CurrentUser.ID);
                     LarvaeViewModel.LarvaeOwnAnnotationViewModel.Annotation = ownAnnotation;
 
-                    LarvaeViewModel.LarvaeAllAnnotationViewModel.LarvaeAnnotationParameterResult = new ObservableCollection<LarvaeAnnotationParameterResult>(selectedSample.Annotations.SelectMany(x => x.LarvaeAnnotationParameterResult));
+                    //LarvaeViewModel.LarvaeAllAnnotationViewModel.LarvaeAnnotationParameterResult = new ObservableCollection<LarvaeAnnotationParameterResult>(selectedSample.Annotations.SelectMany(x => x.LarvaeAnnotationParameterResult));
+                    LarvaeViewModel.LarvaeAllAnnotationViewModel.Annotations = new ObservableCollection<LarvaeAnnotation>(selectedSample.Annotations);
 
                     LarvaeViewModel.LarvaeAllAnnotationView.AnnotationList.BestFitColumns();
-
-
                 }
 
                 ChangingSample = false;
-
                 LarvaeViewModel.LarvaeSampleView.SampleList.BestFitColumns();
-
-
-                //LarvaeViewModel.LarvaeAn.LarvaeFiles = selectedSample.Files;
-
-
             }
         }
 
@@ -146,8 +114,6 @@ namespace SmartDots.ViewModel
         public void SetDynamicLarvaeSamples()
         {
             DynamicSamples = new ObservableCollection<dynamic>();
-
-
 
             ObservableCollection<dynamic> dynamicSamples = new ObservableCollection<dynamic>();
             List<string> columnNames = new List<string>();
@@ -176,12 +142,11 @@ namespace SmartDots.ViewModel
 
                     if (mSample.SampleProperties != null)
                     {
-                        Dictionary<string, string> values = mSample.SampleProperties;
+                        Dictionary<string, object> values = mSample.SampleProperties;
                         columnNames = values.Keys.ToList();
                         foreach (var column in columnNames)
                         {
                             ((IDictionary<String, Object>)dynFile)[column] = values[column];
-
                         }
                     }
 
@@ -197,15 +162,12 @@ namespace SmartDots.ViewModel
                 }
 
                 DynamicSamples = dynamicSamples;
-
-
             });
         }
 
         public void UpdateList()
         {
             LarvaeViewModel.LarvaeSampleView.LarvaeSampleGrid.RefreshData();
-
         }
 
         public void SampleList_BeforeLayoutRefresh(object sender, CancelRoutedEventArgs e)
@@ -248,6 +210,9 @@ namespace SmartDots.ViewModel
                     sample.StatusCode = temp.StatusCode;
                     sample.StatusColor = temp.StatusColor;
                     sample.StatusRank = temp.StatusRank;
+                    sample.IsReadOnly = temp.IsReadOnly;
+                    sample.AllowApproveToggle = temp.AllowApproveToggle;
+                    sample.UserHasApproved = temp.UserHasApproved;
 
                     sample.Files = temp.Files;
 
@@ -257,14 +222,17 @@ namespace SmartDots.ViewModel
                     dynSample.StatusColor = sample.StatusColor;
                     dynSample.StatusCode = sample.StatusCode;
                     dynSample.Status = sample.Status;
+                    dynSample.IsReadOnly = temp.IsReadOnly;
+                    dynSample.AllowApproveToggle = temp.AllowApproveToggle;
+                    dynSample.UserHasApproved = temp.UserHasApproved;
 
                     if (temp.SampleProperties != null)
                     {
-                        Dictionary<string, string> values = temp.SampleProperties;
+                        Dictionary<string, object> values = temp.SampleProperties;
                         var columnNames = values.Keys.ToList();
                         foreach (var column in columnNames)
                         {
-                            ((IDictionary<string, string>)sample.SampleProperties)[column] = values[column];
+                            ((IDictionary<string, object>)sample.SampleProperties)[column] = values[column];
                             ((IDictionary<String, Object>)dynSample)[column] = values[column];
                         }
                     }
@@ -283,11 +251,7 @@ namespace SmartDots.ViewModel
                     LarvaeViewModel.LarvaeSampleView.SampleList.BestFitColumns();
 
                     RefreshNavigationButtons();
-
                 }
-
-                //Helper.DoAsync(SetNextPicture);
-                //AgeReadingViewModel.AgeReadingStatusbarViewModel.IsFittingImage = true;
             }
 
             try
@@ -316,13 +280,12 @@ namespace SmartDots.ViewModel
             {
                 foreach (var apr in an.LarvaeAnnotationParameterResult)
                 {
-                    apr.File = sampleResult.Files.FirstOrDefault(x => x.ID == apr.LarvaeFileID);
+                    apr.File = sampleResult.Files.FirstOrDefault(x => x.ID == apr.FileID);
                     apr.Parameter =
-                        LarvaeViewModel.LarvaeAnalysis.LarvaeParameters.FirstOrDefault(x =>
-                            x.ID == apr.LarvaeParameterID);
+                        LarvaeViewModel.LarvaeAnalysis.LarvaeEggParameters.FirstOrDefault(x =>
+                            x.ID == apr.ParameterID);
                 }
             }
-            // todo calculate result
             return sampleResult;
         }
 
@@ -370,6 +333,5 @@ namespace SmartDots.ViewModel
                 LarvaeViewModel.LarvaeView.Next.IsEnabled = true;
             }
         }
-
     }
 }

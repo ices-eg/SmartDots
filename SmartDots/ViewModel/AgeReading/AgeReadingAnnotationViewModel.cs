@@ -519,12 +519,12 @@ namespace SmartDots.ViewModel
                 }
                 if (WorkingAnnotation?.QualityID == null && Global.API.Settings.RequireAqForApproval)
                 {
-                    ApproveAnnotationTooltip = "A quality code (AQ) is needed to approve the Annotation";
+                    ApproveAnnotationTooltip = "A quality code is needed to approve the Annotation";
                     return false;
                 };
-                if (WorkingAnnotation?.QualityID != Qualities.FirstOrDefault(x => x.Code.ToUpper() == "AQ1").ID && Global.API.Settings.RequireAq1ForApproval)
+                if (WorkingAnnotation?.QualityID != Qualities.FirstOrDefault(x => new List<string>(){"QS1", "AQ1"}.Contains(x.Code.ToUpper())).ID && Global.API.Settings.RequireAq1ForApproval)
                 {
-                    ApproveAnnotationTooltip = "A quality code AQ1 is needed to approve the Annotation";
+                    ApproveAnnotationTooltip = "A quality code AQ1 or QS1 is needed to approve the Annotation";
                     return false;
                 };
                 if (WorkingAnnotation?.ParameterID == null && Global.API.Settings.RequireParamForApproval)
@@ -720,7 +720,7 @@ namespace SmartDots.ViewModel
             }
             catch (Exception e)
             {
-                Helper.ShowWinUIMessageBox("Error Mapping AQ colors", "Error", MessageBoxButton.OK, MessageBoxImage.Error, e);
+                Helper.ShowWinUIMessageBox("Error Mapping quality colors", "Error", MessageBoxButton.OK, MessageBoxImage.Error, e);
             }
         }
 
@@ -963,21 +963,29 @@ namespace SmartDots.ViewModel
             }
             else if (e.Column.FieldName == "QualityID")
             {
-                var aq3 = Qualities.FirstOrDefault(x => x.Code.ToLower().Trim().Equals("aq3"));
+                var aq3 = Qualities.FirstOrDefault(x => new List<string>(){ "AQ3", "QS3"}.Contains(x.Code.ToUpper().Trim()));
                 if (aq3 != null && (Guid)e.Value == aq3.ID)
                 {
                     WinUIMessageBoxService messageBox = new WinUIMessageBoxService();
-                    var result = messageBox.ShowMessage("Changing the readability quality to AQ3 will remove all dots for this annotation, are you sure you wish to continue?", "Warning", MessageButton.YesNo, MessageIcon.Warning, MessageResult.No);
+                    var result = messageBox.ShowMessage("Changing the readability quality to AQ3 or QS3 will remove all dots for this annotation, are you sure you wish to continue?", "Warning", MessageButton.YesNo, MessageIcon.Warning, MessageResult.No);
 
                     if (result == MessageResult.No)
                     {
                         e.Handled = false;
                         an.QualityID = (Guid?)e.OldValue;
 
-                        AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
                         AgeReadingViewModel.AgeReadingAnnotationView.AnnotationList.CancelRowEdit();
+                        AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
                         //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.Focus();
                         return;
+                    }
+                    else if(result == MessageResult.Yes)
+                    {
+                        foreach (var cl in an.CombinedLines)
+                        {
+                            cl.Dots.Clear();
+                        }
+                        an.Dots.Clear();
                     }
                 }
 

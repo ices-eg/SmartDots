@@ -41,8 +41,8 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>9</ApplicationRevision>
-    <ApplicationVersion>3.0.0.%2a</ApplicationVersion>
+    <ApplicationRevision>14</ApplicationRevision>
+    <ApplicationVersion>4.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -71,7 +71,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>6054F5EEC10CC150093C93AE25A94CD7A062B3C8</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>04DA73AE702C9F4B6BAD5948B0F78287DE6254D0</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>
@@ -307,6 +307,7 @@
     <Compile Include="Model\Extension\LarvaeAnalysis.cs" />
     <Compile Include="Model\Extension\LarvaeAnnotationParameterResult.cs" />
     <Compile Include="Model\Extension\LarvaeAnnotation.cs" />
+    <Compile Include="Model\Extension\LarvaeAnnotationProperty.cs" />
     <Compile Include="Model\Extension\LarvaeParameter.cs" />
     <Compile Include="Model\Extension\LarvaeFile.cs" />
     <Compile Include="Model\Extension\LarvaeDevelopmentStage.cs" />
@@ -342,6 +343,7 @@
     <Compile Include="Model\Smartdots\AgeReading\DtoSample.cs" />
     <Compile Include="Model\Smartdots\AgeReading\DtoUser.cs" />
     <Compile Include="Model\Smartdots\Larvae\DtoLarvaeEggAnalysis.cs" />
+    <Compile Include="Model\Smartdots\Larvae\DtoLarvaeEggAnnotationProperty.cs" />
     <Compile Include="Model\Smartdots\Larvae\DtoLarvaeEggAnnotationParameterResult.cs" />
     <Compile Include="Model\Smartdots\Larvae\DtoLarvaeEggCircle.cs" />
     <Compile Include="Model\Smartdots\Larvae\DtoLarvaeEggDot.cs" />
@@ -354,7 +356,7 @@
     <Compile Include="Model\Smartdots\Maturity\DtoMaturityAnalysis.cs" />
     <Compile Include="Model\Smartdots\Maturity\DtoMaturityAnnotation.cs" />
     <Compile Include="Model\Smartdots\Maturity\DtoMaturityFile.cs" />
-    <Compile Include="Model\Smartdots\Maturity\DtoMaturityLookupItem.cs" />
+    <Compile Include="Model\Smartdots\DtoLookupItem.cs" />
     <Compile Include="Model\Smartdots\Maturity\DtoMaturitySample.cs" />
     <Compile Include="Model\Smartdots\VisibilityState.cs" />
     <Compile Include="Service References\ServiceReferenceBroadCast\Reference.cs">
@@ -857,32 +859,32 @@
   <ItemGroup>
     <PublishFile Include="DefaultLarvaeLayout.xml">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="DefaultLayout.xml">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="DefaultMaturityLayout.xml">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>

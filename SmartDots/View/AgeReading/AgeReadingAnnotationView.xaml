@@ -101,7 +101,7 @@
                         <dxe:TextEditSettings MaskUseAsDisplayFormat="True" MaskType="Numeric" Mask="d"/>
                     </dxg:GridColumn.EditSettings>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="QualityID" Width="60*" Header="AQ" ToolTip="Annotation quality" VisibleIndex="6">
+                <dxg:GridColumn FieldName="QualityID" Width="60*" Header="Quality" ToolTip="Annotation quality" VisibleIndex="6">
                     <dxg:GridColumn.EditSettings>
                         <dxg:LookUpEditSettings Name="Quality" DisplayMember="Code" ValueMember="ID" ItemsSource="{Binding Qualities}" PopupMinWidth="100" PopupMinHeight="180" AutoPopulateColumns="False">
                             <dxg:LookUpEditSettings.PopupContentTemplate>

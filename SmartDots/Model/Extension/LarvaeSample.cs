@@ -61,17 +61,7 @@ namespace SmartDots.Model
                     ID = annotation.ID,
                     Date = annotation.Date,
                     Comments = annotation.Comments,
-                    QualityID = annotation.QualityID,
-                    SpeciesID = annotation.SpeciesID,
-                    AnalFinPresenceID = annotation.AnalFinPresenceID,
-                    DorsalFinPresenceID = annotation.DorsalFinPresenceID,
-                    PelvicFinPresenceID = annotation.PelvicFinPresenceID,
-                    DevelopmentStageID = annotation.DevelopmentStageID,
                     LarvaeEggSampleID = annotation.LarvaeEggSampleID,
-                    EmbryoPresenceID = annotation.EmbryoPresenceID,
-                    EmbryoSizeID = annotation.EmbryoSizeID,
-                    YolkSegmentationID = annotation.YolkSegmentationID,
-                    OilGlobulePresenceID = annotation.OilGlobulePresenceID,
                     UserID = annotation.UserID,
                     User = annotation.User,
                     IsApproved = annotation.IsApproved,
@@ -79,46 +69,57 @@ namespace SmartDots.Model
 
                 };
 
+                if (annotation.PropertyValues != null)
+                {
+                    temp.PropertyValues = annotation.PropertyValues;
+                }
+
                 if (annotation.AnnotationParameterResult != null)
                 {
                     foreach (var apr in annotation.AnnotationParameterResult)
                     {
                         var apResult = new LarvaeAnnotationParameterResult();
                         apResult.ID = apr.ID;
-                        apResult.LarvaeParameterID = apr.ParameterID;
-                        apResult.LarvaeAnnotationID = apr.AnnotationID;
-                        apResult.LarvaeFileID = apr.FileID;
+                        apResult.ParameterID = apr.ParameterID;
+                        apResult.AnnotationID = apr.AnnotationID;
+                        apResult.FileID = apr.FileID;
                         apResult.Result = apr.Result;
                         apResult.Lines = new List<LarvaeLine>();
                         apResult.Dots = new List<LarvaeDot>();
 
-                        foreach (var line in apr.Lines)
+                        if (apr.Lines != null)
                         {
-                            apResult.Lines.Add(new LarvaeLine()
+                            foreach (var line in apr.Lines)
                             {
-                                ID = line.ID,
-                                //AnnotationParameterResultID = line.AnnotationParameterResultID,
-                                LineIndex = line.LineIndex,
-                                X1 = line.X1,
-                                X2 = line.X2,
-                                Y1 = line.Y1,
-                                Y2 = line.Y2,
-                                Width = line.Width
-                            });
+                                apResult.Lines.Add(new LarvaeLine()
+                                {
+                                    ID = line.ID,
+                                    //AnnotationParameterResultID = line.AnnotationParameterResultID,
+                                    LineIndex = line.LineIndex,
+                                    X1 = line.X1,
+                                    X2 = line.X2,
+                                    Y1 = line.Y1,
+                                    Y2 = line.Y2,
+                                    Width = line.Width
+                                });
+                            }
                         }
 
-                        foreach (var dot in apr.Dots)
+                        if (apr.Dots != null)
                         {
-                            apResult.Dots.Add(new LarvaeDot()
+                            foreach (var dot in apr.Dots)
                             {
-                                ID = dot.ID,
-                                AnnotationParameterResultID = dot.AnnotationParameterResultID,
-                                X = dot.X,
-                                Y = dot.Y,
-                                Width = dot.Width
-                            });
+                                apResult.Dots.Add(new LarvaeDot()
+                                {
+                                    ID = dot.ID,
+                                    AnnotationParameterResultID = dot.AnnotationParameterResultID,
+                                    X = dot.X,
+                                    Y = dot.Y,
+                                    Width = dot.Width
+                                });
+                            }
                         }
-
+                        
                         if(apr.Circle != null)
                         {
                             apResult.Circle = new LarvaeCircle()

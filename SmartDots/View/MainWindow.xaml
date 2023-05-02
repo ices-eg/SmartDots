@@ -68,31 +68,18 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Background="{StaticResource BrushSmartFishDarkBlue}">
-            <Image Source="/Resources/SmartDots-header ui.png" RenderOptions.BitmapScalingMode="HighQuality" 
-                   Visibility="{Binding HeaderLogoIsVisible, Converter={StaticResource boolToVisibilityConverter}}"/>
-            <Image Source="/Resources/sloping15x35.png" Visibility="{Binding HeaderLogoIsVisible, Converter={StaticResource boolToVisibilityConverter}}"/>
-
-            <Image Source="/Resources/arrow-94-32.png" WindowChrome.IsHitTestVisibleInChrome="True" Width="24" Height="24" Margin="10,0,0,0" Visibility="{Binding HeaderBackBtnIsVisible, Converter={StaticResource boolToVisibilityConverter}}" Cursor="Hand">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseLeftButtonDown">
-                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="GoBack"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Image>
-            <TextBlock Text="{Binding HeaderModule}" x:Name="HeaderModuleText" FontWeight="Bold" Margin="0,0,0,5" Foreground="White" FontSize="20" VerticalAlignment="Bottom" />
-            <TextBlock Text="{Binding HeaderInfo}" FontWeight="DemiBold" Margin="00,0,0,5" Foreground="White" FontSize="20" VerticalAlignment="Bottom" />
-            <!--<TextBlock Text="{Binding Subtitle}" FontWeight="DemiBold" Margin="10,0,0,5" Foreground="WhiteSmoke" FontSize="18" VerticalAlignment="Bottom" />-->
-
-            <StackPanel Width="260" Margin="0" HorizontalAlignment="Right" Orientation="Horizontal">
-                <userControls:DropDownWindowButton x:Name="SettingsButton" WindowChrome.IsHitTestVisibleInChrome="True" SnapsToDevicePixels="True" Margin="0,0,15,0" Content="Settings" Foreground="White" FontWeight="Bold" FontSize="20" MouseDown="SettingsButton_MouseDown" Cursor="Hand" ></userControls:DropDownWindowButton>
-                <userControls:DropDownWindowButton x:Name="HelpButton" WindowChrome.IsHitTestVisibleInChrome="True" SnapsToDevicePixels="True" Margin="0,0,20,0" Content="Help" Foreground="White" FontWeight="Bold" FontSize="20" MouseDown="HelpButton_MouseDown" Cursor="Hand" ></userControls:DropDownWindowButton>
+            <StackPanel Width="260" Margin="0" ZIndex="10" DockPanel.Dock="Right" Orientation="Horizontal">
+                <userControls:DropDownWindowButton x:Name="SettingsButton" WindowChrome.IsHitTestVisibleInChrome="True" SnapsToDevicePixels="True" Margin="0,0,15,5" Content="Settings" Foreground="White" FontWeight="Bold" FontSize="20" MouseDown="SettingsButton_MouseDown" Cursor="Hand" VerticalAlignment="Bottom"></userControls:DropDownWindowButton>
+                <userControls:DropDownWindowButton x:Name="HelpButton" WindowChrome.IsHitTestVisibleInChrome="True" SnapsToDevicePixels="True" Margin="0,0,20,5" Content="Help" Foreground="White" FontWeight="Bold" FontSize="20" MouseDown="HelpButton_MouseDown" Cursor="Hand" VerticalAlignment="Bottom"></userControls:DropDownWindowButton>
                 <dxb:PopupMenu x:Name="HelpContextMenu">
                     <dxb:PopupMenu.Items>
                         <!--<dxb:BarItemMenuHeader Content="Measure Scale"/>-->
                         <dxb:BarButtonItem x:Name="GitHub" Content="GitHub"/>
-                        <dxb:BarButtonItem x:Name="IcesSharePoint" Content="ICES SmartDots Sharepoint"/>
-                        <dxb:BarButtonItem x:Name="IcesUserHandbooks" Content="ICES SmartDots user handbooks"/>
-                        <dxb:BarButtonItem x:Name="IcesTrainingVideos" Content="ICES SmartDots training videos"/>
+                        <dxb:BarButtonItem x:Name="IcesSharePoint" Content="ICES SmartDots Sharepoint" IsVisible="{Binding IsIcesApi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <dxb:BarButtonItem x:Name="IcesUserHandbooks" Content="ICES SmartDots user handbooks" IsVisible="{Binding IsIcesApi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <dxb:BarButtonItem x:Name="IcesTrainingVideos" Content="ICES SmartDots training videos" IsVisible="{Binding IsIcesApi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <dxb:BarButtonItem x:Name="IcesUserFeedback" Content="ICES SmartDots user feedback" IsVisible="{Binding IsIcesApi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <dxb:BarButtonItem x:Name="IcesAreas" Content="ICES Areas" IsVisible="{Binding IsIcesApi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <dxb:BarButtonItem x:Name="About" Content="About"/>
                     </dxb:PopupMenu.Items>
                 </dxb:PopupMenu>
@@ -122,6 +109,23 @@
                 </userControls:WindowButton>
 
             </StackPanel>
+
+            <Image Source="/Resources/SmartDots-header ui.png" RenderOptions.BitmapScalingMode="HighQuality" 
+                   Visibility="{Binding HeaderLogoIsVisible, Converter={StaticResource boolToVisibilityConverter}}"/>
+            <Image Source="/Resources/sloping15x35.png" Visibility="{Binding HeaderLogoIsVisible, Converter={StaticResource boolToVisibilityConverter}}"/>
+
+            <Image Source="/Resources/arrow-94-32.png" WindowChrome.IsHitTestVisibleInChrome="True" Width="24" Height="24" Margin="10,0,0,0" Visibility="{Binding HeaderBackBtnIsVisible, Converter={StaticResource boolToVisibilityConverter}}" Cursor="Hand">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="GoBack"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Image>
+            <TextBlock Text="{Binding HeaderModule}" x:Name="HeaderModuleText" FontWeight="Bold" Margin="0,0,0,5" Foreground="White" FontSize="20" VerticalAlignment="Bottom" />
+            <TextBlock Text="{Binding HeaderInfo}" ToolTip="{Binding HeaderInfo}" FontWeight="DemiBold" Margin="00,0,0,5" Foreground="White" FontSize="20" VerticalAlignment="Bottom" />
+            <!--<TextBlock Text="{Binding HeaderInfo}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="{Binding HeaderInfo}" FontWeight="DemiBold" Margin="00,0,0,5" Foreground="White" FontSize="20" VerticalAlignment="Bottom" />-->
+            <!--<TextBlock Text="{Binding Subtitle}" FontWeight="DemiBold" Margin="10,0,0,5" Foreground="WhiteSmoke" FontSize="18" VerticalAlignment="Bottom" />-->
+
 
         </DockPanel>
 

@@ -36,6 +36,7 @@ namespace SmartDots.Model
         public bool? CanApprove { get; set; }
         public int AnnotationCount { get; set; }
         public string FullFileName { get; set; }
+        public string Path { get; set; }
         public StatusIcon Status { get; set; }
         public dynamic SampleProperties { get; set; }
 

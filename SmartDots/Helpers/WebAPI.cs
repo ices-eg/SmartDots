@@ -91,16 +91,25 @@ namespace SmartDots.Helpers
             {
                 Task<HttpResponseMessage> task;
 
-                if (Settings?.MaturityAPI != null && (path.ToLower().Contains("maturity") || path.ToLower().Contains("vocab")))
+                if (Settings?.MaturityAPI != null && (path.ToLower().Contains("maturity")))
                 {
                     var maturityClient = new HttpClient { BaseAddress = new Uri(Settings.MaturityAPI) };
                     task = maturityClient.GetAsync(path, cancelToken.Token);
+                }
+                else if (Settings?.LarvaeAPI != null && (path.ToLower().Contains("larvae")) && Global.LarvaeEggCurrentEventType.ToLower().Contains("larvae"))
+                {
+                    var larvaeClient = new HttpClient { BaseAddress = new Uri(Settings.LarvaeAPI) };
+                    task = larvaeClient.GetAsync(path, cancelToken.Token);
+                }
+                else if (Settings != null && Settings.EggAPI != null && path.ToLower().Contains("egg") && Global.LarvaeEggCurrentEventType.ToLower().Contains("egg"))
+                {
+                    var eggClient = new HttpClient { BaseAddress = new Uri(Settings.EggAPI) };
+                    task = eggClient.GetAsync(path, cancelToken.Token);
                 }
                 else
                 {
                     task = client.GetAsync(path, cancelToken.Token);
                 }
-                
                 if (await Task.WhenAny(task, Task.Delay(timespan)) != task)
                 {
                     cancelToken.Cancel(true);
@@ -174,6 +183,16 @@ namespace SmartDots.Helpers
                 {
                     var maturityClient = new HttpClient { BaseAddress = new Uri(Settings.MaturityAPI) };
                     task = maturityClient.PostAsJsonAsync(path, obj);
+                }
+                else if (Settings != null && Settings.LarvaeAPI != null && path.ToLower().Contains("type=larvae"))
+                {
+                    var larvaeClient = new HttpClient { BaseAddress = new Uri(Settings.LarvaeAPI) };
+                    task = larvaeClient.PostAsJsonAsync(path, obj);
+                }
+                else if (Settings != null && Settings.EggAPI != null && path.ToLower().Contains("type=egg"))
+                {
+                    var eggClient = new HttpClient { BaseAddress = new Uri(Settings.EggAPI) };
+                    task = eggClient.PostAsJsonAsync(path, obj);
                 }
                 else
                 {
@@ -340,9 +359,9 @@ namespace SmartDots.Helpers
             return PerformPost<bool, Guid>("togglematurityanalysisuserprogress?token=" + CurrentUser.Token, analysisid);
         }
 
-        public WebApiResult<List<DtoMaturityLookupItem>> GetVocab(Guid analysisid, string code)
+        public WebApiResult<List<DtoLookupItem>> GetVocab(Guid analysisid, string code)
         {
-            return PerformCall<List<DtoMaturityLookupItem>>("getvocab?token=" + CurrentUser.Token + "&codeType=" + code);
+            return PerformCall<List<DtoLookupItem>>("getvocab?token=" + CurrentUser.Token + "&analysisid=" + analysisid + "&codeType=" + code);
         }
 
         WebApiResult<DtoLarvaeEggAnalysis> ISmartDotsAPI.GetLarvaeAnalysis(Guid id, string type)
@@ -355,9 +374,9 @@ namespace SmartDots.Helpers
             return PerformCall<DtoLarvaeEggSample>("getlarvaeeggsample?token=" + CurrentUser.Token + "&id=" + id + "&type=" + type);
         }
 
-        public WebApiResult<DtoLarvaeEggSample> SaveLarvaeAnnotation(string type, DtoLarvaeEggAnnotation eggAnnotation)
+        public WebApiResult<DtoLarvaeEggSample> SaveLarvaeAnnotation(string type, DtoLarvaeEggAnnotation larvaeEggAnnotation)
         {
-            return PerformPost<DtoLarvaeEggSample, DtoLarvaeEggAnnotation>("savelarvaeeggannotation?token=" + CurrentUser.Token + "&type=" + type, eggAnnotation);
+            return PerformPost<DtoLarvaeEggSample, DtoLarvaeEggAnnotation>("savelarvaeeggannotation?token=" + CurrentUser.Token + "&type=" + type, larvaeEggAnnotation);
         }
 
         public WebApiResult<bool> UpdateLarvaeFile(string type, DtoLarvaeEggFile file)

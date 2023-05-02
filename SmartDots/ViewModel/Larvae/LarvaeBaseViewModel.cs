@@ -42,33 +42,5 @@ namespace SmartDots.ViewModel
             RaisePropertyChanged(null); //triggers propertychanged on all properties
             dialog.ShowDialog();
         }
-
-        //public void KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.Key == Key.Down && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-        //    {
-        //        new WinUIDialogWindow("Down", MessageBoxButton.YesNo).ShowDialog();
-        //        //LarvaeSampleViewModel.Next(null, null);
-        //    }
-
-        //    if (e.Key == Key.Up && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-        //    {
-        //        new WinUIDialogWindow("Up", MessageBoxButton.YesNo).ShowDialog();
-        //        //LarvaeSampleViewModel.Previous(null, null);
-        //    }
-
-        //    if (e.Key == Key.Right && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-        //    {
-        //        new WinUIDialogWindow("Right", MessageBoxButton.YesNo).ShowDialog();
-        //        //LarvaeFileViewModel.Next(null, null);
-        //    }
-
-        //    if (e.Key == Key.Left && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-        //    {
-        //        new WinUIDialogWindow("Left", MessageBoxButton.YesNo).ShowDialog();
-        //        //LarvaeFileViewModel.Previous(null, null);
-        //    }
-        //}
-
     }
 }

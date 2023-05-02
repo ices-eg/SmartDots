@@ -718,10 +718,10 @@
     </Style>
 
 
-    <!--<Style TargetType="{x:Type dxb:PopupMenu}">
+    <Style TargetType="{x:Type dxb:PopupMenu}">
         <Setter Property="dxb:BarManager.ShowGlyphsInPopupMenus" Value="False"/>
         <Setter Property="MinWidth" Value="150"/>
-    </Style>-->
+    </Style>
 
     <Style TargetType="{x:Type dxb:BarItemMenuHeader}">
         <Setter Property="ItemStyle">
@@ -749,6 +749,125 @@
         <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
         <Setter Property="RenderOptions.EdgeMode" Value="Unspecified"/>
     </Style>
+
+    <ControlTemplate x:Key="{dxgt:GridCardThemeKey ResourceKey=ContainerTemplate, IsThemeIndependent=true}" TargetType="{x:Type ContentControl}">
+        <Grid Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!--<Border Width="Auto" Height="Auto" CornerRadius="4,4,4,4" Background="#5A5873A1" Padding="2,2,2,2" Margin="8,8,0,0" x:Name="shadow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="1"/>-->
+            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="4,4,4,4" x:Name="border1" dxg:FadeSelectionHelper.IsKeyboardFocusWithinView="{Binding Path=View.IsKeyboardFocusWithinView}" dxg:FadeSelectionHelper.FadeSelectionOnLostFocus="{Binding Path=View.ActualFadeSelectionOnLostFocus}"/>
+            <Border Margin="4,4,4,4" Width="Auto" Height="Auto" Padding="1,1,1,1" CornerRadius="3,3,3,3" Grid.RowSpan="1" x:Name="border">
+                <!--<Border.Background>
+                    <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                        <GradientStop Color="#FF5272B1" Offset="0" />
+                        <GradientStop Color="#FF7390CA" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>-->
+                <Border Width="Auto" Height="Auto" Padding="1,1,1,1" CornerRadius="2,2,2,2" x:Name="border2">
+                    <!--<Border.Background>
+                        <LinearGradientBrush EndPoint="0.5,-0.002" StartPoint="0.5,1.002">
+                            <GradientStop Color="#FFCBE2FF" Offset="0" />
+                            <GradientStop Color="#FFFFFFFF" Offset="1" />
+                            <GradientStop Color="#FFDFEDFF" Offset="0.913" />
+                        </LinearGradientBrush>
+                    </Border.Background>-->
+                    <Border x:Name="group_row_bg_panel_top" Width="Auto" Height="Auto" CornerRadius="2">
+                        <!--<Border.Style>
+                            <Style>
+                                <Setter Property="Control.Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush EndPoint="0.5,-0.002" StartPoint="0.5,1.002">
+                                            <GradientStop Color="#FFCBE2FF" Offset="0" />
+                                            <GradientStop Color="#FFDDECFF" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="Control.IsMouseOver" Value="True" />
+                                            <Condition Property="dxg:TableView.IsFocusedRow" Value="False" />
+                                        </MultiTrigger.Conditions>
+                                        <Setter Property="Control.Background">
+                                            <Setter.Value>
+                                                <LinearGradientBrush EndPoint="0.5,-0.002" StartPoint="0.5,1.002">
+                                                    <GradientStop Color="#FFE2EFFF" Offset="0" />
+                                                    <GradientStop Color="#FFDDECFF" Offset="1" />
+                                                </LinearGradientBrush>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </MultiTrigger>
+                                    <Trigger Property="dxg:TableView.IsFocusedRow" Value="True">
+                                        <Setter Property="Control.Background">
+                                            <Setter.Value>
+                                                <LinearGradientBrush EndPoint="0.5,-0.002" StartPoint="0.5,1.002">
+                                                    <GradientStop Color="#FFCBE2FF" Offset="0" />
+                                                    <GradientStop Color="#FFDDECFF" Offset="1" />
+                                                </LinearGradientBrush>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>-->
+                        <ContentPresenter />
+                    </Border>
+                </Border>
+            </Border>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <!--<MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="dxg:TableView.IsFocusedRow" Value="False" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" TargetName="border2">
+                    <Setter.Value>
+                        <LinearGradientBrush EndPoint="0.5,-0.002" StartPoint="0.5,1.002">
+                            <GradientStop Color="#FFE8F2FF" Offset="0" />
+                            <GradientStop Color="#FFFFFFFF" Offset="1" />
+                            <GradientStop Color="#FFDFEDFF" Offset="0.913" />
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </MultiTrigger>-->
+            <DataTrigger Binding="{Binding Path=(dxg:RowData.RowData).SelectionState, RelativeSource={RelativeSource TemplatedParent}}" Value="Focused">
+                <Setter Property="Background" TargetName="border1" Value="{StaticResource BrushSmartFishLightBlue}">
+                    <!--<Setter.Value>
+                        --><!--<LinearGradientBrush EndPoint="0.5,-0.002" StartPoint="0.5,1.002">
+                                    <GradientStop Color="#FF5B7DAF" Offset="0" />
+                                    <GradientStop Color="#FF7C9BC8" Offset="1" />
+                                </LinearGradientBrush>-->
+                        <!--<LinearGradientBrush EndPoint="0.5,-0.002" StartPoint="0.5,1.002">
+                            <GradientStop Color="LightPink" Offset="0" />
+                            <GradientStop Color="Red" Offset="1" />
+                        </LinearGradientBrush>--><!--
+                    </Setter.Value>-->
+                </Setter>
+            </DataTrigger>
+            <!--<DataTrigger Binding="{Binding Path=(dxg:RowData.RowData).SelectionState, RelativeSource={RelativeSource TemplatedParent}}" Value="Selected">
+                <Setter Property="Background" TargetName="border1">
+                    <Setter.Value>
+                        <LinearGradientBrush EndPoint="0.5,-0.002" StartPoint="0.5,1.002">
+                            <GradientStop Color="#FFA7C4ED" Offset="0" />
+                            <GradientStop Color="#FF9FB9E2" Offset="1" />
+                        </LinearGradientBrush>
+                        --><!--<LinearGradientBrush EndPoint="0.5,-0.002" StartPoint="0.5,1.002">
+                                    <GradientStop Color="Yellow" Offset="0" />
+                                    <GradientStop Color="YellowGreen" Offset="1" />
+                                </LinearGradientBrush>--><!--
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>-->
+            <!--<MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Path=(dxg:RowData.RowData).IsSelected, RelativeSource={RelativeSource TemplatedParent}}" Value="True" />
+                    --><!--<Condition Binding="{Binding Path=(dxg:GridControl.ActiveView).IsKeyboardFocusWithinView, RelativeSource={RelativeSource TemplatedParent}}" Value="False"/>
+                    <Condition Binding="{Binding Path=(dxg:GridControl.ActiveView).ActualFadeSelectionOnLostFocus, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>--><!--
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Opacity" TargetName="shadow" Value="0"/>
+            </MultiDataTrigger>-->
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
 
 
     <!--<Style TargetType="{x:Type dxdove:TabCaptionControl}">

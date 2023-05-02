@@ -28,15 +28,15 @@
                 <DockPanel Height="25" Background="#ddd">
                     <TextBlock Text="Annotations" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="10,0" FontSize="14"></TextBlock>
                 </DockPanel>
-                <dxg:GridControl MaxHeight="1000" ItemsSource="{Binding Annotations}" VerticalAlignment="Stretch" FontSize="11" x:Name="LarvaeAnnotationOverviewGrid" SelectionMode="None" Loaded="LarvaeAnnotationOverviewGrid_Loaded">
+                <dxg:GridControl x:Name="LarvaeAnnotationOverviewGrid" MaxHeight="1000" ItemsSource="{Binding DynamicAnnotations}" VerticalAlignment="Stretch" FontSize="11" SelectionMode="None"  Loaded="LarvaeAnnotationOverviewGrid_Loaded" AutoGenerateColumns="RemoveOld">
                     <dxg:GridControl.View>
-                        <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="AnnotationOverviewList" RowMinHeight="22" IsColumnChooserVisible="False" AllowBestFit="True" BestFitMode="AllRows" ShowCheckBoxSelectorColumn="False">
+                        <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="AnnotationOverviewList" RowMinHeight="22" IsColumnChooserVisible="False" AllowBestFit="True" BestFitMode="AllRows" ShowCheckBoxSelectorColumn="False" AllowColumnFiltering="True" AllowFilterEditor="False" ColumnFilterPopupMode="Excel" AllowEditing="False">
                         </dxg:TableView>
                     </dxg:GridControl.View>
                     <dxg:GridControl.Columns>
-                        <dxg:GridColumn FieldName="User" Header="Reader" AllowEditing="False" AllowSorting="True" VisibleIndex="0"/>
+                        <!--<<dxg:GridColumn FieldName="User" Header="Reader" AllowEditing="False" AllowSorting="True" VisibleIndex="0"/>
                         <dxg:GridColumn FieldName="Date" Header="Date" AllowEditing="False" AllowSorting="True" VisibleIndex="1" />
-                        <dxg:GridColumn FieldName="Species" Header="Species" AllowEditing="False" AllowSorting="True" VisibleIndex="2" />
+                        dxg:GridColumn FieldName="Species" Header="Species" AllowEditing="False" AllowSorting="True" VisibleIndex="2" />
                         <dxg:GridColumn FieldName="AnalFinPresence" Header="Anal fin" AllowEditing="False" AllowSorting="True" VisibleIndex="3" Visible="{Binding IsLarvaeAnalysis, UpdateSourceTrigger=PropertyChanged}" />
                         <dxg:GridColumn FieldName="DorsalFinPresence" Header="Dorsal fin" AllowEditing="False" AllowSorting="True" VisibleIndex="4" Visible="{Binding IsLarvaeAnalysis, UpdateSourceTrigger=PropertyChanged}" />
                         <dxg:GridColumn FieldName="PelvicFinPresence" Header="Pelvic fin" AllowEditing="False" AllowSorting="True" VisibleIndex="5" Visible="{Binding IsLarvaeAnalysis, UpdateSourceTrigger=PropertyChanged}" />
@@ -46,8 +46,8 @@
                         <dxg:GridColumn FieldName="YolkSegmentation" Header="Yolk segm." AllowEditing="False" AllowSorting="True" VisibleIndex="9" Visible="{Binding IsEggAnalysis, UpdateSourceTrigger=PropertyChanged}" />
                         <dxg:GridColumn FieldName="OilGlobulePresence" Header="Oil globule" AllowEditing="False" AllowSorting="True" VisibleIndex="10" Visible="{Binding IsEggAnalysis, UpdateSourceTrigger=PropertyChanged}" />
                         <dxg:GridColumn FieldName="Quality" Header="Quality" AllowEditing="False" AllowSorting="True" VisibleIndex="11" />
-                        <dxg:GridColumn FieldName="Comments" Header="Comment" AllowEditing="False" AllowSorting="True" VisibleIndex="12" />
-                        <dxg:GridColumn Header="Approved" Width="30*" FieldName="Annotation.IsApproved" ToolTip="Approved Annotation" AllowEditing="False" AllowSorting="True" VisibleIndex="13">
+                        <dxg:GridColumn FieldName="Comments" Header="Comment" AllowEditing="False" AllowSorting="True" VisibleIndex="98" />
+                        <dxg:GridColumn Header="Approved" Width="30*" FieldName="ApprovedPicture" ToolTip="Approved Annotation" AllowEditing="False" AllowSorting="True" VisibleIndex="99">
                             <dxg:GridColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
@@ -55,7 +55,7 @@
                                     </StackPanel>
                                 </DataTemplate>
                             </dxg:GridColumn.CellTemplate>
-                        </dxg:GridColumn>
+                        </dxg:GridColumn>-->
 
 
                     </dxg:GridControl.Columns>
@@ -68,7 +68,7 @@
                 </DockPanel>
                 <dxg:GridControl MaxHeight="2000" ItemsSource="{Binding LarvaeAnnotationParameterResult}" SelectedItems="{Binding SelectedLarvaeAnnotationParameterResults, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" FontSize="11" x:Name="LarvaeAnnotationGrid" SelectionMode="MultipleRow" Loaded="LarvaeAnnotationGrid_Loaded" SelectionChanged="AnnotationGrid_SelectionChanged" >
                     <dxg:GridControl.View>
-                        <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="AnnotationList" RowMinHeight="22" IsColumnChooserVisible="False" AllowBestFit="True" BestFitMode="AllRows" ShowCheckBoxSelectorColumn="True" CheckBoxSelectorColumnWidth="22" AllowColumnFiltering="True" ColumnFilterPopupMode="Excel">
+                        <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="AnnotationList" RowMinHeight="22" IsColumnChooserVisible="False" AllowBestFit="True" BestFitMode="AllRows" ShowCheckBoxSelectorColumn="True" CheckBoxSelectorColumnWidth="22" AllowColumnFiltering="True" AllowFilterEditor="False" ColumnFilterPopupMode="Excel">
                         </dxg:TableView>
                     </dxg:GridControl.View>
                     <dxg:GridControl.Columns>
@@ -86,7 +86,7 @@
                     <dxg:GridColumn FieldName="Annotation.YolkSegmentation" Header="Yolk segm." AllowEditing="False" AllowSorting="True" VisibleIndex="5" Visible="{Binding IsEggAnalysis, UpdateSourceTrigger=PropertyChanged}" />
                     <dxg:GridColumn FieldName="Annotation.OilGlobulePresence" Header="Oil globule" AllowEditing="False" AllowSorting="True" VisibleIndex="6" Visible="{Binding IsEggAnalysis, UpdateSourceTrigger=PropertyChanged}" />-->
                         <dxg:GridColumn FieldName="Parameter.Name" Header="Parameter" AllowEditing="False" AllowSorting="True" VisibleIndex="7" />
-                        <dxg:GridColumn FieldName="File.Name" Header="Image" AllowEditing="False" AllowSorting="True" VisibleIndex="8" />
+                        <dxg:GridColumn FieldName="File.Name" Header="Picture" AllowEditing="False" AllowSorting="True" VisibleIndex="8" />
                         <dxg:GridColumn FieldName="CalculatedResult" Header="Result" AllowEditing="False" AllowSorting="True" VisibleIndex="9" />
                         <!--<dxg:GridColumn FieldName="Annotation.LarvaeQuality" Header="Quality" AllowEditing="False" AllowSorting="True" VisibleIndex="10" />
                     <dxg:GridColumn FieldName="Annotation.Comments" Header="Comment" AllowEditing="False" AllowSorting="True" VisibleIndex="11" />

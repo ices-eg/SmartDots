@@ -48,7 +48,7 @@
                         </dxg:LookUpEdit.PopupContentTemplate>
                     </dxg:LookUpEdit>
                 </dxlc:LayoutItem>
-                <dxlc:LayoutItem Label="AQ-code" Margin="0,0,0,15">
+                <dxlc:LayoutItem Label="Quality" Margin="0,0,0,15">
                     <!--<Border BorderBrush="Red" BorderThickness="2">-->
                     <dxg:LookUpEdit x:Name="Qualities" EditValue="{Binding Quality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding Qualities, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding Quality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Code">
                         <dxg:LookUpEdit.PopupContentTemplate>
@@ -72,7 +72,7 @@
 
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem  Margin="76,-30,0,0" Visibility="{Binding Aq3WarningVisibility}" Height="34">
-                    <TextBlock Text="Warning: Changing the readability quality to AQ3 will remove all dots of the annotation!" FontSize="11" Foreground="Red" Margin="0,12,0,0"></TextBlock>
+                    <TextBlock Text="Warning: Changing the readability quality to AQ3 or QS3 will remove all dots of the annotation!" FontSize="11" Foreground="Red" Margin="0,12,0,0"></TextBlock>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Approved" Margin="0,0,0,15" Visibility="{Binding CanApproveAnnotation}">
                     <dxe:CheckEdit EditValue="{Binding IsApproved}" IsEnabled="{Binding CanApprove}"></dxe:CheckEdit>

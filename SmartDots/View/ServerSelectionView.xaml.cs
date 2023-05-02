@@ -143,6 +143,7 @@ namespace SmartDots.View
                 //}
                 IsLoggedIn = true;
                 MainWindowViewModel.HeaderBackBtnIsVisible = true;
+                MainWindowViewModel.IsIcesApi = Global.API.Connection.ToLower().Contains("ices.dk");
                 LabelConnecting.Content = string.Empty;
                 Background = Brushes.White;
                 FieldPassword.Clear();

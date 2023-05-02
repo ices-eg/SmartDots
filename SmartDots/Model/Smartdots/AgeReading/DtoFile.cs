@@ -7,6 +7,7 @@ namespace SmartDots.Model
     {
         public Guid ID { get; set; }
         public string Filename { get; set; }
+        public string Path { get; set; }
         public string DisplayName { get; set; }
         public string SampleNumber { get; set; } 
         public Guid? SampleID { get; set; }

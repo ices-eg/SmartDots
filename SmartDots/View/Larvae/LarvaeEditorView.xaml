@@ -85,7 +85,7 @@
 
 
 
-            <userControls:SDButton x:Name="LineButton" Glyph="../../Resources/edit-6-32.png" ButtonToolTip="Draw line" IsToggleButton="True" IsEnabled="{Binding CanDrawLine}" Visibility="{Binding LarvaeButtonsVisibility, UpdateSourceTrigger=PropertyChanged}">
+            <userControls:SDButton x:Name="LineButton" Glyph="../../Resources/edit-6-32.png" ButtonToolTip="Draw line" IsToggleButton="True" IsEnabled="{Binding CanDrawLine}" Visibility="{Binding LineButtonVisibility, UpdateSourceTrigger=PropertyChanged}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="DrawLineBtn_Checked"/>
@@ -103,7 +103,7 @@
                 </dxb:PopupMenu.Items>
             </dxb:PopupMenu>
 
-            <userControls:SDButton x:Name="DotButton" Glyph="../../Resources/dot.png" ButtonToolTip="Draw dot" IsToggleButton="True" IsEnabled="{Binding CanDrawDot}" Visibility="{Binding LarvaeButtonsVisibility, UpdateSourceTrigger=PropertyChanged}">
+            <userControls:SDButton x:Name="DotButton" Glyph="../../Resources/dot.png" ButtonToolTip="Draw dot" IsToggleButton="True" IsEnabled="{Binding CanDrawDot}" Visibility="{Binding DotButtonVisibility, UpdateSourceTrigger=PropertyChanged}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="DrawDotBtn_Checked"/>
@@ -121,7 +121,7 @@
                 </dxb:PopupMenu.Items>
             </dxb:PopupMenu>
 
-            <userControls:SDButton x:Name="CircleButton" Glyph="../../Resources/circle.png" ButtonToolTip="Draw circle" IsToggleButton="True" IsEnabled="{Binding CanDrawCircle}" Visibility="{Binding EggButtonsVisibility, UpdateSourceTrigger=PropertyChanged}">
+            <userControls:SDButton x:Name="CircleButton" Glyph="../../Resources/circle.png" ButtonToolTip="Draw circle" IsToggleButton="True" IsEnabled="{Binding CanDrawCircle}" Visibility="{Binding CircleButtonVisibility, UpdateSourceTrigger=PropertyChanged}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="DrawCircleBtn_Checked"/>

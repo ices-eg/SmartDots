@@ -7,9 +7,9 @@ namespace SmartDots.Model
     public class LarvaeAnnotationParameterResult
     {
         public Guid ID { get; set; }
-        public Guid LarvaeAnnotationID { get; set; }
-        public Guid LarvaeParameterID { get; set; }
-        public Guid LarvaeFileID { get; set; }
+        public Guid AnnotationID { get; set; }
+        public Guid ParameterID { get; set; }
+        public Guid FileID { get; set; }
         public int Result { get; set; }
         public string CalculatedResult { get; set; }
         public bool IsVisible { get; set; } = true;

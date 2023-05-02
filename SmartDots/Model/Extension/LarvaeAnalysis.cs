@@ -10,9 +10,9 @@ namespace SmartDots.Model
         public string HeaderInfo { get; set; }
         public string Type { get; set; }
         public bool AllowSetScale { get; set; }
-        public List<LarvaeSample> LarvaeSamples { get; set; } = new List<LarvaeSample>();
-        public List<LarvaeParameter> LarvaeParameters { get; set; } = new List<LarvaeParameter>();
-
+        public List<LarvaeSample> LarvaeEggSamples { get; set; } = new List<LarvaeSample>();
+        public List<LarvaeParameter> LarvaeEggParameters { get; set; } = new List<LarvaeParameter>();
+        public List<LarvaeAnnotationProperty> LarvaeEggAnnotationProperties { get; set; } = new List<LarvaeAnnotationProperty>();
 
     }
 }

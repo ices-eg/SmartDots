@@ -114,7 +114,7 @@ namespace SmartDots.Helpers
             CheckStacks();
         }
 
-        public void InsertInUnDoRedoForDeleteMeasure(System.Windows.Shapes.Line l, LarvaeEditorViewModel editor)
+        public void InsertInUnDoRedoForDeleteMeasure(List<System.Windows.Shapes.Line> l, LarvaeEditorViewModel editor)
         {
             IUndoRedoCommand cmd = new DeleteLarvaeMeasureCommand(l, editor);
             _Undocommands.Push(cmd);
@@ -332,12 +332,12 @@ namespace SmartDots.Helpers
 
     class DeleteLarvaeMeasureCommand : IUndoRedoCommand
     {
-        private System.Windows.Shapes.Line line;
+        private List<System.Windows.Shapes.Line> lines;
         private LarvaeEditorViewModel editor;
 
-        public DeleteLarvaeMeasureCommand(System.Windows.Shapes.Line l, LarvaeEditorViewModel e)
+        public DeleteLarvaeMeasureCommand(List<System.Windows.Shapes.Line> l, LarvaeEditorViewModel e)
         {
-            line = l;
+            lines = l;
             editor = e;
         }
 
@@ -345,13 +345,21 @@ namespace SmartDots.Helpers
 
         public void Execute()
         {
-            editor.LarvaeViewModel.LarvaeEditorViewModel.OriginalMeasureShapes.Remove(line);
+            foreach (var line in lines)
+            {
+                editor.LarvaeViewModel.LarvaeEditorViewModel.OriginalMeasureShapes.Remove(line);
+            }
+            
             editor.RefreshMeasures();
         }
 
         public void UnExecute()
         {
-            editor.LarvaeViewModel.LarvaeEditorViewModel.OriginalMeasureShapes.Add(line);
+            foreach (var line in lines)
+            {
+                editor.LarvaeViewModel.LarvaeEditorViewModel.OriginalMeasureShapes.Add(line);
+            }
+            
             editor.RefreshMeasures();
         }
         #endregion

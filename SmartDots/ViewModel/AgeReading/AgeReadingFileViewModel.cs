@@ -141,7 +141,11 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                if (currentFolder.Path.StartsWith("\\"))
+                if (SelectedFile.Path != null)
+                {
+                    return SelectedFile.Path;
+                }
+                else if (currentFolder.Path.StartsWith("\\"))
                     return Path.Combine(CurrentFolder.Path, SelectedFile.FullFileName);
                 else
                 {
@@ -332,13 +336,19 @@ namespace SmartDots.ViewModel
                     }
                 }
                 //Load the image in a seperate thread
-                var filename = Files.SkipWhile(item => item != SelectedFile).Skip(1).FirstOrDefault()?.Filename;
+                var f = Files.SkipWhile(item => item != SelectedFile).Skip(1).FirstOrDefault();
+                var filename = f?.Filename;
+
                 var extension =
                     Path.GetExtension(
                         Files.SkipWhile(item => item != SelectedFile).Skip(1).FirstOrDefault()?.FullFileName);
                 var path = "";
 
-                if (currentFolder.Path.StartsWith("\\")) path = Path.Combine(CurrentFolder.Path, filename + extension);
+                if (f.Path != null)
+                {
+                    path = f.Path;
+                }
+                else if (currentFolder.Path.StartsWith("\\")) path = Path.Combine(CurrentFolder.Path, filename + extension);
                 else
                 {
                     if (CurrentFolder.Path.EndsWith("/")) path = CurrentFolder.Path + SelectedFile.FullFileName;

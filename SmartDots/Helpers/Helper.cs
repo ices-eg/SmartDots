@@ -18,15 +18,16 @@ namespace SmartDots.Helpers
     public static class Helper
     {
 
-        public static float Version { get; } = 3.0f;
-        
+        public static float Version { get; } = 4.0f;
+
         public static void ShowWinUIMessageBox(string message, string caption, MessageBoxButton msgBoxButton, MessageBoxImage img, Exception e = null)
         {
             //Log("errors.txt", message + e?.StackTrace, e);
 
             try
             {
-                Application.Current.Dispatcher.Invoke((Action)delegate {
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
 
                     new WinUIMessageBoxService().Show(message, caption, msgBoxButton, img);
 
@@ -38,7 +39,7 @@ namespace SmartDots.Helpers
                 throw;
             }
 
-            
+
 
         }
 
@@ -46,7 +47,8 @@ namespace SmartDots.Helpers
         {
             var messageBoxResult = System.Windows.MessageBoxResult.No;
 
-            Application.Current.Dispatcher.Invoke((Action)delegate {
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
 
                 messageBoxResult = new WinUIMessageBoxService().Show(message, caption, MessageBoxButton.YesNo, img);
 
@@ -56,7 +58,7 @@ namespace SmartDots.Helpers
 
 
 
-        public static void Log(string file, string message, Exception e= null)
+        public static void Log(string file, string message, Exception e = null, bool logInRelease = false)
         {
 #if DEBUG
             try
@@ -71,6 +73,24 @@ namespace SmartDots.Helpers
             catch (Exception)
             {
 
+            }
+#else
+
+            if (logInRelease)
+            {
+                try
+                {
+                    using (StreamWriter writer = new StreamWriter(file, true))
+                    {
+                        writer.WriteLine(DateTime.Now + Environment.NewLine + "Computer: " + Environment.MachineName + Environment.NewLine +
+                                         "User: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString() + Environment.NewLine +
+                                         message + Environment.NewLine + e?.InnerException?.ToString() + Environment.NewLine + e?.StackTrace?.ToString() + Environment.NewLine);
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
             }
 #endif
         }
@@ -167,7 +187,7 @@ namespace SmartDots.Helpers
             return new Size(formattedText.Width, formattedText.Height);
         }
 
-        public static List<string> MultiUserColors { get; } = new List<string>() { 
+        public static List<string> MultiUserColors { get; } = new List<string>() {
             "#00FFFF",
             "#FFFF00",
             "#FF0000",

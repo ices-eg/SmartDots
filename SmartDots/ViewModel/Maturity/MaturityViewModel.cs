@@ -169,6 +169,7 @@ namespace SmartDots.ViewModel
                 {
                     Helper.ShowWinUIMessageBox("Error loading Sex vocab from the Web API", "Error", MessageBoxButton.OK,
                         MessageBoxImage.Error);
+                    
                     return false;
                 }
                 
@@ -232,6 +233,7 @@ namespace SmartDots.ViewModel
                 ShowWaitSplashScreen();
                 if (!LoadLookups(maturityAnalysisid))
                 {
+                    CloseSplashScreen();
                     Helper.ShowWinUIMessageBox("Unable to load maturity lookups", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }

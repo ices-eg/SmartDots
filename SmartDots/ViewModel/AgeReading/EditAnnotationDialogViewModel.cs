@@ -98,7 +98,7 @@ namespace SmartDots.ViewModel
                 {
                     IsApproved = false;
                 }
-                if (quality?.Code != "AQ1" && Global.API.Settings.RequireAq1ForApproval)
+                if ((quality?.Code != "AQ1" || quality?.Code != "QS1") && Global.API.Settings.RequireAq1ForApproval)
                 {
                     IsApproved = false;
                 }
@@ -211,7 +211,7 @@ namespace SmartDots.ViewModel
                 if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.IsReadOnly) return false;
                 if (Annotation == null) return false;
                 if (Quality == null && Global.API.Settings.RequireAqForApproval) return false;
-                if (Quality != null && Quality.ID != Qualities.FirstOrDefault(x => x.Code == "AQ1").ID && Global.API.Settings.RequireAq1ForApproval) return false;
+                if (Quality != null && Quality.ID != Qualities.FirstOrDefault(x => new List<string>() { "AQ1", "QS1" }.Contains(x.Code)).ID && Global.API.Settings.RequireAq1ForApproval) return false;
                 if (AnalysisParameter?.ID == null && Global.API.Settings.RequireParamForApproval) return false;
                 
                 return true;
@@ -272,7 +272,7 @@ namespace SmartDots.ViewModel
 
         public void QualityList_EditValueChanging(object sender, EditValueChangingEventArgs e)
         {
-            var aq3 = Qualities.FirstOrDefault(x => x.Code.ToLower().Trim().Equals("aq3"));
+            var aq3 = Qualities.FirstOrDefault(x => new List<string>(){ "AQ3", "QS3" }.Contains(x.Code.ToUpper().Trim()));
             if (aq3 != null && (Guid)((Quality)e.NewValue).ID == aq3.ID)
             {
                 Aq3WarningVisibility = Visibility.Visible;

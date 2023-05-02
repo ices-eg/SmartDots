@@ -30,9 +30,6 @@
                 <dxg:GridControl.View>
                     <dxg:CardView SeparatorThickness="0" ShowGroupPanel="False" Name="FileList" IsColumnChooserVisible="False" ShowCardExpandButton="False" ShowColumnHeaders="False" CardLayout="Columns">
                         <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="BeforeLayoutRefresh">
-                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="FileList_BeforeLayoutRefresh"/>
-                            </i:EventTrigger>
                             <i:EventTrigger EventName="FocusedRowChanged">
                                 <ei:CallMethodAction TargetObject="{Binding}" MethodName="FileList_FocusedRowChanged"/>
                             </i:EventTrigger>

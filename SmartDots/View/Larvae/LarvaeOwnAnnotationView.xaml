@@ -99,8 +99,7 @@
                         <ColumnDefinition Width="3*" />
                         <ColumnDefinition Width="7*" />
                     </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="24" />
+                    <!--<Grid.RowDefinitions>
                         <RowDefinition Height="24" />
                         <RowDefinition Height="24" />
                         <RowDefinition Height="24" />
@@ -280,7 +279,7 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </dxg:LookUpEdit>
-                    <Label Grid.Row="5" Grid.Column="0" Visibility="{Binding LarvaeColumnsVisibility, UpdateSourceTrigger=PropertyChanged}" Content="Development stage"></Label>
+                    --><!--<Label Grid.Row="5" Grid.Column="0" Visibility="{Binding LarvaeColumnsVisibility, UpdateSourceTrigger=PropertyChanged}" Content="Development stage"></Label>
                     <dxg:LookUpEdit Grid.Row="5" Grid.Column="1" AllowNullInput="True" Visibility="{Binding LarvaeColumnsVisibility, UpdateSourceTrigger=PropertyChanged}" NullValueButtonPlacement="Popup" x:Name="MaturitiesLookup" Background="{StaticResource BrushSmartFishYellow}" Padding="0,-2,0,0" Margin="0,2,0,2" EditValue="{Binding LarvaeDevelopmentStage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding LarvaeDevelopmentStages, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding LarvaeDevelopmentStage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Code" IsEnabled="{Binding CanEdit, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                         <dxg:LookUpEdit.PopupContentTemplate>
                             <ControlTemplate >
@@ -298,7 +297,7 @@
                                 <ei:CallMethodAction TargetObject="{Binding}" MethodName="LarvaeLookup_EditValueChanged"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </dxg:LookUpEdit>
+                    </dxg:LookUpEdit>--><!--
                     <Label Grid.Row="6" Grid.Column="0" Content="Quality"></Label>
                     <dxg:LookUpEdit Grid.Row="6" Grid.Column="1" AllowNullInput="True" NullValueButtonPlacement="Popup" x:Name="LarvaeQualitiesLookup" Background="{StaticResource BrushSmartFishYellow}" Padding="0,-2,0,0" Margin="0,2,0,2" EditValue="{Binding Quality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ItemsSource="{Binding LarvaeQualities, Mode=TwoWay}" AutoPopulateColumns="False" SelectedItem="{Binding Quality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMember="Code" IsEnabled="{Binding CanEdit, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                         <dxg:LookUpEdit.PopupContentTemplate>
@@ -320,7 +319,7 @@
                     </dxg:LookUpEdit>
                     <Label Grid.Row="7" Grid.Column="0" Content="Comment"></Label>
                     <dxe:TextEdit Grid.Row="7" Grid.Column="1" x:Name="LarvaeComments" EditValue="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Background="{StaticResource BrushSmartFishYellow}" Height="68" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" IsEnabled="{Binding CanEdit, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                    </dxe:TextEdit>
+                    </dxe:TextEdit>-->
                 </Grid>
             </DockPanel>
 

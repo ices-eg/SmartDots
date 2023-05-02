@@ -24,8 +24,6 @@ namespace SmartDots.ViewModel
                     LarvaeViewModel.LarvaeEditorViewModel.Height = (int)(LarvaeViewModel.LarvaeEditorViewModel.OriginalHeight * (double)zoomPercentage / 100);
                     LarvaeViewModel.LarvaeEditorViewModel.Width = (int)(LarvaeViewModel.LarvaeEditorViewModel.OriginalWidth * (double)zoomPercentage / 100);
 
-
-                    //todo get visual center point to scroll to
                     LarvaeViewModel.LarvaeEditorView.ScrollViewer.ScrollToHorizontalOffset((LarvaeViewModel.LarvaeEditorViewModel.Width / 2) - (LarvaeViewModel.LarvaeEditorView.ActualWidth - 20) / 2);
                     LarvaeViewModel.LarvaeEditorView.ScrollViewer.ScrollToVerticalOffset((LarvaeViewModel.LarvaeEditorViewModel.Height / 2) - (LarvaeViewModel.LarvaeEditorView.ActualHeight - 20) / 2); //20 is the width of the scrollbar
 
@@ -99,7 +97,6 @@ namespace SmartDots.ViewModel
             {
                 ZoomPercentage = LarvaeViewModel.LarvaeEditorView.ScrollViewer.ActualHeight / LarvaeViewModel.LarvaeEditorViewModel.OriginalHeight * 100;
             }
-
         }
 
         //todo this does not seem to work

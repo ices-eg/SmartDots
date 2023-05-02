@@ -196,12 +196,17 @@ namespace SmartDots.ViewModel
                 });
                 MaturityViewModel.MaturityOwnAnnotationView.MaturitySexesLookup.SetValue(Grid.RowProperty, startpos);
 
+                StackPanel sp = new StackPanel() { HorizontalAlignment = HorizontalAlignment.Left, FlowDirection = FlowDirection.LeftToRight, Orientation = Orientation.Horizontal };
                 Label sexKey = new Label() { Content = "Sex", Padding = new Thickness(0), FontWeight = FontWeights.Bold };
+                Label sRequired = new Label() { Content = "*", Padding = new Thickness(0), Margin = new Thickness(2, 0, 0, 0), FontWeight = FontWeights.Bold, Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 0)), ToolTip = "Required for approval" };
+                sp.Children.Add(sexKey);
+                sp.Children.Add(sRequired);
 
-                Grid.SetColumn(sexKey, 0);
-                Grid.SetRow(sexKey, startpos);
 
-                MaturityViewModel.MaturityOwnAnnotationView.Grid.Children.Add(sexKey);
+                Grid.SetColumn(sp, 0);
+                Grid.SetRow(sp, startpos);
+
+                MaturityViewModel.MaturityOwnAnnotationView.Grid.Children.Add(sp);
                 startpos++;
 
                 MaturityViewModel.MaturityOwnAnnotationView.Grid.RowDefinitions.Add(new RowDefinition()
@@ -210,12 +215,16 @@ namespace SmartDots.ViewModel
                 });
                 MaturityViewModel.MaturityOwnAnnotationView.MaturitiesLookup.SetValue(Grid.RowProperty, startpos);
 
+                StackPanel mp = new StackPanel() { HorizontalAlignment = HorizontalAlignment.Left, FlowDirection = FlowDirection.LeftToRight, Orientation = Orientation.Horizontal };
                 Label maturityKey = new Label() { Content = "Maturity", Padding = new Thickness(0), FontWeight = FontWeights.Bold };
+                Label mRequired = new Label() { Content = "*", Padding = new Thickness(0), Margin = new Thickness(2, 0, 0, 0), FontWeight = FontWeights.Bold, Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 0)), ToolTip = "Required for approval" };
+                mp.Children.Add(maturityKey);
+                mp.Children.Add(mRequired);
 
-                Grid.SetColumn(maturityKey, 0);
-                Grid.SetRow(maturityKey, startpos);
+                Grid.SetColumn(mp, 0);
+                Grid.SetRow(mp, startpos);
 
-                MaturityViewModel.MaturityOwnAnnotationView.Grid.Children.Add(maturityKey);
+                MaturityViewModel.MaturityOwnAnnotationView.Grid.Children.Add(mp);
                 startpos++;
 
 
@@ -225,12 +234,16 @@ namespace SmartDots.ViewModel
                 });
                 MaturityViewModel.MaturityOwnAnnotationView.MaturityQualitiesLookup.SetValue(Grid.RowProperty, startpos);
 
+                StackPanel qp = new StackPanel() { HorizontalAlignment = HorizontalAlignment.Left, FlowDirection = FlowDirection.LeftToRight, Orientation = Orientation.Horizontal };
                 Label qualityKey = new Label() { Content = "Quality", Padding = new Thickness(0), FontWeight = FontWeights.Bold };
+                Label qRequired = new Label() { Content = "*", Padding = new Thickness(0), Margin = new Thickness(2, 0, 0, 0), FontWeight = FontWeights.Bold, Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 0)), ToolTip = "Required for approval" };
+                qp.Children.Add(qualityKey);
+                qp.Children.Add(qRequired);
 
-                Grid.SetColumn(qualityKey, 0);
-                Grid.SetRow(qualityKey, startpos);
+                Grid.SetColumn(qp, 0);
+                Grid.SetRow(qp, startpos);
 
-                MaturityViewModel.MaturityOwnAnnotationView.Grid.Children.Add(qualityKey);
+                MaturityViewModel.MaturityOwnAnnotationView.Grid.Children.Add(qp);
                 startpos++;
 
                 MaturityViewModel.MaturityOwnAnnotationView.Grid.RowDefinitions.Add(new RowDefinition()
@@ -262,6 +275,10 @@ namespace SmartDots.ViewModel
                 foreach (var label in MaturityViewModel.MaturityOwnAnnotationView.Grid.Children.OfType<Label>().ToList())
                 {
                     MaturityViewModel.MaturityOwnAnnotationView.Grid.Children.Remove(label);
+                }
+                foreach (var sp in MaturityViewModel.MaturityOwnAnnotationView.Grid.Children.OfType<StackPanel>().ToList())
+                {
+                    MaturityViewModel.MaturityOwnAnnotationView.Grid.Children.Remove(sp);
                 }
             });
         }

@@ -71,7 +71,7 @@
             </Grid.RowDefinitions>
             <dxg:GridControl Grid.Row="0" ItemsSource="{Binding DynamicSamples}" VerticalAlignment="Stretch" FontSize="11" x:Name="LarvaeSampleGrid" Loaded="LarvaeSampleGrid_Loaded" EndGrouping="LarvaeSampleGrid_EndGrouping" EndSorting="LarvaeSampleGrid_EndSorting" FilterChanged="LarvaeSampleGrid_FilterChanged" >
                 <dxg:GridControl.View>
-                    <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="SampleList" RowMinHeight="22" IsColumnChooserVisible="False" AllowBestFit="True" BestFitMode="AllRows" AllowColumnFiltering="True" ColumnFilterPopupMode="Excel">
+                    <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="SampleList" RowMinHeight="22" IsColumnChooserVisible="False" AllowBestFit="True" BestFitMode="AllRows" AllowColumnFiltering="True" AllowFilterEditor="False" ColumnFilterPopupMode="Excel">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="BeforeLayoutRefresh">
                                 <ei:CallMethodAction TargetObject="{Binding}" MethodName="SampleList_BeforeLayoutRefresh"/>

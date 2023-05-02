@@ -268,7 +268,6 @@ namespace SmartDots.ViewModel
                 if(!Helper.FolderExists(Analysis.Folder.Path)) throw new Exception("Could not find Folder " + Analysis.Folder.Path);
                 AgeReadingFileViewModel.CurrentFolder = Analysis.Folder;
                 return true;
-
             }
             catch (Exception e)
             {

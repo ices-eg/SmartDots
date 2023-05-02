@@ -39,7 +39,7 @@ namespace SmartDots.Helpers
         WebApiResult<LoginToken> EstablishConnection(string connStr);
         WebApiResult<DtoMaturityAnalysis> GetMaturityAnalysis(Guid id);
         WebApiResult<DtoMaturitySample> GetMaturitySample(Guid id);
-        WebApiResult<List<DtoMaturityLookupItem>> GetVocab(Guid analysisid, string code);
+        WebApiResult<List<DtoLookupItem>> GetVocab(Guid analysisid, string code);
         WebApiResult<DtoMaturitySample> SaveMaturityAnnotation(DtoMaturityAnnotation annotation);
         WebApiResult<bool> UpdateMaturityFile(DtoMaturityFile file);
         WebApiResult<bool> ToggleMaturityAnalysisUserProgress(Guid analysisid);

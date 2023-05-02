@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Dynamic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +16,7 @@ namespace SmartDots.ViewModel
     public class LarvaeAllAnnotationViewModel : LarvaeBaseViewModel
     {
         private ObservableCollection<LarvaeAnnotation> larvaeAnnotations;
+        private ObservableCollection<dynamic> dynamicAnnotations;
         private ObservableCollection<LarvaeAnnotationParameterResult> larvaeAnnotationParameterResult;
         private ObservableCollection<LarvaeAnnotationParameterResult> selectedLarvaeAnnotationParameterResults = new ObservableCollection<LarvaeAnnotationParameterResult>();
 
@@ -26,6 +28,55 @@ namespace SmartDots.ViewModel
                 larvaeAnnotations = value;
 
                 RaisePropertyChanged("Annotations");
+
+                ObservableCollection<dynamic> dynAnnotations = new ObservableCollection<dynamic>();
+                foreach (var an in larvaeAnnotations)
+                {
+                    dynamic dynAnnotation = new ExpandoObject();
+                    dynAnnotation.User = an.User;
+                    dynAnnotation.Date = an.Date.ToString("yyyy-MM-dd");
+                    foreach (var prop in LarvaeViewModel.LarvaeOwnAnnotationViewModel.Dict)
+                    {
+                        if (an.PropertyValues.ContainsKey(prop.Key.Property))
+                        {
+                            ((IDictionary<String, Object>)dynAnnotation)[prop.Key.Label] =
+                                prop.Value.FirstOrDefault(x => x.ID == an.PropertyValues[prop.Key.Property])?.Code;
+                        }
+                        else
+                        {
+                            ((IDictionary<String, Object>)dynAnnotation)[prop.Key.Label] = "";
+                        }
+                    }
+                    dynAnnotation.Comment = an.Comments;
+                    //dynAnnotation.Approved = an.IsApproved;
+                    //if (an.IsApproved)
+                    //{
+                    //    ((IDictionary<String, Object>)dynAnnotation)["ApprovedPicture"] =  "/SmartDots;component/Resources/ok-16.png";
+                    //}
+                    //else
+                    //{
+                    //    ((IDictionary<String, Object>)dynAnnotation)["ApprovedPicture"] = "";
+                    //}
+
+                    dynAnnotation.Approved = an.IsApproved ? "Yes" : "No";
+
+                    dynAnnotations.Add(dynAnnotation);
+
+                }
+
+                DynamicAnnotations = dynAnnotations;
+                LarvaeAnnotationParameterResult = new ObservableCollection<LarvaeAnnotationParameterResult>(Annotations.SelectMany(x => x.LarvaeAnnotationParameterResult));
+            }
+        }
+
+        public ObservableCollection<dynamic> DynamicAnnotations
+        {
+            get { return dynamicAnnotations; }
+            set
+            {
+                dynamicAnnotations = value;
+
+                RaisePropertyChanged("DynamicAnnotations");
                 LarvaeViewModel.LarvaeAllAnnotationView.AnnotationOverviewList.BestFitColumns();
 
             }
@@ -38,24 +89,29 @@ namespace SmartDots.ViewModel
             {
                 larvaeAnnotationParameterResult = value;
 
-                //ObservableCollection<LarvaeAnnotationParameterResult> selected = new ObservableCollection<LarvaeAnnotationParameterResult>();
-
                 foreach (var lapr in larvaeAnnotationParameterResult)
                 {
                     if (lapr.Annotation == null)
                     {
                         lapr.Annotation =
                             LarvaeViewModel.LarvaeSampleViewModel.SelectedSample.Annotations.FirstOrDefault(x =>
-                                x.ID == lapr.LarvaeAnnotationID);
+                                x.ID == lapr.AnnotationID);
                     }
 
-                    var l = LarvaeViewModel.LarvaeOwnAnnotationViewModel?.Annotation?.LarvaeAnnotationParameterResult
-                        ?.FirstOrDefault(x => x.ID == lapr.ID);
+                    if (lapr.File == null)
+                    {
+                        lapr.File =
+                            LarvaeViewModel.LarvaeSampleViewModel.SelectedSample.Files.FirstOrDefault(x =>
+                                x.ID == lapr.FileID);
+                    }
+
+                    //var l = LarvaeViewModel.LarvaeOwnAnnotationViewModel?.Annotation?.LarvaeAnnotationParameterResult
+                    //    ?.FirstOrDefault(x => x.ID == lapr.ID);
                     
                     if (lapr.CalculatedResult == null) LarvaeViewModel.LarvaeEditorViewModel.CalculateResult(lapr);
 
 
-                    if (lapr.Annotation.UserID != null)
+                    if (lapr.Annotation != null && lapr.Annotation.UserID != null)
                     {
                         if (!Helper.MultiUserColorsDict.ContainsKey((Guid)lapr.Annotation.UserID))
                         {
@@ -66,11 +122,9 @@ namespace SmartDots.ViewModel
                     }
                 }
 
-
-                Annotations = new ObservableCollection<LarvaeAnnotation>(larvaeAnnotationParameterResult.Select(x => x.Annotation).Distinct());
+                //Annotations = new ObservableCollection<LarvaeAnnotation>(larvaeAnnotationParameterResult.Select(x => x.Annotation).Distinct());
 
                 RaisePropertyChanged("LarvaeAnnotationParameterResult");
-
             }
         }
 
@@ -88,20 +142,6 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public bool IsLarvaeAnalysis
-        {
-            get
-            {
-                return LarvaeViewModel != null && (bool)(LarvaeViewModel?.LarvaeAnalysis.Type.ToLower().Contains("lar"));
-            }
-        }
-
-        public bool IsEggAnalysis
-        {
-            get
-            {
-                return LarvaeViewModel != null && (bool)(LarvaeViewModel?.LarvaeAnalysis.Type.ToLower().Contains("egg"));
-            }
-        }
+        
     }
 }
