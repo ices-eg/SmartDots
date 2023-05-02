@@ -204,7 +204,7 @@ namespace SmartDots.ViewModel
                 ShowWaitSplashScreen();
                 Helper.MultiUserColorsDict.Clear();
 
-                Global.LarvaeEggCurrentEventType = type;
+                Global.CurrentEventType = type;
 
                 var dtoLarvaeAnalysis = Global.API.GetLarvaeAnalysis(larvaeAnalysisid, type);
                 if (!dtoLarvaeAnalysis.Succeeded)

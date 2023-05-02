@@ -240,6 +240,7 @@ namespace SmartDots.ViewModel
             {
                 Helper.MultiUserColorsDict.Clear();
 
+                Global.CurrentEventType = "agereading";
                 if (!LoadQualities())
                 {
                     Helper.ShowWinUIMessageBox("Unable to load qualities", "Error", MessageBoxButton.OK, MessageBoxImage.Error);

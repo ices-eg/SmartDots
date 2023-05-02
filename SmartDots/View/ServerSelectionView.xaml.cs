@@ -243,6 +243,7 @@ namespace SmartDots.View
 
         public void LoadGrid()
         {
+            Global.CurrentEventType = "";
             var user = Global.API.CurrentUser;
             if (user == null)
             {

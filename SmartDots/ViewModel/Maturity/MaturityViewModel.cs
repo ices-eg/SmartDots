@@ -231,6 +231,7 @@ namespace SmartDots.ViewModel
             try
             {
                 ShowWaitSplashScreen();
+                Global.CurrentEventType = "maturity";
                 if (!LoadLookups(maturityAnalysisid))
                 {
                     CloseSplashScreen();

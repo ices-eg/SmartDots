@@ -91,17 +91,17 @@ namespace SmartDots.Helpers
             {
                 Task<HttpResponseMessage> task;
 
-                if (Settings?.MaturityAPI != null && (path.ToLower().Contains("maturity")))
+                if (Settings?.MaturityAPI != null && Global.CurrentEventType.ToLower().Contains("maturity"))
                 {
                     var maturityClient = new HttpClient { BaseAddress = new Uri(Settings.MaturityAPI) };
                     task = maturityClient.GetAsync(path, cancelToken.Token);
                 }
-                else if (Settings?.LarvaeAPI != null && (path.ToLower().Contains("larvae")) && Global.LarvaeEggCurrentEventType.ToLower().Contains("larvae"))
+                else if (Settings?.LarvaeAPI != null && Global.CurrentEventType.ToLower().Contains("larvae"))
                 {
                     var larvaeClient = new HttpClient { BaseAddress = new Uri(Settings.LarvaeAPI) };
                     task = larvaeClient.GetAsync(path, cancelToken.Token);
                 }
-                else if (Settings != null && Settings.EggAPI != null && path.ToLower().Contains("egg") && Global.LarvaeEggCurrentEventType.ToLower().Contains("egg"))
+                else if (Settings != null && Settings.EggAPI != null && Global.CurrentEventType.ToLower().Contains("egg"))
                 {
                     var eggClient = new HttpClient { BaseAddress = new Uri(Settings.EggAPI) };
                     task = eggClient.GetAsync(path, cancelToken.Token);

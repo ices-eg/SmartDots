@@ -10,5 +10,6 @@ namespace SmartDots.Helpers
     {
         public static ISmartDotsAPI API;
         public static string LarvaeEggCurrentEventType = "";
+        public static string CurrentEventType = "";
     }
 }
