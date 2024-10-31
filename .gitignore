@@ -243,3 +243,6 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/SmartDots/Portable/SmartDots2.3
+/SmartDots/Portable/SmartDots3.0
+/SmartDots/Portable/SmartDots4.0
