@@ -1564,7 +1564,7 @@ namespace SmartDots.ViewModel
             }
             if (LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters == null || LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters.Count > 1) return;
 
-
+            if(!LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters.Any()) return;
             var selectedParameter = LarvaeViewModel.LarvaeOwnAnnotationViewModel.SelectedParameters[0];
 
             if (selectedParameter == null) return;

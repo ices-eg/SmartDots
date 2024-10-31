@@ -16,6 +16,7 @@
         MinWidth="500"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
+        Title="About"
         
 >
     <StackPanel Background="White"  >

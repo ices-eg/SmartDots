@@ -12,7 +12,7 @@ namespace SmartDots.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.11.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -211,6 +211,318 @@ namespace SmartDots.Properties {
             }
             set {
                 this["CircleWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction1 {
+            get {
+                return ((string)(this["AgeReadingKeyAction1"]));
+            }
+            set {
+                this["AgeReadingKeyAction1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction2 {
+            get {
+                return ((string)(this["AgeReadingKeyAction2"]));
+            }
+            set {
+                this["AgeReadingKeyAction2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction3 {
+            get {
+                return ((string)(this["AgeReadingKeyAction3"]));
+            }
+            set {
+                this["AgeReadingKeyAction3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction4 {
+            get {
+                return ((string)(this["AgeReadingKeyAction4"]));
+            }
+            set {
+                this["AgeReadingKeyAction4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction5 {
+            get {
+                return ((string)(this["AgeReadingKeyAction5"]));
+            }
+            set {
+                this["AgeReadingKeyAction5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction6 {
+            get {
+                return ((string)(this["AgeReadingKeyAction6"]));
+            }
+            set {
+                this["AgeReadingKeyAction6"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction7 {
+            get {
+                return ((string)(this["AgeReadingKeyAction7"]));
+            }
+            set {
+                this["AgeReadingKeyAction7"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction8 {
+            get {
+                return ((string)(this["AgeReadingKeyAction8"]));
+            }
+            set {
+                this["AgeReadingKeyAction8"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Own Annotations (all samples)")]
+        public string GrowthAllMode {
+            get {
+                return ((string)(this["GrowthAllMode"]));
+            }
+            set {
+                this["GrowthAllMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("mm (use scale)")]
+        public string GrowthAllScale {
+            get {
+                return ((string)(this["GrowthAllScale"]));
+            }
+            set {
+                this["GrowthAllScale"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction9 {
+            get {
+                return ((string)(this["AgeReadingKeyAction9"]));
+            }
+            set {
+                this["AgeReadingKeyAction9"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction10 {
+            get {
+                return ((string)(this["AgeReadingKeyAction10"]));
+            }
+            set {
+                this["AgeReadingKeyAction10"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction11 {
+            get {
+                return ((string)(this["AgeReadingKeyAction11"]));
+            }
+            set {
+                this["AgeReadingKeyAction11"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction12 {
+            get {
+                return ((string)(this["AgeReadingKeyAction12"]));
+            }
+            set {
+                this["AgeReadingKeyAction12"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction13 {
+            get {
+                return ((string)(this["AgeReadingKeyAction13"]));
+            }
+            set {
+                this["AgeReadingKeyAction13"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction14 {
+            get {
+                return ((string)(this["AgeReadingKeyAction14"]));
+            }
+            set {
+                this["AgeReadingKeyAction14"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction15 {
+            get {
+                return ((string)(this["AgeReadingKeyAction15"]));
+            }
+            set {
+                this["AgeReadingKeyAction15"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction16 {
+            get {
+                return ((string)(this["AgeReadingKeyAction16"]));
+            }
+            set {
+                this["AgeReadingKeyAction16"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction17 {
+            get {
+                return ((string)(this["AgeReadingKeyAction17"]));
+            }
+            set {
+                this["AgeReadingKeyAction17"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction18 {
+            get {
+                return ((string)(this["AgeReadingKeyAction18"]));
+            }
+            set {
+                this["AgeReadingKeyAction18"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction19 {
+            get {
+                return ((string)(this["AgeReadingKeyAction19"]));
+            }
+            set {
+                this["AgeReadingKeyAction19"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction20 {
+            get {
+                return ((string)(this["AgeReadingKeyAction20"]));
+            }
+            set {
+                this["AgeReadingKeyAction20"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction21 {
+            get {
+                return ((string)(this["AgeReadingKeyAction21"]));
+            }
+            set {
+                this["AgeReadingKeyAction21"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction22 {
+            get {
+                return ((string)(this["AgeReadingKeyAction22"]));
+            }
+            set {
+                this["AgeReadingKeyAction22"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction23 {
+            get {
+                return ((string)(this["AgeReadingKeyAction23"]));
+            }
+            set {
+                this["AgeReadingKeyAction23"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction24 {
+            get {
+                return ((string)(this["AgeReadingKeyAction24"]));
+            }
+            set {
+                this["AgeReadingKeyAction24"] = value;
             }
         }
     }

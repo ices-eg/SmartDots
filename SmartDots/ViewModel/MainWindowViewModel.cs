@@ -5,12 +5,19 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using DevExpress.Mvvm.POCO;
+using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI;
 using SmartDots.Helpers;
 using SmartDots.Model.Events;
 using SmartDots.Model.Security;
 using SmartDots.View;
+using DevExpress.Mvvm.UI;
+using System.Windows.Media;
+using System.Threading.Tasks;
+
+
 
 namespace SmartDots.ViewModel
 {
@@ -22,6 +29,7 @@ namespace SmartDots.ViewModel
         private bool _headerBackBtnIsVisible;
         public bool _isListening;
         public bool _isIcesApi;
+        public MainWindow MainWindow => Application.Current.MainWindow as MainWindow;
 
         public string HeaderInfo
         {
@@ -84,6 +92,9 @@ namespace SmartDots.ViewModel
             }
         }
 
+
+
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public MainWindowViewModel()
@@ -117,7 +128,7 @@ namespace SmartDots.ViewModel
 
             if (ctrl.GetType() == typeof(ServerSelectionView))
             {
-                var isLoggedIn = ((ServerSelectionView) ctrl).IsLoggedIn;
+                var isLoggedIn = ((ServerSelectionView)ctrl).IsLoggedIn;
                 if (isLoggedIn)
                 {
                     HeaderBackBtnIsVisible = true;
@@ -126,7 +137,7 @@ namespace SmartDots.ViewModel
                 {
                     HeaderBackBtnIsVisible = false;
                 }
-                
+
             }
             else
             {
@@ -205,6 +216,7 @@ namespace SmartDots.ViewModel
             AgeReadingControl.AgeReadingViewModel.AgeReadingFileViewModel.UseSampleStatus = Global.API.Settings.UseSampleStatus;
             AgeReadingControl.AgeReadingViewModel.AgeReadingAnnotationViewModel.CanApproveAnnotation = Global.API.Settings.CanApproveAnnotation;
             AgeReadingControl.AgeReadingViewModel.EditAnnotationDialogViewModel.CanApproveAnnotation = Global.API.Settings.CanApproveAnnotation ? Visibility.Visible : Visibility.Collapsed;
+
             var newWindow = !Global.API.Settings.OpenSocket;
             if (!_isListening && !newWindow)
             {
@@ -241,6 +253,11 @@ namespace SmartDots.ViewModel
             AgeReadingControl?.AgeReadingViewModel.Save();
             MaturityControl?.MaturityViewModel.Save();
             LarvaeControl?.LarvaeViewModel.Save();
+
+            if (Helper.GetTotalFileSize("temp") > 1024 * 1024 * 1024) // bigger than 1 GB
+            {
+                Helper.ClearCache();
+            }
 
             Application.Current.Shutdown();
             Environment.Exit(0);
@@ -340,6 +357,9 @@ namespace SmartDots.ViewModel
                     Helper.ShowWinUIMessageBox("Unable to load settings", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }
+
+                MainWindow.ClearCacheEvent.Content = $@"Delete downloaded images for selected {Global.API.Settings.EventAlias}...";
+                MainWindow.ClearCacheEvent.IsVisible = true;
                 //if (!ServerSelectionView.LoadQualities())
                 //{
                 //    Helper.ShowWinUIMessageBox("Unable to load qualities", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -380,6 +400,38 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public void ClearCache(bool selectedAnalysis = false)
+        {
+            string folder = null;
+            if (selectedAnalysis)
+            {
+                if(ServerSelectionView.Analyses.SelectedItem != null)
+                {
+                    folder = $@"temp\{((dynamic)ServerSelectionView.Analyses.SelectedItem)?.ID.ToString()}";
+                }
+                else
+                {
+                    Helper.ShowWinUIMessageBox($@"No {Global.API.Settings.EventAlias} selected", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            else
+            {
+                
+            }
+
+            if (Helper.ClearCache(folder))
+            {
+                if (AgeReadingControl != null && AgeReadingControl.AgeReadingViewModel != null && AgeReadingControl.AgeReadingViewModel.AgeReadingFileViewModel != null)
+                {
+                    Task.Run(() => AgeReadingControl.AgeReadingViewModel.AgeReadingFileViewModel.RefreshFileLoadedList());
+                }
+
+                ShowSuccessToast("Clear cache", "The cache was sucessfully cleared!");
+            }
+
+        }
+
         public void OpenManualsLink()
         {
             //System.Diagnostics.Process.Start("http://ices.dk/publications/library/Pages/default.aspx#k=smartdots%20handbook");
@@ -410,6 +462,29 @@ namespace SmartDots.ViewModel
             System.Diagnostics.Process.Start("https://github.com/ices-eg/SmartDots#readme");
         }
 
-        
+
+
+        public void ShowToast(string title, string message, Brush background)
+        {
+            CustomNotificationViewModel vm = ViewModelSource.Create(() => new CustomNotificationViewModel());
+            vm.Caption = title;
+            vm.Content = message;
+            vm.Background = background;
+
+            INotification notification = MainWindow.ServiceWithCustomNotifications.CreateCustomNotification(vm);
+            notification.ShowAsync();
+        }
+
+        public void ShowSuccessToast(string title, string message)
+        {
+            ShowToast(title, message, (SolidColorBrush)Application.Current.TryFindResource("BrushSmartFishGreen") ?? Brushes.Green);
+        }
+
+        public void ShowErrorToast(string title, string message)
+        {
+            ShowToast(title, message, (SolidColorBrush)Application.Current.TryFindResource("BrushSmartFishRed") ?? Brushes.Red);
+        }
+
+
     }
 }

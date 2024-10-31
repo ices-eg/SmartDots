@@ -31,8 +31,6 @@ namespace SmartDots.ViewModel
         private bool changingFile;
         private bool needsSampleLink;
         private bool canDetach;
-        private string nextFileLocation;
-        private string nextLocalFileLocation;
         private bool loadingNextPicture;
         private bool useSampleStatus;
         private bool loadingfolder;
@@ -87,8 +85,9 @@ namespace SmartDots.ViewModel
                     AgeReadingViewModel.AgeReadingEditorViewModel.Contrast = 0;
                     AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine = null;
                 }
+                DownloadPicture(selectedFile);
                 //experimental
-                if (SelectedFileLocation == nextFileLocation)
+                if (System.IO.File.Exists($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\{SelectedFile.Filename}"))
                 {
                     while (loadingNextPicture)
                     {
@@ -96,7 +95,7 @@ namespace SmartDots.ViewModel
                     }
                     try
                     {
-                        LoadImage(nextLocalFileLocation);
+                        LoadImage($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\{SelectedFile.Filename}");
                     }
                     catch (Exception e)
                     {
@@ -125,11 +124,11 @@ namespace SmartDots.ViewModel
                 }
 
                 ChangingFile = false;
-
+                Task.Run(() => RefreshFileLoadedList());
 
                 AgeReadingViewModel.AgeReadingEditorViewModel.Mode = EditorModeEnum.DrawLine;
                 AgeReadingViewModel.AgeReadingSampleViewModel.SetSample();
-                AgeReadingViewModel.UpdateGraphs();
+                //AgeReadingViewModel.UpdateGraphs();
                 NeedsSampleLink = SelectedFile != null && SelectedFile?.SampleID == null;
                 CanDetach = SelectedFile?.SampleID != null && !AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes.Any();
 
@@ -253,12 +252,6 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public string NextFileLocation
-        {
-            get { return nextFileLocation; }
-            set { nextFileLocation = value; }
-        }
-
         public string SampleNumberAlias
         {
             get { return sampleNumberAlias; }
@@ -315,62 +308,63 @@ namespace SmartDots.ViewModel
             AgeReadingViewModel.AgeReadingView.Opacity = 1;
             AgeReadingViewModel.AgeReadingView.WinFormBrightness.Visibility = Visibility.Visible;
             AgeReadingViewModel.AgeReadingView.WinFormRedness.Visibility = Visibility.Visible;
-            AgeReadingViewModel.AgeReadingView.WinFormGrowth.Visibility = Visibility.Visible;
         }
 
-        public void SetNextPicture()
+        public void DownloadPicture(File f)
         {
             try
             {
-                Directory.CreateDirectory("temp");
-                DirectoryInfo di = new DirectoryInfo("temp");
-                foreach (FileInfo file in di.GetFiles())
-                {
-                    try
-                    {
-                        System.IO.File.Delete("temp/" + file.Name);
-                    }
-                    catch (Exception e)
-                    {
-                        //current file will be locked
-                    }
-                }
+                Directory.CreateDirectory($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}");
+                DirectoryInfo di = new DirectoryInfo($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}");
+
                 //Load the image in a seperate thread
-                var f = Files.SkipWhile(item => item != SelectedFile).Skip(1).FirstOrDefault();
                 var filename = f?.Filename;
 
-                var extension =
-                    Path.GetExtension(
-                        Files.SkipWhile(item => item != SelectedFile).Skip(1).FirstOrDefault()?.FullFileName);
+                if (System.IO.File.Exists($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\{filename}")) return;
+
                 var path = "";
 
                 if (f.Path != null)
                 {
                     path = f.Path;
                 }
-                else if (currentFolder.Path.StartsWith("\\")) path = Path.Combine(CurrentFolder.Path, filename + extension);
+                else if (currentFolder.Path.StartsWith("\\")) path = Path.Combine(CurrentFolder.Path, filename);
                 else
                 {
-                    if (CurrentFolder.Path.EndsWith("/")) path = CurrentFolder.Path + SelectedFile.FullFileName;
+                    if (CurrentFolder.Path.EndsWith("/")) path = CurrentFolder.Path + filename;
                     else
                     {
-                        path = CurrentFolder.Path + "/" + SelectedFile.FullFileName;
+                        path = CurrentFolder.Path + "/" + filename;
                     }
                 }
-                nextFileLocation = path;
-                nextLocalFileLocation = "temp/" + filename + extension;
-                if (!System.IO.File.Exists(nextLocalFileLocation)) CopyFileAsync(path, nextLocalFileLocation);
+                var localFileLocation = $@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\" + filename;
+                if (!System.IO.File.Exists(localFileLocation)) CopyFileAsync(path, localFileLocation);
             }
             catch (Exception e)
             {
-                // ignored
+                throw;
+                
+            }
+        }
+
+        public void SetNextPicture()
+        {
+            try
+            {
+                loadingNextPicture = true;
+                var f = Files.SkipWhile(item => item != SelectedFile).Skip(1).FirstOrDefault();
+                DownloadPicture(f);
                 loadingNextPicture = false;
             }
+            catch (Exception)
+            {
+                loadingNextPicture = false;
+            }
+            
         }
 
         public async Task CopyFileAsync(string sourceFile, string destinationFile)
         {
-            loadingNextPicture = true;
             if (sourceFile.StartsWith("http"))
             {
                 using (var client = new WebClient())
@@ -383,7 +377,7 @@ namespace SmartDots.ViewModel
                     {
                         //
                     }
-                    
+
                 }
             }
             else
@@ -392,8 +386,8 @@ namespace SmartDots.ViewModel
                 using (var destinationStream = new FileStream(destinationFile, FileMode.CreateNew, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan))
                     await sourceStream.CopyToAsync(destinationStream);
             }
-            
-            loadingNextPicture = false;
+
+            Task.Run(() => RefreshFileLoadedList());
         }
 
         public void UpdateList()
@@ -449,7 +443,7 @@ namespace SmartDots.ViewModel
 
         public void FileList_FocusedRowChanged(object sender, FocusedRowChangedEventArgs e)
         {
-            if(!LoadingFolder) LoadNewFile();
+            if (!LoadingFolder) LoadNewFile();
             LoadingFolder = false;
         }
 
@@ -469,8 +463,8 @@ namespace SmartDots.ViewModel
                 var rowFile = Files.FirstOrDefault(x => x.ID == ((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row).ID);
                 file = rowFile;
             }
-            
-            if (file != null )
+
+            if (file != null)
             {
                 var temp = GetFileWithAnnotationsAndSampleProperties(file.ID);
                 if (temp != null)
@@ -520,7 +514,7 @@ namespace SmartDots.ViewModel
             var updateFileResult = Global.API.UpdateFile(file.Result);
             if (!updateFileResult.Succeeded)
             {
-                Helper.ShowWinUIMessageBox("Error saving File to Web API\n" + updateFileResult.ErrorMessage , "Error", MessageBoxButton.OK,
+                Helper.ShowWinUIMessageBox("Error saving File to Web API\n" + updateFileResult.ErrorMessage, "Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 return;
             }
@@ -558,9 +552,9 @@ namespace SmartDots.ViewModel
                     MessageBoxImage.Error);
                 return null;
             }
-            var fileResult = (File) Helper.ConvertType(file.Result, typeof(File));
+            var fileResult = (File)Helper.ConvertType(file.Result, typeof(File));
             fileResult.ConvertDbAnnotations(file.Result.Annotations.ToList());
-            
+
             try
             {
                 if (file.Result.Sample != null)
@@ -621,8 +615,8 @@ namespace SmartDots.ViewModel
                     }
                     fullImageNames = tempImageNames;
                 }
-                
-                
+
+
                 var filesResult = Global.API.GetFiles(AgeReadingViewModel.Analysis.ID, fullImageNames);
                 if (!filesResult.Succeeded)
                 {
@@ -631,7 +625,7 @@ namespace SmartDots.ViewModel
                 }
                 if (!Global.API.Settings.ScanFolder)
                 {
-                    fullImageNames = ((List<DtoFile>) filesResult.Result).Select(x => x.Filename).ToList();
+                    fullImageNames = ((List<DtoFile>)filesResult.Result).Select(x => x.Filename).ToList();
                 }
 
                 List<string> columnNames = new List<string>();
@@ -646,12 +640,12 @@ namespace SmartDots.ViewModel
                         }
                         var file = (File)Helper.ConvertType(dtoFile, typeof(File));
 
-                        if(file.SampleProperties != null)
+                        if (file.SampleProperties != null)
                         {
                             Dictionary<string, string> values = file.SampleProperties.ToObject<Dictionary<string, string>>();
                             columnNames = values.Keys.ToList();
                         }
-                        
+
                         if (dtoFile.Sample != null) file.Sample = (Sample)Helper.ConvertType(dtoFile.Sample, typeof(Sample));
                         if (file != null)
                         {
@@ -661,8 +655,10 @@ namespace SmartDots.ViewModel
                             file.FetchProps((dynamic)AgeReadingViewModel.AgeReadingFileView.FileList.FocusedRowData.Row);
                         }
 
+                        if (dtoFile.Annotations != null) file.ConvertDbAnnotations(dtoFile.Annotations.ToList());
+
                         dynamic dynFile = CreateDynamicFile(file);
-                        
+
                         dynamicFiles.Add(dynFile);
                         filelist.Add(file);
                     }
@@ -679,7 +675,7 @@ namespace SmartDots.ViewModel
                     }
 
                     List<GridColumn> columns = new List<GridColumn>();
-                    
+
                     columns.AddRange(columnNames.Select(columnName => new GridColumn() { FieldName = columnName, AllowSorting = DefaultBoolean.True, Tag = "Dynamic", AllowEditing = DefaultBoolean.False }));
                     foreach (var col in columns)
                     {
@@ -703,7 +699,8 @@ namespace SmartDots.ViewModel
             }
             catch (Exception e)
             {
-                Helper.ShowWinUIMessageBox("Error loading images\n" + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error,e);
+                AgeReadingViewModel.CloseSplashScreen();
+                Helper.ShowWinUIMessageBox("Error loading images\n" + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, e);
             }
             finally
             {
@@ -722,6 +719,7 @@ namespace SmartDots.ViewModel
             dynFile.SampleNumber = file.SampleNumber;
             dynFile.AnnotationCount = file.AnnotationCount;
             dynFile.Scale = file.Scale;
+            dynFile.Loaded = "";
             dynFile.Sample = new ExpandoObject();
             if (file.Sample != null)
             {
@@ -763,7 +761,7 @@ namespace SmartDots.ViewModel
             CanDetach = SelectedFile?.SampleID != null && !AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes.Any();
         }
 
-        
+
 
         private void ToggleFileOptions(bool toggle)
         {
@@ -831,6 +829,107 @@ namespace SmartDots.ViewModel
         public void AgeReadingFileGrid_EndSorting(object sender, System.Windows.RoutedEventArgs e)
         {
             RefreshNavigationButtons();
+        }
+
+        public void DownloadImages()
+        {
+            try
+            {
+                Directory.CreateDirectory($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}");
+                DirectoryInfo di = new DirectoryInfo($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}");
+
+                var currentFolderPath = currentFolder.Path;
+                bool isUncPath = currentFolderPath.StartsWith("\\");
+
+                int totalFiles = Files.Count;
+                int downloadedFiles = 0;
+                int alreadyExistingFiles = 0;
+
+                //Load the image in a seperate thread
+                foreach (var f in Files)
+                {
+                    var filename = f?.Filename;
+                    var extension = Path.GetExtension(f?.FullFileName);
+                    var path = "";
+
+                    if (f.Path != null)
+                    {
+                        path = f.Path;
+                    }
+                    else if (isUncPath) path = Path.Combine(CurrentFolder.Path, filename);
+                    else
+                    {
+                        if (currentFolderPath.EndsWith("/")) path = CurrentFolder.Path + filename;
+                        else
+                        {
+                            path = CurrentFolder.Path + "/" + filename;
+                        }
+                    }
+                    var localFileLocation = $@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\" + filename;
+                    if (!System.IO.File.Exists(localFileLocation))
+                    {
+                        CopyFileAsync(path, localFileLocation);
+                        downloadedFiles++;
+                    }
+                    else
+                    {
+                        alreadyExistingFiles++;
+                    }
+                }
+
+                //Task.Run(() => RefreshFileLoadedList());
+
+                var message = "";
+                if (downloadedFiles > 0)
+                {
+                    message = $"Started downloading {downloadedFiles} images...";
+                }
+                if (alreadyExistingFiles == totalFiles)
+                {
+                    message = $"All images are already available on disk, no action required";
+                }
+
+                AgeReadingViewModel.AgeReadingView.MainWindowViewModel.ShowSuccessToast("Image Download", message);
+
+
+            }
+            catch (Exception e)
+            {
+                // ignored
+
+            }
+        }
+
+        public void RefreshFileLoadedList(Guid? fileId = null)
+        {
+
+            var files = Files;
+            if (fileId != null)
+            {
+                files = Files.Where(x => x.ID == fileId).ToList();
+            }
+
+            var allFiles = System.IO.Directory.GetFiles($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}");
+            foreach (var f in files)
+            {
+                // check if the file exists on disk
+                var exists = allFiles.Any(x => x.Contains(f.Filename));
+
+                if (exists)
+                {
+                    DynamicFiles.FirstOrDefault(x => x.ID == f.ID).Loaded = "/SmartDots;component/Resources/storage.png";
+                }
+                else
+                {
+                    DynamicFiles.FirstOrDefault(x => x.ID == f.ID).Loaded = "";
+                }
+
+            }
+
+            AgeReadingViewModel.AgeReadingFileView.FileGrid.Dispatcher.Invoke(() =>
+            {
+                AgeReadingViewModel.AgeReadingFileView.FileGrid.RefreshData();
+            });
         }
     }
 }

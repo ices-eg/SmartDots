@@ -24,10 +24,13 @@ namespace SmartDots.View
 
             ViewModel = (MainWindowViewModel)DataContext;
 
+
             SizeChanged += MainWindow_SizeChanged;
             Loaded += MainWindow_Loaded;
 
             ResetLayout.ItemClick += (sender, args) => ViewModel.ResetLayout();
+            ClearCache.ItemClick += (sender, args) => ViewModel.ClearCache();
+            ClearCacheEvent.ItemClick += (sender, args) => ViewModel.ClearCache(true);
             IcesSharePoint.ItemClick += (sender, args) => ViewModel.OpenIcesSharePoint();
             IcesUserHandbooks.ItemClick += (sender, args) => ViewModel.OpenManualsLink();
             IcesTrainingVideos.ItemClick += (sender, args) => ViewModel.OpenIcesTrainingVideos();

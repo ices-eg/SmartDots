@@ -524,7 +524,7 @@ namespace SmartDots.ViewModel
                 };
                 if (WorkingAnnotation?.QualityID != Qualities.FirstOrDefault(x => new List<string>(){"QS1", "AQ1"}.Contains(x.Code.ToUpper())).ID && Global.API.Settings.RequireAq1ForApproval)
                 {
-                    ApproveAnnotationTooltip = "A quality code AQ1 or QS1 is needed to approve the Annotation";
+                    ApproveAnnotationTooltip = "A quality code AQ1 is needed to approve the Annotation";
                     return false;
                 };
                 if (WorkingAnnotation?.ParameterID == null && Global.API.Settings.RequireParamForApproval)
@@ -855,6 +855,7 @@ namespace SmartDots.ViewModel
                 AgeReadingViewModel.AgeReadingFileViewModel.Refresh();
                 AgeReadingViewModel.AgeReadingFileViewModel.UpdateList();
                 UpdateList();
+                RefreshActions();
 
             }
             catch (Exception e)
@@ -963,40 +964,8 @@ namespace SmartDots.ViewModel
             }
             else if (e.Column.FieldName == "QualityID")
             {
-                var aq3 = Qualities.FirstOrDefault(x => new List<string>(){ "AQ3", "QS3"}.Contains(x.Code.ToUpper().Trim()));
-                if (aq3 != null && (Guid)e.Value == aq3.ID)
-                {
-                    WinUIMessageBoxService messageBox = new WinUIMessageBoxService();
-                    var result = messageBox.ShowMessage("Changing the readability quality to AQ3 or QS3 will remove all dots for this annotation, are you sure you wish to continue?", "Warning", MessageButton.YesNo, MessageIcon.Warning, MessageResult.No);
-
-                    if (result == MessageResult.No)
-                    {
-                        e.Handled = false;
-                        an.QualityID = (Guid?)e.OldValue;
-
-                        AgeReadingViewModel.AgeReadingAnnotationView.AnnotationList.CancelRowEdit();
-                        AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
-                        //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.Focus();
-                        return;
-                    }
-                    else if(result == MessageResult.Yes)
-                    {
-                        foreach (var cl in an.CombinedLines)
-                        {
-                            cl.Dots.Clear();
-                        }
-                        an.Dots.Clear();
-                    }
-                }
-
-                an.QualityID = (Guid?)e.Value;
-                an.IsChanged = true;
-                var quality = Qualities.FirstOrDefault(x => x.ID == an.QualityID);
-                if (quality == null) return;
-                an.Quality = quality;
-                an.CalculateAge();
-                ageReadingViewModel.AgeReadingEditorViewModel.RefreshShapes();
-                //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
+                var qualitySet = SetQuality(an, (Guid)e.Value, (Guid?)e.OldValue);
+                if(!qualitySet) return;
             }
             else if (e.Column.FieldName == "Nucleus")
             {
@@ -1010,6 +979,45 @@ namespace SmartDots.ViewModel
                 an.IsChanged = true;
                 //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
             }
+        }
+
+        public bool SetQuality(Annotation an,Guid qualityId, Guid? oldValue)
+        {
+            var aq3 = Qualities.FirstOrDefault(x => new List<string>() { "AQ3", "QS3" }.Contains(x.Code.ToUpper().Trim()));
+            if (aq3 != null && qualityId == aq3.ID)
+            {
+                WinUIMessageBoxService messageBox = new WinUIMessageBoxService();
+                var result = messageBox.ShowMessage("Changing the readability quality to AQ3 will remove all dots for this annotation, are you sure you wish to continue?", "Warning", MessageButton.YesNo, MessageIcon.Warning, MessageResult.No);
+
+                if (result == MessageResult.No)
+                {
+                    an.QualityID = oldValue;
+
+                    AgeReadingViewModel.AgeReadingAnnotationView.AnnotationList.CancelRowEdit();
+                    AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
+                    //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.Focus();
+                    return false;
+                }
+                else if (result == MessageResult.Yes)
+                {
+                    foreach (var cl in an.CombinedLines)
+                    {
+                        cl.Dots.Clear();
+                    }
+                    an.Dots.Clear();
+                }
+            }
+
+            an.QualityID = qualityId;
+            an.IsChanged = true;
+            var quality = Qualities.FirstOrDefault(x => x.ID == an.QualityID);
+            if (quality == null) return false;
+            an.Quality = quality;
+            an.CalculateAge();
+            ageReadingViewModel.AgeReadingEditorViewModel.RefreshShapes();
+            //AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.RefreshData();
+
+            return true;
         }
 
 

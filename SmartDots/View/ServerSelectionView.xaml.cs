@@ -144,6 +144,8 @@ namespace SmartDots.View
                 IsLoggedIn = true;
                 MainWindowViewModel.HeaderBackBtnIsVisible = true;
                 MainWindowViewModel.IsIcesApi = Global.API.Connection.ToLower().Contains("ices.dk");
+                MainWindowViewModel.MainWindow.ClearCacheEvent.Content = $@"Delete downloaded images for selected {Global.API.Settings.EventAlias}...";
+                MainWindowViewModel.MainWindow.ClearCacheEvent.IsVisible = true;
                 LabelConnecting.Content = string.Empty;
                 Background = Brushes.White;
                 FieldPassword.Clear();
@@ -238,6 +240,10 @@ namespace SmartDots.View
             {
                 Helper.ShowWinUIMessageBox(dtoUser.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            else if (!string.IsNullOrEmpty(dtoUser.WarningMessage))
+            {
+                Helper.ShowWinUIMessageBox(dtoUser.WarningMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
             return dtoUser;
         }
 
@@ -251,7 +257,7 @@ namespace SmartDots.View
             }
 
             var itemsResult = Global.API.GetAnalysesDynamic();
-            if (!itemsResult.Succeeded)
+            if (!itemsResult.Succeeded || itemsResult.Result == null)
             {
                 Helper.ShowWinUIMessageBox("Error loading Analyses from the Web API\n" + itemsResult.ErrorMessage, "Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);

@@ -17,7 +17,7 @@
              xmlns:userControls="clr-namespace:SmartDots.View.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="600"
-        dx:ThemeManager.ThemeName="Office2016White">
+        dx:ThemeManager.ThemeName="Office2016White" PreviewKeyDown="UserControl_PreviewKeyDown">
     <UserControl.DataContext>
         <viewModel:AgeReadingEditorViewModel x:Name="evm"></viewModel:AgeReadingEditorViewModel>
     </UserControl.DataContext>
@@ -25,6 +25,7 @@
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter"></helpers:EnumToBooleanConverter>
 
     </UserControl.Resources>
+
     <DockPanel>
         <dxdo:DockLayoutManager EnableWin32Compatibility="True" FloatingMode="Desktop">
             <dxdo:DockLayoutManager.FloatGroups>
@@ -232,6 +233,17 @@
                 </i:Interaction.Triggers>
             </Button>
 
+            <StackPanel Width="28" Height="33" Margin="0" dxdove:DockPane.HitTestType="Header"/>
+
+            <Button x:Name="btnKeys" Style="{StaticResource SDButtonBase}" ToolTip="Configure Keys" >
+                <Image Source="../../Resources/keyboard.png" Width="22" Height="22"/>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="KeyActions_Click"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+
             <StackPanel Width="2000" Margin="0" Height="33" Background="{StaticResource BrushSmartFishFairBlue2}" dxdove:DockPane.HitTestType="Header"></StackPanel>
         </StackPanel>
 
@@ -302,7 +314,6 @@
                 </dxb:Bar>
             </dxb:BarManager.Bars>
         </dxb:BarManager>
-
         <dxdo:DockLayoutManager x:Name="DockLayoutManager" FloatingMode="Window">
             <dxdo:LayoutGroup AllowSplitters="False" BorderThickness="0" Padding="0" Margin="0">
                 <dxdo:LayoutPanel ShowCaption="False" AllowClose="False" DockPanel.Dock="Bottom" Margin="0">

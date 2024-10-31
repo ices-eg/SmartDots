@@ -18,7 +18,7 @@
              WindowStyle="None" AllowsTransparency="True"
              d:DesignHeight="420" d:DesignWidth="800"
                          
-                         VerticalContentAlignment="Top">
+                         VerticalContentAlignment="Top" ContentRendered="WinUIDialogWindow_ContentRendered">
     <dxwui:WinUIDialogWindow.DataContext>
         <viewModel:EditAnnotationDialogViewModel/>
     </dxwui:WinUIDialogWindow.DataContext>
@@ -72,7 +72,7 @@
 
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem  Margin="76,-30,0,0" Visibility="{Binding Aq3WarningVisibility}" Height="34">
-                    <TextBlock Text="Warning: Changing the readability quality to AQ3 or QS3 will remove all dots of the annotation!" FontSize="11" Foreground="Red" Margin="0,12,0,0"></TextBlock>
+                    <TextBlock Text="Warning: Changing the readability quality to AQ3 will remove all dots of the annotation!" FontSize="11" Foreground="Red" Margin="0,12,0,0"></TextBlock>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Approved" Margin="0,0,0,15" Visibility="{Binding CanApproveAnnotation}">
                     <dxe:CheckEdit EditValue="{Binding IsApproved}" IsEnabled="{Binding CanApprove}"></dxe:CheckEdit>
@@ -110,18 +110,18 @@
                     <!--</Border>-->
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Comment" Margin="0,0,0,15" Height="86">
-                    <dxe:ButtonEdit EditValue="{Binding Comment}" Height="86" TextWrapping="Wrap" AcceptsReturn="True"></dxe:ButtonEdit>
+                    <dxe:ButtonEdit Name="CommentEditor" EditValue="{Binding Comment}" Height="86" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top"></dxe:ButtonEdit>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Height="40" Margin="0,0,0,15">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button x:Name="btnSave" IsTabStop="False" Content="Save" Margin="0,0,10,0" Width="60" >
+                        <Button x:Name="btnSave" IsTabStop="True" Content="Save" Margin="0,0,10,0" Width="60" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Click">
                                     <ei:CallMethodAction TargetObject="{Binding}" MethodName="Save"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </Button>
-                        <Button x:Name="btnCancel" IsTabStop="False" Content="Cancel" Width="60" >
+                        <Button x:Name="btnCancel" IsTabStop="True" Content="Cancel" Width="60" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Click">
                                     <ei:CallMethodAction TargetObject="{Binding}" MethodName="Cancel"/>

@@ -54,7 +54,7 @@
         <property name="ParentName">dockItem5</property>
         <property name="ParentCollectionName" isnull="true" />
         <property name="Name">OtolithPanel</property>
-        <property name="Caption" type="System.String">Files</property>
+        <property name="Caption" type="System.String">Sample list</property>
       </property>
       <property name="Item5" isnull="true" iskey="true">
         <property name="SerializableFloatingBounds">0,0,0,0</property>

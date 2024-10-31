@@ -13,5 +13,6 @@
         public bool UserCanPin { get; set; }
         public bool ShowNucleusColumn { get; set; }
         public bool ShowEdgeColumn { get; set; }
+        public bool UseGrowthGraphAllSamples { get; set; }
     }
 }

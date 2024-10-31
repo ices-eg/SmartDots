@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using Line = System.Windows.Shapes.Line;
 using DevExpress.Utils;
 using System.Dynamic;
+using System.Windows.Shapes;
 
 namespace SmartDots.ViewModel
 {
@@ -79,10 +80,17 @@ namespace SmartDots.ViewModel
 
                 using (var stream = new MemoryStream(buffer))
                 {
+                    string[] parts = imagepath.Split(new char[] { '\\', '/' });
+                    string filename = parts[parts.Length - 1];
+
                     bitmap.BeginInit();
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
                     bitmap.StreamSource = stream;
                     bitmap.EndInit();
+
+                    Directory.CreateDirectory($@"temp\{LarvaeViewModel.LarvaeAnalysis.ID.ToString()}");
+
+                    SaveMemoryStreamToFile(stream, $@"temp\{LarvaeViewModel.LarvaeAnalysis.ID.ToString()}\{filename}");
                 }
             }
             else
@@ -140,7 +148,42 @@ namespace SmartDots.ViewModel
             {
                 UpdateList();
 
-                LoadImage(file.Path);
+                string[] parts = file.Path.Split(new char[] { '\\', '/' });
+                string filename = parts[parts.Length - 1];
+
+                if (System.IO.File.Exists($@"temp\{LarvaeViewModel.LarvaeAnalysis.ID.ToString()}\{filename}"))
+                {
+                    
+                    try
+                    {
+                        LoadImage($@"temp\{LarvaeViewModel.LarvaeAnalysis.ID.ToString()}\{filename}");
+                    }
+                    catch (Exception e)
+                    {
+                        try
+                        {
+                            LoadImage(file.Path);
+                        }
+                        catch (Exception ex)
+                        {
+                            ChangingFile = false;
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        LoadImage(file.Path);
+                    }
+                    catch (Exception ex)
+                    {
+                        ChangingFile = false;
+                        return;
+                    }
+                }
+
             }
             else
             {
@@ -189,6 +232,13 @@ namespace SmartDots.ViewModel
             else
             {
                 LarvaeViewModel.LarvaeView.FileNext.IsEnabled = true;
+            }
+        }
+        public void SaveMemoryStreamToFile(MemoryStream stream, string filePath)
+        {
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                stream.WriteTo(fileStream);
             }
         }
     }

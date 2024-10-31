@@ -59,9 +59,11 @@
                         <ContentControl Content="{Binding LarvaeSampleView}"></ContentControl>
                         <dxdo:LayoutPanel.ControlBoxContent>
                             <DockPanel>
-                                <!--<Button Style="{StaticResource SDWhiteButtonBase}" x:Name="btnSampleSettings" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Sample panel settings" IsEnabled="True" FontSize="14">
-                                    <Image Source="../../Resources/icons8-cog-48.png" RenderOptions.BitmapScalingMode="HighQuality" Width="16" Height="16"/>
-                                </Button>-->
+                                <Button Style="{StaticResource SDWhiteButtonBase}" x:Name="Download" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Download all images" Click="Download_Click" >
+                                    <Image Source="../../Resources/download.png" Width="16" Height="16">
+
+                                    </Image>
+                                </Button>
                                 <Button Style="{StaticResource SDWhiteButtonBase}" x:Name="Previous" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Previous Sample" Click="Previous_Click" >
                                     <Image Source="../../Resources/icons8-arrow-100.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5">
                                         <Image.RenderTransform>

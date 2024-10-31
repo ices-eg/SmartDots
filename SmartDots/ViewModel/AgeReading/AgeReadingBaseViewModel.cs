@@ -32,7 +32,6 @@ namespace SmartDots.ViewModel
         {
             AgeReadingViewModel.AgeReadingView.WinFormBrightness.Visibility = Visibility.Visible;
             AgeReadingViewModel.AgeReadingView.WinFormRedness.Visibility = Visibility.Visible;
-            AgeReadingViewModel.AgeReadingView.WinFormGrowth.Visibility = Visibility.Visible;
             dialog.Close();
             AgeReadingViewModel.WaitState = false;
         }
@@ -43,7 +42,6 @@ namespace SmartDots.ViewModel
             AgeReadingViewModel.WaitState = true;
             AgeReadingViewModel.AgeReadingView.WinFormBrightness.Visibility = Visibility.Hidden;
             AgeReadingViewModel.AgeReadingView.WinFormRedness.Visibility = Visibility.Hidden;
-            AgeReadingViewModel.AgeReadingView.WinFormGrowth.Visibility = Visibility.Hidden;
             RaisePropertyChanged(null); //triggers propertychanged on all properties
             dialog.ShowDialog();
         }

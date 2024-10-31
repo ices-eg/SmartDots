@@ -1,4 +1,7 @@
-﻿using System.Windows.Controls;
+﻿using System.Collections.Generic;
+using System.Windows.Controls;
+using DevExpress.Data.Filtering;
+using DevExpress.Xpf.Grid;
 using SmartDots.ViewModel;
 
 namespace SmartDots.View
@@ -22,5 +25,7 @@ namespace SmartDots.View
             ageReadingFileViewModel = (AgeReadingFileViewModel) base.DataContext;
             ageReadingFileViewModel.AgeReadingViewModel = ageReadingViewModel;
         }
+
+        
     }
 }

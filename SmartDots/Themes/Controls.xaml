@@ -24,6 +24,7 @@
     <system:Double x:Key="EditorFontSize">14</system:Double>
 
     <!-- Colors -->
+    <Color x:Key="ColorSmartFishRed" A="255" R="240" G="40" B="28"/>
     <Color x:Key="ColorSmartFishOrange" A="255" R="240" G="80" B="38"/>
     <Color x:Key="ColorSmartFishLightOrange" A="255" R="255" G="183" B="112"/>
     <Color x:Key="ColorSmartFishPeachOrange" A="255" R="255" G="204" B="153"/>
@@ -41,7 +42,10 @@
     <Color x:Key="ColorSmartFishBorderGray" A="255" R="191" G="191" B="191"/>
     <Color x:Key="ColorSmartFishControlGray" A="255" R="246" G="246" B="246"/>
 
+    <Color x:Key="ColorSmartFishGreen" A="255" R="60" G="205" B="80"/>
+
     <!-- Brushes -->
+    <SolidColorBrush x:Key="BrushSmartFishRed" Color="{StaticResource ColorSmartFishRed}"/>
     <SolidColorBrush x:Key="BrushSmartFishOrange" Color="{StaticResource ColorSmartFishOrange}"/>
     <SolidColorBrush x:Key="BrushSmartFishLightOrange" Color="{StaticResource ColorSmartFishLightOrange}"/>
     <SolidColorBrush x:Key="BrushSmartFishPeachOrange" Color="{StaticResource ColorSmartFishPeachOrange}"/>
@@ -59,6 +63,8 @@
     <SolidColorBrush x:Key="BrushSmartFishBorderGray" Color="{StaticResource ColorSmartFishBorderGray}"/>
     <SolidColorBrush x:Key="BrushSmartFishControlGray" Color="{StaticResource ColorSmartFishControlGray}"/>
 
+    <SolidColorBrush x:Key="BrushSmartFishGreen" Color="{StaticResource ColorSmartFishGreen}"/>
+    
     <!-- Images -->
     <BitmapImage x:Key="Filter" UriSource="/SmartDots;component/Resources/Filter.png" />
     <BitmapImage x:Key="New" UriSource="/SmartDots;Component/Resources/New.png" />
@@ -143,9 +149,9 @@
                 <Setter Property="Background" Value="{StaticResource BrushSmartFishYellow}"/>
             </Trigger>
         </Style.Triggers>
-        <Setter Property="MinHeight" Value="12"></Setter>
+        <!--<Setter Property="MinHeight" Value="12"></Setter>
         <Setter Property="MaxHeight" Value="12"></Setter>
-        <Setter Property="Height" Value="12"></Setter>
+        <Setter Property="Height" Value="12"></Setter>-->
     </Style>
 
     <Style TargetType="{x:Type dxlc:LayoutGroup}">
@@ -475,6 +481,15 @@
             <TextBlock Text="{Binding Data.User}" VerticalAlignment="Center" ></TextBlock>
         </StackPanel>
         
+    </DataTemplate>
+
+    <DataTemplate x:Key="CustomNotificationTemplate">
+        <Border Background="{Binding Background}" BorderThickness="1" BorderBrush="Black" Width="400">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Left" Text="{Binding Caption}" Foreground="White" FontSize="18" FontWeight="Bold" Margin="5"/>
+                <TextBlock HorizontalAlignment="Left" Text="{Binding Content}" Foreground="White" FontSize="16" Margin="5" TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
     </DataTemplate>
 
     <Style x:Key="AppBarItemBaseStyle" TargetType="Control">

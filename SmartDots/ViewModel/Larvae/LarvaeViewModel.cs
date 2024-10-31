@@ -223,9 +223,12 @@ namespace SmartDots.ViewModel
                     return false;
                 }
                 List<LarvaeSample> larvaeSamples = new List<LarvaeSample>();
-                foreach (var dtoLarvaeSamples in dtoLarvaeAnalysis.Result.LarvaeEggSamples)
+                foreach (var dtoLarvaeSample in dtoLarvaeAnalysis.Result.LarvaeEggSamples)
                 {
-                    larvaeSamples.Add((LarvaeSample)Helper.ConvertType(dtoLarvaeSamples, typeof(LarvaeSample)));
+                    LarvaeSample sample = (LarvaeSample)Helper.ConvertType(dtoLarvaeSample, typeof(LarvaeSample));
+                    sample.ConvertDbFiles(dtoLarvaeSample.Files);
+
+                    larvaeSamples.Add(sample);
                 }
 
                 larvaeAnalysis.LarvaeEggSamples = larvaeSamples;
@@ -288,7 +291,6 @@ namespace SmartDots.ViewModel
                 if (dtoLarvaeAnalysis.WarningMessage != null)
                 {
                     Helper.ShowWinUIMessageBox(dtoLarvaeAnalysis.WarningMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-
                 }
 
                 LoadingAnalysis = false;

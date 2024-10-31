@@ -248,9 +248,12 @@ namespace SmartDots.ViewModel
 
                 var maturityAnalysis = (MaturityAnalysis)Helper.ConvertType(dtoMaturityAnalysis.Result, typeof(MaturityAnalysis));
                 List<MaturitySample> maturitySamples = new List<MaturitySample>();
-                foreach (var dtoMaturitySamples in dtoMaturityAnalysis.Result.MaturitySamples)
+                foreach (var dtoMaturitySample in dtoMaturityAnalysis.Result.MaturitySamples)
                 {
-                    maturitySamples.Add((MaturitySample)Helper.ConvertType(dtoMaturitySamples, typeof(MaturitySample)));
+                    MaturitySample sample = (MaturitySample)Helper.ConvertType(dtoMaturitySample, typeof(MaturitySample));
+                    sample.ConvertDbFiles(dtoMaturitySample.Files);
+
+                    maturitySamples.Add(sample);
                 }
                 maturityAnalysis.MaturitySamples = maturitySamples;
                 //if (maturityAnalysis.Folder == null)

@@ -76,6 +76,11 @@ namespace SmartDots.View
             LarvaeViewModel.LarvaeFileView.FileList.MoveNextRow();
         }
 
+        private void Download_Click(object sender, RoutedEventArgs e)
+        {
+            LarvaeViewModel.LarvaeSampleViewModel.DownloadImages();
+        }
+
         //private void DockLayoutManager_OnDockOperationCompleted(object sender, DockOperationCompletedEventArgs e)
         //{
         //    try

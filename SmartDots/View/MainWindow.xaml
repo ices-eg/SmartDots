@@ -12,6 +12,7 @@
         xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
         xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
         xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
         mc:Ignorable="d"
         ResizeMode="CanResizeWithGrip"
         SnapsToDevicePixels="True"
@@ -37,6 +38,10 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:NotificationService x:Name="ServiceWithCustomNotifications" CustomNotificationTemplate="{StaticResource CustomNotificationTemplate}" UseWin8NotificationsIfAvailable="False" />
+    </dxmvvm:Interaction.Behaviors>
 
     <WindowChrome.WindowChrome>
         <WindowChrome
@@ -87,6 +92,8 @@
                     <dxb:PopupMenu.Items>
                         <!--<dxb:BarItemMenuHeader Content="Measure Scale"/>-->
                         <dxb:BarButtonItem x:Name="ResetLayout" Content="Restore layout"/>
+                        <dxb:BarButtonItem x:Name="ClearCache" Content="Delete downloaded images..."/>
+                        <dxb:BarButtonItem x:Name="ClearCacheEvent" Content="Delete downloaded images for selected Event..." IsVisible="False"/>
                     </dxb:PopupMenu.Items>
                 </dxb:PopupMenu>
 

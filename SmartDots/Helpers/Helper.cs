@@ -5,20 +5,25 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.WindowsUI;
+using SmartDots.Model;
+using SmartDots.ViewModel;
 
 namespace SmartDots.Helpers
 {
     public static class Helper
     {
 
-        public static float Version { get; } = 4.0f;
+        public static float Version { get; } = 4.1f;
 
         public static void ShowWinUIMessageBox(string message, string caption, MessageBoxButton msgBoxButton, MessageBoxImage img, Exception e = null)
         {
@@ -229,6 +234,171 @@ namespace SmartDots.Helpers
             {
                 return Directory.Exists(path);
             }
+        }
+
+        public static string DownloadImages(Guid analysisid, List<string> images)
+        {
+            try
+            {
+                Directory.CreateDirectory($@"temp\{analysisid.ToString()}");
+                DirectoryInfo di = new DirectoryInfo($@"temp\{analysisid.ToString()}");
+
+                int totalFiles = images.Count;
+                int downloadedFiles = 0;
+                int alreadyExistingFiles = 0;
+
+                foreach (var img in images)
+                {
+
+                    bool isUncPath = img.StartsWith("\\");
+                    var filename = "";
+                    if (img.Contains("/"))
+                    {
+                        filename = img.Split('/').Last();
+                    }
+                    else if (img.Contains("\\"))
+                    {
+                        filename = img.Split('\\').Last();
+                    }
+
+                    var localFileLocation = $@"temp\{analysisid.ToString()}" + filename;
+
+                    if (!System.IO.File.Exists(localFileLocation))
+                    {
+                        CopyFileAsync(img, localFileLocation);
+                        downloadedFiles++;
+                    }
+                    else
+                    {
+                        alreadyExistingFiles++;
+                    }
+                    if (!System.IO.File.Exists(localFileLocation)) CopyFileAsync(img, localFileLocation);
+
+                }
+
+                var message = "";
+                if (downloadedFiles > 0)
+                {
+                    message = $"Started downloading {downloadedFiles} images...";
+                }
+                if (alreadyExistingFiles == totalFiles)
+                {
+                    message = $"All images are already available on disk, no action required";
+                }
+
+                return message;
+            }
+            catch (Exception e)
+            {
+                // ignored
+                return "";
+
+            }
+        }
+
+        public static async Task CopyFileAsync(string sourceFile, string destinationFile)
+        {
+            if (sourceFile.StartsWith("http"))
+            {
+                using (var client = new WebClient())
+                {
+                    try
+                    {
+                        client.DownloadFile(sourceFile, destinationFile);
+                    }
+                    catch (Exception)
+                    {
+                        //
+                    }
+
+                }
+            }
+            else
+            {
+                using (var sourceStream = new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan))
+                using (var destinationStream = new FileStream(destinationFile, FileMode.CreateNew, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan))
+                    await sourceStream.CopyToAsync(destinationStream);
+            }
+        }
+
+        public static bool ClearCache(string folder = null)
+        {
+            if(folder == null)
+            {
+                folder = "temp";
+            }
+            string size = "";
+            var totalBytes = GetTotalFileSize(folder);
+            if (totalBytes == 0)
+            {
+                ShowWinUIMessageBox("The cache is already empty", "Clear cache", MessageBoxButton.OK, MessageBoxImage.Information);
+                return false;
+            }
+
+            if (totalBytes > 1024)
+            {
+                size = (totalBytes / 1024).ToString() + " KB";
+            }
+            if (totalBytes > 1024 * 1024)
+            {
+                size = (totalBytes / (1024 * 1024)).ToString() + " MB";
+            }
+            if (totalBytes > 1024 * 1024 * 1024)
+            {
+                size = (totalBytes / (1024 * 1024 * 1024)).ToString() + " GB";
+            }
+            
+            var result = ShowWinUIDialog($"The cache contains {size} on image data, do you want to clear it?", "Clear cache", MessageBoxImage.Question);
+
+            if(result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    Directory.Delete(folder, true);
+                    Directory.CreateDirectory("temp");
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    //Log("errors.txt", "Error clearing cache", e);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static long GetTotalFileSize(string folderPath)
+        {
+            long totalSize = 0;
+            DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
+            if(directoryInfo.Exists == false)
+            {
+                return 0;
+            }
+            FileInfo[] files = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
+            foreach (FileInfo file in files)
+            {
+                totalSize += file.Length;
+            }
+            return totalSize;
+        }
+
+        public static bool IsUserVisible(FrameworkElement element, FrameworkElement container)
+        {
+            if (!element.IsVisible)
+                return false;
+
+            try
+            {
+                Rect bounds = element.TransformToAncestor(container).TransformBounds(new Rect(0.0, 0.0, element.ActualWidth, element.ActualHeight));
+                Rect rect = new Rect(0.0, 0.0, container.ActualWidth, container.ActualHeight);
+                return rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight);
+            }
+            catch (Exception)
+            {
+                return true;
+            }
+            
         }
     }
 }

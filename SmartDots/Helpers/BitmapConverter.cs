@@ -28,6 +28,8 @@ namespace SmartDots.Helpers
                     stopwatch.Start();
 
                     BitmapEncoder enc = new BmpBitmapEncoder();
+                    if (bitmapImage == null) return null;
+                    
                     enc.Frames.Add(BitmapFrame.Create(bitmapImage));
                     enc.Save(outStream);
                     Bitmap bitmap = new Bitmap(outStream);

@@ -89,7 +89,7 @@
             </Grid.RowDefinitions>
             <dxg:GridControl Grid.Row="0" ItemsSource="{Binding DynamicFiles}" VerticalAlignment="Stretch" FontSize="11" x:Name="FileGrid">
                 <dxg:GridControl.View>
-                    <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="FileList" RowMinHeight="22" IsColumnChooserVisible="False">
+                    <dxg:TableView ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" Name="FileList" RowMinHeight="22" IsColumnChooserVisible="False" AllowColumnFiltering="True" ColumnFilterPopupMode="Excel">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="BeforeLayoutRefresh">
                                 <ei:CallMethodAction TargetObject="{Binding}" MethodName="FileList_BeforeLayoutRefresh"/>
@@ -102,8 +102,19 @@
                     </dxg:TableView>
                 </dxg:GridControl.View>
                 <dxg:GridControl.Columns>
-                    <dxg:GridColumn FieldName="Status" Header="@" ToolTip="Sample status" Width="16" CellTemplate="{StaticResource StatusColumn}" AllowEditing="False" AllowSorting="True" SortMode="Custom" Visible="{Binding UseSampleStatus}" VisibleIndex="0" />
-                    <dxg:GridColumn FieldName="Display" Header="File" ToolTip="Filename" AllowEditing="False" />
+                    <dxg:GridColumn FieldName="Status" Header="" ToolTip="Sample status" Width="16" CellTemplate="{StaticResource StatusColumn}" AllowEditing="False" AllowSorting="True" AllowGrouping="False" AllowColumnFiltering="False" SortMode="Custom" Visible="{Binding UseSampleStatus}" VisibleIndex="0">
+                        
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="Display" Header="File" ToolTip="Filename" AllowEditing="False" >
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal" >
+                                    <Image Source="{Binding Path=Data.Loaded, Converter={StaticResource nullImageConverter}}" HorizontalAlignment="Center" Margin="5,0,0,0"  Stretch="Uniform" Width="16" Height="16" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding Data.Display}" Margin="5,0,0,0" VerticalAlignment="Center"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
                     <dxg:GridColumn FieldName="SampleNumber" Header="{Binding SampleNumberAlias}" ToolTip="{Binding SampleNumberAlias}" AllowEditing="False" Width="60"  />
                     <dxg:GridColumn FieldName="AnnotationCount" Header="#Annotations" ToolTip="Number of annotations" AllowEditing="False"  Width="60" />
                     <dxg:GridColumn FieldName="Scale" AllowEditing="False" Header="Scale (px/mm)" Width="80" >

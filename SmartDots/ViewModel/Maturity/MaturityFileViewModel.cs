@@ -56,7 +56,7 @@ namespace SmartDots.ViewModel
             set
             {
                 maturityFiles = value;
-                /*if (maturityFiles != null && maturityFiles.Any())*/ 
+                /*if (maturityFiles != null && maturityFiles.Any())*/
                 SelectedFile = maturityFiles?.FirstOrDefault();
                 RaisePropertyChanged("MaturityFiles");
             }
@@ -112,10 +112,17 @@ namespace SmartDots.ViewModel
 
                 using (var stream = new MemoryStream(buffer))
                 {
+                    string[] parts = imagepath.Split(new char[] { '\\', '/' });
+                    string filename = parts[parts.Length - 1];
+
                     bitmap.BeginInit();
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
                     bitmap.StreamSource = stream;
                     bitmap.EndInit();
+
+                    Directory.CreateDirectory($@"temp\{MaturityViewModel.MaturityAnalysis.ID.ToString()}");
+
+                    SaveMemoryStreamToFile(stream, $@"temp\{MaturityViewModel.MaturityAnalysis.ID.ToString()}\{filename}");
                 }
             }
             else
@@ -307,50 +314,49 @@ namespace SmartDots.ViewModel
 
             if (file != null)
             {
-
-                //file.StatusCode = temp.StatusCode;
-                //sample.StatusColor = temp.StatusColor;
-                //sample.StatusRank = temp.StatusRank;
-
-                //var dynSample = DynamicSamples.FirstOrDefault(x => x.ID == sample.ID);
-
-                //dynSample.StatusRank = sample.StatusRank;
-                //dynSample.StatusColor = sample.StatusColor;
-                //dynSample.StatusCode = sample.StatusCode;
-                //dynSample.Status = sample.Status;
-
-                //if (temp.SampleProperties != null)
-                //{
-                //    Dictionary<string, string> values = temp.SampleProperties;
-                //    var columnNames = values.Keys.ToList();
-                //    foreach (var column in columnNames)
-                //    {
-                //        ((IDictionary<string, string>)sample.SampleProperties)[column] = values[column];
-                //        ((IDictionary<String, Object>)dynSample)[column] = values[column];
-                //    }
-                //}
-
-
-
-                //SelectedSample = sample;
-
                 UpdateList();
 
-                //Helper.Log("filetimer.txt", $"Start loading image {file.Path}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
+                string[] parts = file.Path.Split(new char[] { '\\', '/' });
+                string filename = parts[parts.Length - 1];
 
+                if (System.IO.File.Exists($@"temp\{MaturityViewModel.MaturityAnalysis.ID.ToString()}\{filename}"))
+                {
 
-                LoadImage(file.Path);
-
-                //Helper.Log("filetimer.txt", $"End loading image{file.Path}: {timer.ElapsedMilliseconds} ms" + Environment.NewLine);
+                    try
+                    {
+                        LoadImage($@"temp\{MaturityViewModel.MaturityAnalysis.ID.ToString()}\{filename}");
+                    }
+                    catch (Exception e)
+                    {
+                        try
+                        {
+                            LoadImage(file.Path);
+                        }
+                        catch (Exception ex)
+                        {
+                            ChangingFile = false;
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        LoadImage(file.Path);
+                    }
+                    catch (Exception ex)
+                    {
+                        ChangingFile = false;
+                        return;
+                    }
+                }
 
                 MaturityViewModel.MaturityEditorViewModel.Mode = EditorModeEnum.Measure;
-
-                //Helper.DoAsync(SetNextPicture);
-                //AgeReadingViewModel.AgeReadingStatusbarViewModel.IsFittingImage = true;
             }
             else
             {
-                if(MaturityViewModel.MaturityEditorViewModel.MaturityImage != null) MaturityViewModel.MaturityEditorViewModel.MaturityImage = null;
+                if (MaturityViewModel.MaturityEditorViewModel.MaturityImage != null) MaturityViewModel.MaturityEditorViewModel.MaturityImage = null;
                 if (MaturityViewModel.MaturityEditorViewModel.OriginalImage != null) MaturityViewModel.MaturityEditorViewModel.OriginalImage = null;
             }
 
@@ -676,6 +682,14 @@ namespace SmartDots.ViewModel
             else
             {
                 MaturityViewModel.MaturityView.FileNext.IsEnabled = true;
+            }
+        }
+
+        public void SaveMemoryStreamToFile(MemoryStream stream, string filePath)
+        {
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                stream.WriteTo(fileStream);
             }
         }
 

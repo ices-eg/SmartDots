@@ -83,12 +83,12 @@ namespace SmartDots.ViewModel
                 }
 
 
-                
+
 
 
                 MaturityViewModel.MaturityFileViewModel.MaturityFiles = selectedSample.Files;
 
-                
+
 
                 if (selectedSample.Annotations != null)
                 {
@@ -173,7 +173,7 @@ namespace SmartDots.ViewModel
 
                 List<GridColumn> columns = new List<GridColumn>();
 
-                columns.AddRange(columnNames.Select(columnName => new GridColumn() { FieldName = columnName, AllowSorting = DefaultBoolean.True, Tag = "Dynamic", AllowEditing = DefaultBoolean.False, AllowBestFit = DefaultBoolean.True}));
+                columns.AddRange(columnNames.Select(columnName => new GridColumn() { FieldName = columnName, AllowSorting = DefaultBoolean.True, Tag = "Dynamic", AllowEditing = DefaultBoolean.False, AllowBestFit = DefaultBoolean.True }));
                 foreach (var col in columns)
                 {
                     MaturityViewModel.MaturitySampleView.MaturitySampleGrid.Columns.Add(col);
@@ -279,7 +279,7 @@ namespace SmartDots.ViewModel
                             maturityAnnotations.Add((MaturityAnnotation)Helper.ConvertType(annotation, typeof(MaturityAnnotation)));
                         }
                     }
-                    
+
                     sample.Annotations = maturityAnnotations;
 
                     SelectedSample = sample;
@@ -364,6 +364,39 @@ namespace SmartDots.ViewModel
                 MaturityViewModel.MaturityView.Next.IsEnabled = true;
             }
         }
+
+        public void DownloadImages()
+        {
+            try
+            {
+                if (MaturitySamples.Count == 1 || MaturitySamples.Any(x => x.ID != SelectedSample.ID && (x.Files != null && x.Files.Count > 0)))
+                {
+                    var images = MaturitySamples
+                    .Where(x => x?.Files != null)
+                    .SelectMany(x => x.Files)
+                    .Where(x => x.Path != null)
+                    .Select(x => x.Path)
+                    .ToList();
+
+                    var result = Helper.DownloadImages(MaturityViewModel.MaturityAnalysis.ID, images);
+
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        MaturityViewModel.MaturityView.MainWindowViewModel.ShowSuccessToast("Image Download", result);
+                    }
+                }
+                else
+                {
+                    Helper.ShowWinUIMessageBox("Preloading of images is currently not supported.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception e)
+            {
+                // ignored
+            }
+        }
+
+
 
     }
 }

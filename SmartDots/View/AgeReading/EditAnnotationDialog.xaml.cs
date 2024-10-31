@@ -40,5 +40,10 @@ namespace SmartDots.View
             editAnnotationDialogViewModel.AgeReadingViewModel = ageReadingViewModel;
             if(Global.API.Settings != null) EditAnnotationDialogViewModel.ApplySettings();
         }
+
+        private void WinUIDialogWindow_ContentRendered(object sender, EventArgs e)
+        {
+            CommentEditor.Focus();
+        }
     }
 }

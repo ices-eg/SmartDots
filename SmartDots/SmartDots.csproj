@@ -137,6 +137,10 @@
     <Reference Include="Accord.Statistics, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\packages\Accord.Statistics.3.8.0\lib\net45\Accord.Statistics.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.Charts.v17.1.Core, Version=17.1.17.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\DevExpress 17.1\Components\Bin\Framework\DevExpress.Charts.v17.1.Core.dll</HintPath>
+    </Reference>
     <Reference Include="DevExpress.CodeParser.v17.1, Version=17.1.8.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -155,6 +159,10 @@
     <Reference Include="DevExpress.RichEdit.v17.1.Export, Version=17.1.17.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\DevExpress 17.1\Components\Bin\Framework\DevExpress.RichEdit.v17.1.Export.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Charts.v17.1, Version=17.1.17.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\DevExpress 17.1\Components\Bin\Framework\DevExpress.Xpf.Charts.v17.1.dll</HintPath>
     </Reference>
     <Reference Include="DevExpress.Xpf.Controls.v17.1, Version=17.1.17.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -367,6 +375,8 @@
     <Compile Include="Settings.cs" />
     <Compile Include="ViewModel\AgeReading\AgeReadingBaseViewModel.cs" />
     <Compile Include="ViewModel\AgeReading\AgeReadingSampleViewModel.cs" />
+    <Compile Include="ViewModel\AgeReading\AgeReadingKeyMappingViewModel.cs" />
+    <Compile Include="ViewModel\AgeReading\CustomNotificationViewModel.cs" />
     <Compile Include="ViewModel\AgeReading\SelectAnalysisDialogViewModel.cs" />
     <Compile Include="ViewModel\AgeReading\EditAnnotationDialogViewModel.cs" />
     <Compile Include="ViewModel\AgeReading\AttachSampleDialogViewModel.cs" />
@@ -387,6 +397,9 @@
     <Compile Include="ViewModel\Maturity\MaturitySampleViewModel.cs" />
     <Compile Include="ViewModel\Maturity\MaturityStatusbarViewModel.cs" />
     <Compile Include="ViewModel\Maturity\MaturityViewModel.cs" />
+    <Compile Include="View\AgeReading\AgeReadingKeyMappingView.xaml.cs">
+      <DependentUpon>AgeReadingKeyMappingView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\AgeReading\AgeReadingSampleView.xaml.cs">
       <DependentUpon>AgeReadingSampleView.xaml</DependentUpon>
     </Compile>
@@ -469,7 +482,11 @@
     <Content Include="DefaultMaturityLayout.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\storage.png" />
+    <Resource Include="Resources\keyboard.png" />
     <Resource Include="Resources\circle.png" />
+    <Resource Include="Resources\download.png" />
+    <Resource Include="Resources\csv.png" />
     <Content Include="Resources\falsering.svg" />
     <Resource Include="Resources\go-back-arrow.png" />
     <Resource Include="Resources\WindowButtonClose-Original.png" />
@@ -514,6 +531,10 @@
     <Page Include="Themes\Controls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AgeReading\AgeReadingKeyMappingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\AgeReading\AgeReadingSampleView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -859,32 +880,32 @@
   <ItemGroup>
     <PublishFile Include="DefaultLarvaeLayout.xml">
       <Visible>False</Visible>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="DefaultLayout.xml">
       <Visible>False</Visible>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="DefaultMaturityLayout.xml">
       <Visible>False</Visible>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>

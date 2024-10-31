@@ -16,12 +16,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using DevExpress.Data.Helpers;
+using DevExpress.Internal.WinApi;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.WindowsUI;
 using SmartDots.Helpers;
 using SmartDots.Model;
+using SmartDots.View;
 using Color = System.Windows.Media.Color;
 using ColorConverter = System.Windows.Media.ColorConverter;
 using Image = System.Windows.Controls.Image;
@@ -72,6 +76,7 @@ namespace SmartDots.ViewModel
         private string dotType = "Seawater";
         private string dotShape = "Dot";
         private Tuple<Dot, double> closestDot;
+        private Dictionary<int, Tuple<Action, string, string>> shortcutActions = new Dictionary<int, Tuple<Action, string, string>>();
 
         public object LineColor
         {
@@ -234,7 +239,7 @@ namespace SmartDots.ViewModel
                 RaisePropertyChanged("ActiveCombinedLine");
                 AgeReadingViewModel.AgeReadingView.BrightnessGraph.graphViewer.SetAnnotations(AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations);
                 AgeReadingViewModel.AgeReadingView.RednessGraph.graphViewer.SetAnnotations(AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations);
-                AgeReadingViewModel.AgeReadingView.GrowthGraph.graphViewer.SetAnnotations(AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations);
+                //AgeReadingViewModel.AgeReadingView.GrowthGraph.graphViewer.SetAnnotations(AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations);
             }
         }
 
@@ -648,8 +653,8 @@ namespace SmartDots.ViewModel
             get { return hideLines; }
             set
             {
+                if (hideLines != value) RefreshShapes();
                 hideLines = value;
-                RefreshShapes();
                 RaisePropertyChanged("HideLines");
             }
         }
@@ -735,6 +740,8 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public Dictionary<int, Tuple<Action, string, string>> ShortcutActions { get => shortcutActions; set => shortcutActions = value; }
+
         public AgeReadingEditorViewModel()
         {
             Mode = EditorModeEnum.DrawLine;
@@ -748,7 +755,7 @@ namespace SmartDots.ViewModel
             DotColor = (Color)ColorConverter.ConvertFromString("#FF00FF00");
             DotWidth = 10;
             UndoRedo = new UndoRedo(this);
-            LoadUserPreferences();
+            InitializeShortcuts();
         }
 
         public void CalculateAge()
@@ -827,27 +834,7 @@ namespace SmartDots.ViewModel
             AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = true;
         }
 
-        public void SaveUserPreferences()
-        {
-            try
-            {
-                Properties.Settings.Default.DotColor = DotColor.ToString();
-                Properties.Settings.Default.DotWidth = (int)DotWidth;
-                Properties.Settings.Default.DotShape = DotShape;
-                Properties.Settings.Default.DotType = DotType;
-                Properties.Settings.Default.LineColor = LineColor.ToString();
-                Properties.Settings.Default.LineWidth = (int)LineWidth;
-                Properties.Settings.Default.MeasureColor = MeasureColor.ToString();
-                Properties.Settings.Default.MeasureLineWidth = (int)MeasureLineWidth;
-                Properties.Settings.Default.MeasureFontSize = (int)MeasureFontSize;
-                Properties.Settings.Default.Save();
-            }
-            catch (Exception e)
-            {
-                Helper.ShowWinUIMessageBox("Error saving user preferences", "Error", MessageBoxButton.OK,
-                    MessageBoxImage.Error, e);
-            }
-        }
+
 
         public void UpdateButtons()
         {
@@ -861,47 +848,7 @@ namespace SmartDots.ViewModel
                 AgeReadingViewModel.AgeReadingEditorView.DotButton);
         }
 
-        public void LoadUserPreferences()
-        {
-            try
-            {
-                DotColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.DotColor);
-                DotWidth = Properties.Settings.Default.DotWidth;
-                DotShape = Properties.Settings.Default.DotShape;
-                DotType = Properties.Settings.Default.DotType;
-                LineColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.LineColor);
-                LineWidth = Properties.Settings.Default.LineWidth;
-                MeasureColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.MeasureColor);
-                MeasureLineWidth = Properties.Settings.Default.MeasureLineWidth;
-                MeasureFontSize = Properties.Settings.Default.MeasureFontSize;
-            }
-            catch (Exception e)
-            {
-                Helper.ShowWinUIMessageBox("Error saving user preferences", "Error", MessageBoxButton.OK,
-                    MessageBoxImage.Error, e);
-            }
-        }
 
-        public void RestoreUserPreferences()
-        {
-            try
-            {
-                DotColor = (Color)ColorConverter.ConvertFromString("#FF00FF00");
-                DotWidth = 8;
-                DotShape = "Dot";
-                DotType = "Seawater";
-                LineColor = (Color)ColorConverter.ConvertFromString("#FFFF00FF");
-                LineWidth = 2;
-                MeasureColor = (Color)ColorConverter.ConvertFromString("#FFFF00FF");
-                MeasureLineWidth = 1;
-                MeasureFontSize = 12;
-            }
-            catch (Exception e)
-            {
-                Helper.ShowWinUIMessageBox("Error restoring user preferences", "Error", MessageBoxButton.OK,
-                    MessageBoxImage.Error, e);
-            }
-        }
 
         public void RefreshShapes(bool updategraphs = true)
         {
@@ -1339,7 +1286,7 @@ namespace SmartDots.ViewModel
                     {
                         OtolithImage = ImageManipulator.SetBrightnessContrast(new Bitmap(OriginalImage), Brightness, Contrast);
                     }
-                    AgeReadingViewModel.UpdateGraphs();
+                    AgeReadingViewModel.UpdateGraphs(true, true, false, false);
                 }
             }
             catch (Exception e)
@@ -1834,7 +1781,7 @@ namespace SmartDots.ViewModel
                             if (!ActiveCombinedLine.Equals(closestPoint.Item1.ParentCombinedLine))
                             {
                                 ActiveCombinedLine = closestPoint.Item1.ParentCombinedLine;
-                                AgeReadingViewModel.UpdateGraphs();
+                                AgeReadingViewModel.UpdateGraphs(true, true, false, false);
                             }
 
                             AgeReadingViewModel.AgeReadingView.BrightnessGraph.m_MouseLocationTracker.X =
@@ -2096,6 +2043,13 @@ namespace SmartDots.ViewModel
             AgeReadingViewModel.ToggleGraphs();
         }
 
+        public void KeyActions_Click(object sender, RoutedEventArgs e)
+        {
+            AgeReadingViewModel.AgeReadingKeyMappingView = new AgeReadingKeyMappingView(AgeReadingViewModel);
+            AgeReadingViewModel.AgeReadingKeyMappingViewModel.ToggleEdgeSettings(AgeReadingViewModel.Analysis.ShowEdgeColumn);
+            AgeReadingViewModel.AgeReadingKeyMappingView.ShowDialog();
+        }
+
         public void bReset_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
         {
             Brightness = 0;
@@ -2104,5 +2058,249 @@ namespace SmartDots.ViewModel
         {
             Contrast = 0;
         }
+
+
+        #region shortcuts
+        public void InitializeShortcuts()
+        {
+            ShortcutActions = new Dictionary<int, Tuple<Action, string, string>>()
+            {
+
+                { 1, new Tuple<Action, string, string>(Action1, "Set AQ1 + Select next file", "") },
+                { 2, new Tuple<Action, string, string>(Action2, "Set AQ2 + Select next file", "")},
+                { 3, new Tuple<Action, string, string>(Action3, "Set AQ3 + Select next file", "")},
+                { 4, new Tuple<Action, string, string>(Action4, "Set AQ3__QA + Select next file", "")},
+                { 5, new Tuple<Action, string, string>(Action5, "Set AQ1 + Set Approved + Select next file", "")},
+                { 6, new Tuple<Action, string, string>(Action6, "Set AQ2 + Set Approved + Select next file", "")},
+                { 7, new Tuple<Action, string, string>(Action7, "Set AQ3 + Set Approved + Select next file", "")},
+                { 8, new Tuple<Action, string, string>(Action8, "Set AQ3__QA + Set Approved + Select next file", "")},
+                { 9, new Tuple<Action, string, string>(Action9, "Set AQ1 + Add comment + Select next file", "")},
+                { 10, new Tuple<Action, string, string>(Action10, "Set AQ2 + Add comment + Select next file", "")},
+                { 11, new Tuple<Action, string, string>(Action11, "Set AQ3 + Add comment + Select next file", "")},
+                { 12, new Tuple<Action, string, string>(Action12, "Set AQ3__QA + Add comment + Select next file", "")},
+                { 13, new Tuple<Action, string, string>(Action13, "Set AQ1 + Add comment + Set Approved + Select next file", "")},
+                { 14, new Tuple<Action, string, string>(Action14, "Set AQ2 + Add comment + Set Approved + Select next file", "")},
+                { 15, new Tuple<Action, string, string>(Action15, "Set AQ3 + Add comment + Set Approved + Select next file", "")},
+                { 16, new Tuple<Action, string, string>(Action16, "Set AQ3__QA + Add comment + Set Approved + Select next file", "")},
+                { 17, new Tuple<Action, string, string>(Action17, "Set AQ1 + Set edge: opaque + Set Approved + Select next file", "")},
+                { 18, new Tuple<Action, string, string>(Action18, "Set AQ2 + Set edge: opaque + Set Approved + Select next file", "")},
+                { 19, new Tuple<Action, string, string>(Action19, "Set AQ3 + Set edge: opaque + Set Approved + Select next file", "")},
+                { 20, new Tuple<Action, string, string>(Action20, "Set AQ3__QA + Set edge: opaque + Set Approved + Select next file", "")},
+                { 21, new Tuple<Action, string, string>(Action21, "Set AQ1 + Set edge: translucent + Set Approved + Select next file", "")},
+                { 22, new Tuple<Action, string, string>(Action22, "Set AQ2 + Set edge: translucent + Set Approved + Select next file", "")},
+                { 23, new Tuple<Action, string, string>(Action23, "Set AQ3 + Set edge: translucent + Set Approved + Select next file", "")},
+                { 24, new Tuple<Action, string, string>(Action24, "Set AQ3__QA + Set edge: translucent + Set Approved + Select next file", "")},
+            };
+        }
+
+        public bool SetQualitySubAction(int q)
+        {
+            var annotation = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation;
+            if (annotation == null)
+            {
+                AgeReadingViewModel.AgeReadingView.MainWindowViewModel.ShowErrorToast("Error setting quality", "No annotation currently active");
+
+                return false;
+            }
+
+            var q1 = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.FirstOrDefault(x => new List<string>() { "AQ" + q, "QS" + q }.Contains(x.Code.ToUpper().Trim()));
+
+            if (q == 0){
+                q1 = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.FirstOrDefault(x => new List<string>() { "QA" }.Contains(x.Code.ToUpper().Trim()));
+            }
+
+            
+
+            var result1 = AgeReadingViewModel.AgeReadingAnnotationViewModel.SetQuality(annotation, q1.ID, annotation.QualityID);
+
+            if (result1 == false)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public void ActionGroup1(int qualitycode, int action)
+        {
+            if (!SetQualitySubAction(qualitycode)) return;
+
+            AgeReadingViewModel.AgeReadingFileView.FileList.MoveNextRow();
+            AgeReadingViewModel.AgeReadingView.MainWindowViewModel.ShowSuccessToast("Action complete", ShortcutActions[action].Item2);
+        }
+
+        public void ActionGroup2(int qualitycode, int action)
+        {
+            if (!SetQualitySubAction(qualitycode)) return;
+
+            if (!AgeReadingViewModel.AgeReadingAnnotationViewModel.CanApprove)
+            {
+                Helper.ShowWinUIMessageBox(AgeReadingViewModel.AgeReadingAnnotationViewModel.ApproveAnnotationTooltip, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.Approve();
+
+            AgeReadingViewModel.AgeReadingFileView.FileList.MoveNextRow();
+            AgeReadingViewModel.AgeReadingView.MainWindowViewModel.ShowSuccessToast("Action complete", ShortcutActions[action].Item2);
+        }
+
+        public void ActionGroup3(int qualitycode, int action)
+        {
+            if (!SetQualitySubAction(qualitycode)) return;
+
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.EditAnnotation();
+
+            AgeReadingViewModel.AgeReadingFileView.FileList.MoveNextRow();
+            AgeReadingViewModel.AgeReadingView.MainWindowViewModel.ShowSuccessToast("Action complete", ShortcutActions[action].Item2);
+        }
+
+        public void ActionGroup4(int qualitycode, int action)
+        {
+            if (!SetQualitySubAction(qualitycode)) return;
+
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.EditAnnotation();
+
+            if (!AgeReadingViewModel.AgeReadingAnnotationViewModel.CanApprove)
+            {
+                Helper.ShowWinUIMessageBox(AgeReadingViewModel.AgeReadingAnnotationViewModel.ApproveAnnotationTooltip, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.Approve();
+
+            AgeReadingViewModel.AgeReadingFileView.FileList.MoveNextRow();
+            AgeReadingViewModel.AgeReadingView.MainWindowViewModel.ShowSuccessToast("Action complete", ShortcutActions[action].Item2);
+        }
+
+        public void ActionGroup5(int qualitycode, int action, string edge)
+        {
+            if (!SetQualitySubAction(qualitycode)) return;
+
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.Edge = "Opaque";
+
+            if (!AgeReadingViewModel.AgeReadingAnnotationViewModel.CanApprove)
+            {
+                Helper.ShowWinUIMessageBox(AgeReadingViewModel.AgeReadingAnnotationViewModel.ApproveAnnotationTooltip, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.Approve();
+
+            AgeReadingViewModel.AgeReadingFileView.FileList.MoveNextRow();
+            AgeReadingViewModel.AgeReadingView.MainWindowViewModel.ShowSuccessToast("Action complete", ShortcutActions[action].Item2);
+        }
+
+
+
+        public void Action1()
+        {
+            ActionGroup1(1, 1);
+        }
+        public void Action2()
+        {
+            ActionGroup1(2, 2);
+        }
+        public void Action3()
+        {
+            ActionGroup1(3, 3);
+        }
+
+        public void Action4()
+        {
+            ActionGroup1(0, 4);
+        }
+        public void Action5()
+        {
+            ActionGroup2(1, 5);
+        }
+
+        public void Action6()
+        {
+            ActionGroup2(2, 6);
+        }
+
+        public void Action7()
+        {
+            ActionGroup2(3, 7);
+        }
+        public void Action8()
+        {
+            ActionGroup2(0, 8);
+        }
+        public void Action9()
+        {
+            ActionGroup3(1, 9);
+        }
+        public void Action10()
+        {
+            ActionGroup3(2, 10);
+        }
+        public void Action11()
+        {
+            ActionGroup3(3, 11);
+        }
+        public void Action12()
+        {
+            ActionGroup3(0, 12);
+        }
+
+        public void Action13()
+        {
+            ActionGroup4(1, 13);
+        }
+
+        public void Action14()
+        {
+            ActionGroup4(2, 14);
+        }
+
+        public void Action15()
+        {
+            ActionGroup4(3, 15);
+        }
+        public void Action16()
+        {
+            ActionGroup4(0, 16);
+        }
+
+        public void Action17()
+        {
+            ActionGroup5(1, 17, "Opaque");
+        }
+
+        public void Action18()
+        {
+            ActionGroup5(2, 18, "Opaque");
+        }
+
+        public void Action19()
+        {
+            ActionGroup5(3, 19, "Opaque");
+        }
+        public void Action20()
+        {
+            ActionGroup5(0, 20, "Opaque");
+        }
+        public void Action21()
+        {
+            ActionGroup5(1, 21, "Translucent");
+        }
+
+        public void Action22()
+        {
+            ActionGroup5(2, 22, "Translucent");
+        }
+
+        public void Action23()
+        {
+            ActionGroup5(3, 23, "Translucent");
+        }
+
+        public void Action24()
+        {
+            ActionGroup5(0, 24, "Translucent");
+        }
+        #endregion
     }
 }

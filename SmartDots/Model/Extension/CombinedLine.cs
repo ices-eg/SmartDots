@@ -78,6 +78,7 @@ namespace SmartDots.Model
 
             try
             {
+                if (Points == null) RecalculatePoints();
                 if (Points != null)
                 {
                     foreach (var point in Points)
@@ -100,6 +101,7 @@ namespace SmartDots.Model
 
             try
             {
+                if (Points == null) RecalculatePoints();
                 if (Points != null)
                 {
                     foreach (var point in Points)

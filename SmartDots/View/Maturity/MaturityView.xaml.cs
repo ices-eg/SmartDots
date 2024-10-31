@@ -81,6 +81,11 @@ namespace SmartDots.View
 
         }
 
+        private void Download_Click(object sender, RoutedEventArgs e)
+        {
+            MaturityViewModel.MaturitySampleViewModel.DownloadImages();
+        }
+
 
         //private void DockLayoutManager_OnDockOperationCompleted(object sender, DockOperationCompletedEventArgs e)
         //{

@@ -11,8 +11,10 @@
         xmlns:userControls="clr-namespace:SmartDots.View.UserControls"
         xmlns:graph="clr-namespace:AgeReading.Graph"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
              xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts" 
              mc:Ignorable="d"
         SnapsToDevicePixels="True"
         TextOptions.TextFormattingMode="Display"
@@ -22,7 +24,7 @@
         xmlns:SmartDots="clr-namespace:SmartDots"
         dx:DXSplashScreen.SplashScreenType="{x:Type SmartDots:SmartdotsSplashScreen}" 
     -->
-    
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -31,32 +33,39 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
+
+
     <UserControl.DataContext>
         <viewModel:AgeReadingViewModel/>
     </UserControl.DataContext>
 
-        <Grid x:Name="ModalDialogParent">
+    <Grid x:Name="ModalDialogParent">
 
-            <Grid.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform />
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Grid.RenderTransform>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+        <Grid.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform/>
+                <SkewTransform/>
+                <RotateTransform />
+                <TranslateTransform/>
+            </TransformGroup>
+        </Grid.RenderTransform>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-            <dxdo:DockLayoutManager Name="DockLayoutManager" FloatingMode="Desktop" EnableWin32Compatibility="True" Background="White" Grid.Row="0">
-                
-                <dxdo:LayoutGroup Orientation="Horizontal" Padding="0" BorderThickness="0" Margin="0,5,0,0">
-                    <dxdo:LayoutGroup Orientation="Vertical" ItemWidth="120*" x:Name="DockingPanels" Margin="2,0">
-                        <dxdo:LayoutPanel x:Name="OtolithPanel" Caption="Sample list" ItemWidth="Auto" ItemHeight="1*" AllowClose="False" AllowHide="False" AllowMove="True" MinWidth="100">
+        <dxdo:DockLayoutManager Name="DockLayoutManager" FloatingMode="Desktop" EnableWin32Compatibility="True" Background="White" Grid.Row="0">
+
+            <dxdo:LayoutGroup Orientation="Horizontal" Padding="0" BorderThickness="0" Margin="0,5,0,0">
+                <dxdo:LayoutGroup Orientation="Vertical" ItemWidth="120*" x:Name="DockingPanels" Margin="2,0">
+                    <dxdo:LayoutPanel x:Name="OtolithPanel" Caption="Sample list" ItemWidth="Auto" ItemHeight="1*" AllowClose="False" AllowHide="False" AllowMove="True" MinWidth="100">
                         <dxdo:LayoutPanel.ControlBoxContent>
                             <DockPanel>
+                                <Button Style="{StaticResource SDWhiteButtonBase}" x:Name="Download" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Download all images" Click="Download_Click" RenderTransformOrigin="136.612,285.847">
+                                    <Image Source="../../Resources/download.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5">
+
+                                    </Image>
+                                </Button>
                                 <Button Style="{StaticResource SDWhiteButtonBase}" x:Name="Previous" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Previous File" Click="Previous_Click" >
                                     <Image Source="../../Resources/icons8-arrow-100.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5">
                                         <Image.RenderTransform>
@@ -103,12 +112,12 @@
                                     </dxb:PopupMenu.Items>
                                 </dxb:PopupMenu>-->
                             </DockPanel>
-                            
+
                             <!--<Image Source="../../Resources/settings-16.png" Width="16" Height="16" HorizontalAlignment="Right" />-->
                         </dxdo:LayoutPanel.ControlBoxContent>
                         <ContentControl Content="{Binding AgeReadingFileView}"></ContentControl>
-                        </dxdo:LayoutPanel>
-                        <dxdo:LayoutGroup ItemWidth="Auto" ItemHeight="0.5*" Orientation="Horizontal" Grid.Row="2">
+                    </dxdo:LayoutPanel>
+                    <dxdo:LayoutGroup ItemWidth="Auto" ItemHeight="0.5*" Orientation="Horizontal" Grid.Row="2">
                         <!--<dxdo:LayoutPanel x:Name="Adjustments" ItemHeight="155" Caption="Adjustments" AllowDock="True" AllowMaximize="False" AllowSizing="True" CloseCommand="{Binding CloseToolsetPanelCommand}" AllowHide="False" AllowMove="True" >
                                 <StackPanel Orientation="Vertical" Margin="10,0,10,0" Height="115" HorizontalAlignment="Stretch">
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
@@ -122,43 +131,95 @@
                                 </StackPanel>
                             </dxdo:LayoutPanel>-->
                         <dxdo:LayoutPanel x:Name="SamplePanel" Caption="{Binding SampleAlias}" ItemWidth="Auto" ItemHeight="0.30*" AllowClose="False" AllowHide="False" AllowMove="True">
-                                <ContentControl Content="{Binding AgeReadingSampleView}"/>
-                            </dxdo:LayoutPanel>
-                        </dxdo:LayoutGroup>
-                    <dxdo:LayoutPanel x:Name="AnnotationPanel" Caption="Annotations" ItemWidth="Auto" ItemHeight="0.5*" AllowClose="False" AllowHide="False" AllowMove="True">
-                            <ContentControl Content="{Binding AgeReadingAnnotationView}"></ContentControl>
+                            <ContentControl Content="{Binding AgeReadingSampleView}"/>
                         </dxdo:LayoutPanel>
-                        <dxdo:TabbedGroup ItemWidth="*" ItemHeight="0.5*" Grid.Row="2" SelectedTabIndex="0">
-                        <dxdo:LayoutPanel x:Name="BrightnessPanel" TabIndex="1" Caption="Brightness" CloseCommand="{Binding CloseBrightnessPanelCommand}" Visibility="Visible" AllowClose="False" AllowHide="False" AllowMove="True">
-                                <WindowsFormsHost x:Name="WinFormBrightness">
-                                    <graph:curvePanel x:Name="BrightnessGraph" x:FieldModifier="public"/>
-                                </WindowsFormsHost>
-                            </dxdo:LayoutPanel>
-                        <dxdo:LayoutPanel x:Name="RednessPanel" TabIndex="2" Caption="Redness" Visibility="Visible" CloseCommand="{Binding CloseRednessPanelCommand}" AllowClose="False" AllowHide="False" AllowMove="True">
-                                <WindowsFormsHost x:Name="WinFormRedness">
-                                    <graph:curvePanel x:Name="RednessGraph" x:FieldModifier="public"/>
-                                </WindowsFormsHost>
-                            </dxdo:LayoutPanel>
-                        <dxdo:LayoutPanel x:Name="GrowthPanel" Caption="Growth" Visibility="Visible" CloseCommand="{Binding CloseGrowthPanelCommand}" AllowClose="False" AllowHide="False" AllowMove="True">
+                    </dxdo:LayoutGroup>
+                    <dxdo:LayoutPanel x:Name="AnnotationPanel" Caption="Annotations" ItemWidth="Auto" ItemHeight="0.5*" AllowClose="False" AllowHide="False" AllowMove="True">
+                        <ContentControl Content="{Binding AgeReadingAnnotationView}"></ContentControl>
+                    </dxdo:LayoutPanel>
+                    <dxdo:TabbedGroup ItemWidth="*" ItemHeight="0.5*" Grid.Row="2" SelectedTabIndex="3" AllowMove="True" AllowDrag="True">
+                        <dxdo:LayoutPanel x:Name="BrightnessPanel" TabIndex="1" Caption="Brightness" CloseCommand="{Binding CloseBrightnessPanelCommand}" Visibility="Visible" AllowClose="False" AllowHide="False" AllowMove="True" AllowDrag="True" GotFocus="BrightnessPanel_GotFocus" >
+                            <WindowsFormsHost x:Name="WinFormBrightness">
+                                <graph:curvePanel x:Name="BrightnessGraph" x:FieldModifier="public"/>
+                            </WindowsFormsHost>
+                        </dxdo:LayoutPanel>
+                        <dxdo:LayoutPanel x:Name="RednessPanel" TabIndex="2" Caption="Redness" Visibility="Visible" CloseCommand="{Binding CloseRednessPanelCommand}" AllowClose="False" AllowHide="False" AllowMove="True" AllowDrag="True" GotFocus="RednessPanel_GotFocus">
+                            <WindowsFormsHost x:Name="WinFormRedness">
+                                <graph:curvePanel x:Name="RednessGraph" x:FieldModifier="public"/>
+                            </WindowsFormsHost>
+                        </dxdo:LayoutPanel>
+                        <!--<dxdo:LayoutPanel x:Name="GrowthPanel" TabIndex="3" Caption="Growth" Visibility="Visible" CloseCommand="{Binding CloseGrowthPanelCommand}" AllowClose="False" AllowHide="False" AllowMove="True">
                                 <WindowsFormsHost x:Name="WinFormGrowth" x:FieldModifier="public">
                                     <graph:curvePanel x:Name="GrowthGraph"/>
                                 </WindowsFormsHost>
-                            </dxdo:LayoutPanel>
-                        </dxdo:TabbedGroup>
-                    </dxdo:LayoutGroup>
-                    <dxdo:DocumentPanel x:Name="paneDocument1" Caption="Document" ItemWidth="300*" Padding="2,0" >
-                        <DockPanel >
-                            <DockPanel x:Name="StatusBarPlaceholder" DockPanel.Dock="Bottom">
-                                <ContentControl Content="{Binding AgeReadingStatusbarView}"></ContentControl>
-                            </DockPanel>
-                            <DockPanel Background="#FFA0A0A0"  >
-                                <ContentControl Content="{Binding AgeReadingEditorView}"></ContentControl>
-                            </DockPanel>
-                        </DockPanel>
-                    </dxdo:DocumentPanel>
+                            </dxdo:LayoutPanel>-->
+                        <dxdo:LayoutPanel x:Name="GrowthPanel" CaptionHorizontalAlignment="Stretch" TabIndex="3" Caption="Growth" Visibility="Visible" CloseCommand="{Binding CloseGrowthPanelCommand}" AllowClose="False" AllowHide="False" AllowMove="True" AllowDrag="True" GotFocus="GrowthPanel_GotFocus">
+                            <dxdo:LayoutPanel.ControlBoxContent>
+                                <Grid HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Style="{StaticResource SDWhiteButtonBase}" Grid.Column="0" x:Name="CsvDownload" Height="21" Width="22" Margin="0,0,10,0" ToolTip="Download graph data" Click="CsvDownload_Click">
+                                        <Image Source="../../Resources/csv.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5">
+
+                                        </Image>
+                                    </Button>
+                                    <dxe:ComboBoxEdit Name="GrowthAllScale" Grid.Column="1" Width="120" IsTextEditable="False" Margin="0,0,10,0" EditValueChanged="YAxis_EditValueChanged">
+                                        <dxe:ComboBoxEditItem Name="Px">pixels</dxe:ComboBoxEditItem>
+                                        <dxe:ComboBoxEditItem Name="Mm">mm (use scale)</dxe:ComboBoxEditItem>
+                                    </dxe:ComboBoxEdit>
+                                    <dxe:ComboBoxEdit Name="GrowthAllMode" Grid.Column="2" Width="200" IsTextEditable="False" EditValueChanged="GrowthAllMode_EditValueChanged" >
+                                        <dxe:ComboBoxEditItem Name="SelectedAnnotations">Selected Annotation(s)</dxe:ComboBoxEditItem>
+                                        <dxe:ComboBoxEditItem Name="OwnAnnotations">Own Annotations (all samples)</dxe:ComboBoxEditItem>
+                                        <dxe:ComboBoxEditItem Name="OwnAnnotationsA">Own Annotations (all samples) - Aggregated</dxe:ComboBoxEditItem>
+                                        <dxe:ComboBoxEditItem Name="AllAnnotations">All Annotations (all samples)</dxe:ComboBoxEditItem>
+                                        <dxe:ComboBoxEditItem Name="AllAnnotationsA">All Annotations (all samples) - Aggregated</dxe:ComboBoxEditItem>
+                                    </dxe:ComboBoxEdit>
+                                </Grid>
+                                <!--<StackPanel Orientation="Horizontal" > 
+                                    --><!--<Button Style="{StaticResource SDWhiteButtonBase}" x:Name="test" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Previous File" Click="Previous_Click" >
+                                        <Image Source="../../Resources/icons8-arrow-100.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5">
+                                            <Image.RenderTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform/>
+                                                    <SkewTransform/>
+                                                    <RotateTransform Angle="270"/>
+                                                    <TranslateTransform/>
+                                                </TransformGroup>
+                                            </Image.RenderTransform>
+                                        </Image>
+                                    </Button>--><!--
+                                    
+                                    
+
+                                </StackPanel>-->
+
+                                <!--<Image Source="../../Resources/settings-16.png" Width="16" Height="16" HorizontalAlignment="Right" />-->
+                            </dxdo:LayoutPanel.ControlBoxContent>
+                            <Grid>
+                                <DockPanel Name="GrowthGraphPanel">
+
+                                </DockPanel>
+                            </Grid>
+                            
+                        </dxdo:LayoutPanel>
+                    </dxdo:TabbedGroup>
                 </dxdo:LayoutGroup>
+                <dxdo:DocumentPanel x:Name="paneDocument1" Caption="Document" ItemWidth="300*" Padding="2,0">
+                    <DockPanel >
+                        <DockPanel x:Name="StatusBarPlaceholder" DockPanel.Dock="Bottom">
+                            <ContentControl Content="{Binding AgeReadingStatusbarView}"></ContentControl>
+                        </DockPanel>
+                        <DockPanel Background="#FFA0A0A0"  >
+                            <ContentControl Content="{Binding AgeReadingEditorView}"></ContentControl>
+                        </DockPanel>
+                    </DockPanel>
+                </dxdo:DocumentPanel>
+            </dxdo:LayoutGroup>
 
-            </dxdo:DockLayoutManager>
+        </dxdo:DockLayoutManager>
 
-        </Grid>
+    </Grid>
 </UserControl>

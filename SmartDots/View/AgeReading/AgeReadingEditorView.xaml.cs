@@ -1,5 +1,8 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using SmartDots.Helpers;
 using SmartDots.ViewModel;
 
 namespace SmartDots.View
@@ -75,6 +78,47 @@ namespace SmartDots.View
         private void EditDotContextMenu_Opened(object sender, System.EventArgs e)
         {
             AgeReadingEditorViewModel.IsContextmenuOpen = true;
+        }
+
+        private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                string message = "";
+
+                // Here I'm assuming every requested action modifies the annotation, so I'm checking if the user can edit the annotation
+                var canEdit = AgeReadingEditorViewModel.AgeReadingViewModel.AgeReadingAnnotationViewModel.CanEdit;
+                if (!canEdit)
+                {
+                    message = AgeReadingEditorViewModel.AgeReadingViewModel.AgeReadingAnnotationViewModel.EditAnnotationTooltip;
+                    Helper.ShowWinUIMessageBox(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (!AgeReadingEditorViewModel.ShortcutActions.Any(x => x.Value.Item3 == e.Key.ToString())) return;
+                var shortcutAction = AgeReadingEditorViewModel.ShortcutActions.FirstOrDefault(x => x.Value.Item3 == e.Key.ToString());
+                var action = shortcutAction.Value.Item1;
+
+                if (action == null) return;
+
+                action.Invoke();
+
+                Tracker.Visibility = Visibility.Hidden;
+
+
+                //if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt) // Is Alt key pressed
+                //{
+                //if (Keyboard.IsKeyDown(Key.D1) || Keyboard.IsKeyDown(Key.NumPad1))
+                //{
+                // do something here
+                // Helper.ShowWinUIMessageBox("Key pressed: " + e.Key.ToString(), "Key Pressed", MessageBoxButton.OK, MessageBoxImage.Information);
+                //}
+                //}
+            }
+            catch (System.Exception ex)
+            {
+
+            }
         }
     }
 }
