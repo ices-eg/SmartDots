@@ -19,8 +19,9 @@ namespace WebAPI
          config.Routes.MapHttpRoute(name: "GetSettings", routeTemplate: "GetSettings", defaults: new { controller = "GetSettings" });
          config.Routes.MapHttpRoute(name: "GetReadabilityQualities", routeTemplate: "GetReadabilityQualities", defaults: new { controller = "GetReadabilityQualities" });
          config.Routes.MapHttpRoute(name: "getanalysesdynamic", routeTemplate: "getanalysesdynamic", defaults: new { controller = "getanalysesdynamic" });
-         config.Routes.MapHttpRoute(name: "GetAnalysis", routeTemplate: "GetAnalysis", defaults: new { controller = "GetAnalysis" });
-         config.Routes.MapHttpRoute(name: "GetFiles", routeTemplate: "GetFiles", defaults: new { controller = "GetFiles" });
+            config.Routes.MapHttpRoute(name: "GetAnalysis", routeTemplate: "GetAnalysis", defaults: new { controller = "GetAnalysis" });
+            config.Routes.MapHttpRoute(name: "GetVocab", routeTemplate: "GetVocab", defaults: new { controller = "GetVocab" });
+            config.Routes.MapHttpRoute(name: "GetFiles", routeTemplate: "GetFiles", defaults: new { controller = "GetFiles" });
          config.Routes.MapHttpRoute(name: "GetFile", routeTemplate: "GetFile", defaults: new { controller = "GetFile" });
          config.Routes.MapHttpRoute(name: "getfilewithsampleandannotations", routeTemplate: "getfilewithsampleandannotations", defaults: new { controller = "getfilewithsampleandannotations" });
          config.Routes.MapHttpRoute(name: "addannotation", routeTemplate: "addannotation", defaults: new { controller = "addannotation" });
