@@ -12,7 +12,7 @@ namespace WebAPI.App_Code
       public string SampleNumber { get; set; }
       public Guid? SampleId { get; set; }
       public int AnnotationCount { get; set; }
-
+      public string Path { get; set; }
       public bool IsReadOnly { get; set; }
       public decimal? Scale { get; set; }
       public List<DtoAnnotation> Annotations { get; set; }

@@ -7,8 +7,38 @@ namespace WebAPI.App_Code
 {
    public class RunDBOperation
    {
-      public static string connectionString = "Data Source=sql06.ices.local;Initial Catalog=smartdots;Integrated Security=True;";
+      public static string connectionString = "Data Source=sql10.ices.local;Initial Catalog=smartdots;Integrated Security=True;";
 
+
+      /// <summary>
+      /// This function will help to return specific results where only one row is needed
+      /// </summary>
+      /// <param name="strSQL"></param>
+      /// <returns></returns>
+      public static string executeScalarQuery(string strSQL)
+      {
+         try
+         {
+            //string strSmartDots connection string: "Data Source=sql10.ices.local;Initial Catalog=SmartDots;Integrated Security=True";
+            //String ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SmartDotsCS"].ConnectionString;
+            using (SqlConnection cn = new SqlConnection(connectionString))
+            {
+               SqlDataAdapter da = new SqlDataAdapter();
+               SqlCommand cmd = new SqlCommand();
+               cn.Open();
+               cmd.Connection = cn;
+               cmd.CommandText = strSQL;
+               string strResult = (string)cmd.ExecuteScalar();
+               return strResult;
+            }
+         }
+         catch (Exception exp)
+         {
+            String a = exp.Message.ToString();
+         }
+
+         return null;
+      }
 
       public static int intExecuteScalarQuery(string strSQL)
       {
