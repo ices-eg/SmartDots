@@ -22,6 +22,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Annotations;
 using System.Threading.Tasks;
 using System.Text;
+using System.Windows.Controls;
 
 namespace SmartDots.ViewModel
 {
@@ -35,8 +36,8 @@ namespace SmartDots.ViewModel
         private bool firstLoad = true;
         private string headerInfo;
         private string sampleAlias;
-        private string growthAllMode = "Own Annotations (all samples)";
-        private string growthAllScale = "mm (use scale)";
+        private string growthAllMode = "Selected Annotations";
+        private string growthAllScale = "pixels";
 
         private Analysis analysis;
         private ChartControl chartControl;
@@ -175,6 +176,15 @@ namespace SmartDots.ViewModel
             set
             {
                 growthAllMode = value;
+                try
+                {
+                    AgeReadingView.GrowthAllMode.EditValue = value;
+                }
+                catch (Exception)
+                {
+
+                }
+                
                 UpdateGraphs(false, false, false, true);
                 RaisePropertyChanged("GrowthAllMode");
             }
@@ -186,6 +196,14 @@ namespace SmartDots.ViewModel
             set
             {
                 growthAllScale = value;
+                try
+                {
+                    AgeReadingView.GrowthAllScale.EditValue = value;
+                }
+                catch (Exception)
+                {
+
+                }
                 UpdateGraphs(false, false, false, true);
                 RaisePropertyChanged("GrowthAllScale");
             }
@@ -504,15 +522,17 @@ namespace SmartDots.ViewModel
             bool aggregate = GrowthAllMode.Contains("Aggregated");
             string legendText1 = "Own";
             string legendText2 = "Other";
-            if (GrowthAllMode == "Own Annotations (all samples)")
+            bool missingCurves = false;
+
+            if (GrowthAllMode.Contains("Own Annotations (all samples)"))
             {
                 legendText1 = "Current sample";
                 legendText2 = "Other samples";
             }
-            if (aggregate)
-            {
-                legendText1 = "Selected Annotations";
-            }
+            //if (aggregate)
+            //{
+            //    legendText1 = "Selected Annotations";
+            //}
             chart.Legend.CustomItems.Add(new CustomLegendItem()
             {
                 Text = legendText1,
@@ -581,17 +601,28 @@ namespace SmartDots.ViewModel
 
             var drawnAnnotations = new List<Annotation>();
 
+
             foreach (var file in AgeReadingFileViewModel.Files)
             {
-                if (GrowthAllScale == "mm (use scale)" && (file.Scale == 0 || file.Scale == null)) continue;
                 var annotations = allAnnotations.Where(x => x.FileID == file.ID).ToList();
+
+                
                 if (GrowthAllMode == "Selected Annotation(s)")
                 {
                     annotations = annotations.Where(x => AgeReadingAnnotationViewModel.SelectedAnnotations.Select(y => y.ID).Contains(x.ID)).ToList();
                 }
-                else if (GrowthAllMode == "Own Annotations (all samples)")
+                else if (GrowthAllMode.Contains("Own Annotations (all samples)"))
                 {
                     annotations = annotations.Where(x => x.LabTechnician == Global.API.CurrentUser.AccountName).ToList();
+                }
+
+                if (GrowthAllScale == "mm (use scale)" && (file.Scale == 0 || file.Scale == null))
+                {
+                    if (annotations.Any())
+                    {
+                        missingCurves = true;
+                    }
+                    continue;
                 }
 
                 drawnAnnotations.AddRange(annotations);
@@ -602,19 +633,10 @@ namespace SmartDots.ViewModel
             {
                 chart.Legend.CustomItems.Add(new CustomLegendItem()
                 {
-                    Text = "Max Other",
-                    MarkerBrush = new SolidColorBrush(Color.FromRgb(255, 0, 0))
+                    Text = "Aggregated Other (min, avg, max)",
+                    MarkerBrush = blueBrush
                 });
-                chart.Legend.CustomItems.Add(new CustomLegendItem()
-                {
-                    Text = "Avg Other",
-                    MarkerBrush = new SolidColorBrush(Color.FromRgb(0, 255, 0))
-                });
-                chart.Legend.CustomItems.Add(new CustomLegendItem()
-                {
-                    Text = "Min Other",
-                    MarkerBrush = new SolidColorBrush(Color.FromRgb(0, 0, 255))
-                });
+                
             }
             else
             {
@@ -638,7 +660,7 @@ namespace SmartDots.ViewModel
                     LineStyle = new LineStyle() { Thickness = 2 },
                     DisplayName = file.Filename + " | " + annotation.LabTechnician,
                     Brush = blueBrush,
-                    MarkerVisible = true,
+                    MarkerVisible = false,
                 };
 
                 if (
@@ -651,7 +673,11 @@ namespace SmartDots.ViewModel
                 }
                 else if (aggregate)
                 {
-                    if(selectedAnnotations.Any(x => x.ID == annotation.ID))
+                    if(GrowthAllMode.Contains("Own Annotations (all samples) - Aggregated") && AgeReadingFileViewModel.SelectedFile.ID == annotation.FileID)
+                    {
+                        series.Brush = orangeBrush;
+                    }
+                    else if(GrowthAllMode.Contains("All Annotations (all samples) - Aggregated") && annotation.LabTechnician == Global.API.CurrentUser.AccountName)
                     {
                         series.Brush = orangeBrush;
                     }
@@ -704,77 +730,81 @@ namespace SmartDots.ViewModel
                         values.Add(lineGrowth);
                     }
                 }
-                if (!values.Any()) return;
-                var maxCount = values.Max(x => x.Count);
-
-                List<decimal> maxValues = new List<decimal>() { 0 };
-                List<decimal> minValues = new List<decimal>() { 0 };
-                List<decimal> avgValues = new List<decimal>() { 0 };
-                for (int i = 1; i < maxCount; i++)
+                if (values.Any())
                 {
-                    // idea: also save the annotation and user for the max and min values
-                    decimal maxVal = values.FirstOrDefault(x => x.Count == maxCount)[i];
-                    decimal minVal = values.FirstOrDefault(x => x.Count == maxCount)[i];
-                    decimal sumVal = 0;
-                    int count = 0;
-                    for (int j = 0; j < values.Count; j++)
+                    var maxCount = values.Max(x => x.Count);
+
+                    List<decimal> maxValues = new List<decimal>() { 0 };
+                    List<decimal> minValues = new List<decimal>() { 0 };
+                    List<decimal> avgValues = new List<decimal>() { 0 };
+                    for (int i = 1; i < maxCount; i++)
                     {
-                        if (values[j].Count > i)
+                        // idea: also save the annotation and user for the max and min values
+                        decimal maxVal = values.FirstOrDefault(x => x.Count == maxCount)[i];
+                        decimal minVal = values.FirstOrDefault(x => x.Count == maxCount)[i];
+                        decimal sumVal = 0;
+                        int count = 0;
+                        for (int j = 0; j < values.Count; j++)
                         {
-                            if (values[j][i] > maxVal) maxVal = values[j][i];
-                            if (values[j][i] < minVal) minVal = values[j][i];
-                            sumVal += values[j][i];
-                            count++;
+                            if (values[j].Count > i)
+                            {
+                                if (values[j][i] > maxVal) maxVal = values[j][i];
+                                if (values[j][i] < minVal) minVal = values[j][i];
+                                sumVal += values[j][i];
+                                count++;
+                            }
                         }
+                        maxValues.Add(maxVal);
+                        minValues.Add(minVal);
+                        avgValues.Add(sumVal / count);
+                        //series.Points.Add(new SeriesPoint(i.ToString(), Math.Round((double)values[i], 2)));
                     }
-                    maxValues.Add(maxVal);
-                    minValues.Add(minVal);
-                    avgValues.Add(sumVal / count);
-                    //series.Points.Add(new SeriesPoint(i.ToString(), Math.Round((double)values[i], 2)));
+
+                    var maxSeries = new LineSeries2D
+                    {
+                        LineStyle = new LineStyle() { Thickness = 2 },
+                        DisplayName = "Max Other",
+                        Brush = blueBrush,
+                        MarkerVisible = false,
+                    };
+
+                    for (int i = 0; i < maxValues.Count; i++)
+                    {
+                        maxSeries.Points.Add(new SeriesPoint(i.ToString(), Math.Round((double)maxValues[i], 2)));
+                    }
+
+                    var minSeries = new LineSeries2D
+                    {
+                        LineStyle = new LineStyle() { Thickness = 2 },
+                        DisplayName = "Min Other",
+                        Brush = blueBrush,
+                        MarkerVisible = false,
+                    };
+
+                    for (int i = 0; i < minValues.Count; i++)
+                    {
+                        minSeries.Points.Add(new SeriesPoint(i.ToString(), Math.Round((double)minValues[i], 2)));
+                    }
+
+                    var avgSeries = new LineSeries2D
+                    {
+                        LineStyle = new LineStyle() { Thickness = 2 },
+                        DisplayName = "Avg Other",
+                        Brush = blueBrush,
+                        MarkerVisible = false,
+
+                    };
+
+                    for (int i = 0; i < avgValues.Count; i++)
+                    {
+                        avgSeries.Points.Add(new SeriesPoint(i.ToString(), Math.Round((double)avgValues[i], 2)));
+                    }
+
+                    diagram.Series.Add(maxSeries);
+                    diagram.Series.Add(avgSeries);
+                    diagram.Series.Add(minSeries);
                 }
-
-                var maxSeries = new LineSeries2D
-                {
-                    LineStyle = new LineStyle() { Thickness = 2 },
-                    DisplayName = "Max Other",
-                    Brush = new SolidColorBrush(Color.FromRgb(255, 0, 0)),
-                    MarkerVisible = true,
-                };
-
-                for (int i = 0; i < maxValues.Count; i++)
-                {
-                    maxSeries.Points.Add(new SeriesPoint(i.ToString(), Math.Round((double)maxValues[i], 2)));
-                }
-
-                var minSeries = new LineSeries2D
-                {
-                    LineStyle = new LineStyle() { Thickness = 2 },
-                    DisplayName = "Min Other",
-                    Brush = new SolidColorBrush(Color.FromRgb(0, 0, 255)),
-                    MarkerVisible = true,
-                };
-
-                for (int i = 0; i < minValues.Count; i++)
-                {
-                    minSeries.Points.Add(new SeriesPoint(i.ToString(), Math.Round((double)minValues[i], 2)));
-                }
-
-                var avgSeries = new LineSeries2D
-                {
-                    LineStyle = new LineStyle() { Thickness = 2 },
-                    DisplayName = "Avg Other",
-                    Brush = new SolidColorBrush(Color.FromRgb(0, 255, 0)),
-                    MarkerVisible = true,
-                };
-
-                for (int i = 0; i < avgValues.Count; i++)
-                {
-                    avgSeries.Points.Add(new SeriesPoint(i.ToString(), Math.Round((double)avgValues[i], 2)));
-                }
-
-                diagram.Series.Add(maxSeries);
-                diagram.Series.Add(avgSeries);
-                diagram.Series.Add(minSeries);
+                
             }
 
 
@@ -789,6 +819,18 @@ namespace SmartDots.ViewModel
             chartControl = chart;
 
             AgeReadingView.GrowthGraphPanel.Children.Clear();
+
+            if (missingCurves)
+            {
+                StackPanel panel = new StackPanel();
+                panel.Height = 30;
+                panel.Children.Add(new TextBlock() { Text = "WARNING: Some curves cannot be displayed due to a missing scale", FontSize = 14, TextAlignment = TextAlignment.Center, Margin = new Thickness(6), FontWeight = FontWeights.Bold });
+                DockPanel.SetDock(panel, Dock.Top);
+                panel.Background = new SolidColorBrush(Colors.Yellow);
+                AgeReadingView.GrowthGraphPanel.Children.Add(panel);
+            }
+
+            DockPanel.SetDock(chart, Dock.Bottom);
             AgeReadingView.GrowthGraphPanel.Children.Add(chart);
         }
 
@@ -1020,24 +1062,11 @@ namespace SmartDots.ViewModel
                 Properties.Settings.Default.MeasureColor = AgeReadingEditorViewModel.MeasureColor.ToString();
                 Properties.Settings.Default.MeasureLineWidth = (int)AgeReadingEditorViewModel.MeasureLineWidth;
                 Properties.Settings.Default.MeasureFontSize = (int)AgeReadingEditorViewModel.MeasureFontSize;
-                Properties.Settings.Default.AgeReadingKeyAction1 = AgeReadingEditorViewModel.ShortcutActions[1].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction2 = AgeReadingEditorViewModel.ShortcutActions[2].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction3 = AgeReadingEditorViewModel.ShortcutActions[3].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction4 = AgeReadingEditorViewModel.ShortcutActions[4].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction5 = AgeReadingEditorViewModel.ShortcutActions[5].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction6 = AgeReadingEditorViewModel.ShortcutActions[6].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction7 = AgeReadingEditorViewModel.ShortcutActions[7].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction8 = AgeReadingEditorViewModel.ShortcutActions[8].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction9 = AgeReadingEditorViewModel.ShortcutActions[9].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction10 = AgeReadingEditorViewModel.ShortcutActions[10].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction11 = AgeReadingEditorViewModel.ShortcutActions[11].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction12 = AgeReadingEditorViewModel.ShortcutActions[12].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction13 = AgeReadingEditorViewModel.ShortcutActions[13].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction14 = AgeReadingEditorViewModel.ShortcutActions[14].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction15 = AgeReadingEditorViewModel.ShortcutActions[15].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction16 = AgeReadingEditorViewModel.ShortcutActions[16].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction17 = AgeReadingEditorViewModel.ShortcutActions[17].Item3;
-                Properties.Settings.Default.AgeReadingKeyAction18 = AgeReadingEditorViewModel.ShortcutActions[18].Item3;
+                for (int i = 1; i <= 24; i++)
+                {
+                    Properties.Settings.Default[$"AgeReadingKeyAction{i}"] = AgeReadingEditorViewModel.ShortcutActions[i].Item3;
+                }
+
                 Properties.Settings.Default.GrowthAllMode = GrowthAllMode;
                 Properties.Settings.Default.GrowthAllScale = GrowthAllScale;
                 Properties.Settings.Default.Save();
@@ -1062,24 +1091,14 @@ namespace SmartDots.ViewModel
                 AgeReadingEditorViewModel.MeasureColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.MeasureColor);
                 AgeReadingEditorViewModel.MeasureLineWidth = Properties.Settings.Default.MeasureLineWidth;
                 AgeReadingEditorViewModel.MeasureFontSize = Properties.Settings.Default.MeasureFontSize;
-                AgeReadingEditorViewModel.ShortcutActions[1] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[1].Item1, AgeReadingEditorViewModel.ShortcutActions[1].Item2, Properties.Settings.Default.AgeReadingKeyAction1);
-                AgeReadingEditorViewModel.ShortcutActions[2] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[2].Item1, AgeReadingEditorViewModel.ShortcutActions[2].Item2, Properties.Settings.Default.AgeReadingKeyAction2);
-                AgeReadingEditorViewModel.ShortcutActions[3] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[3].Item1, AgeReadingEditorViewModel.ShortcutActions[3].Item2, Properties.Settings.Default.AgeReadingKeyAction3);
-                AgeReadingEditorViewModel.ShortcutActions[4] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[4].Item1, AgeReadingEditorViewModel.ShortcutActions[4].Item2, Properties.Settings.Default.AgeReadingKeyAction4);
-                AgeReadingEditorViewModel.ShortcutActions[5] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[5].Item1, AgeReadingEditorViewModel.ShortcutActions[5].Item2, Properties.Settings.Default.AgeReadingKeyAction5);
-                AgeReadingEditorViewModel.ShortcutActions[6] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[6].Item1, AgeReadingEditorViewModel.ShortcutActions[6].Item2, Properties.Settings.Default.AgeReadingKeyAction6);
-                AgeReadingEditorViewModel.ShortcutActions[7] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[7].Item1, AgeReadingEditorViewModel.ShortcutActions[7].Item2, Properties.Settings.Default.AgeReadingKeyAction7);
-                AgeReadingEditorViewModel.ShortcutActions[8] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[8].Item1, AgeReadingEditorViewModel.ShortcutActions[8].Item2, Properties.Settings.Default.AgeReadingKeyAction8);
-                AgeReadingEditorViewModel.ShortcutActions[9] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[9].Item1, AgeReadingEditorViewModel.ShortcutActions[9].Item2, Properties.Settings.Default.AgeReadingKeyAction9);
-                AgeReadingEditorViewModel.ShortcutActions[10] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[10].Item1, AgeReadingEditorViewModel.ShortcutActions[10].Item2, Properties.Settings.Default.AgeReadingKeyAction10);
-                AgeReadingEditorViewModel.ShortcutActions[11] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[11].Item1, AgeReadingEditorViewModel.ShortcutActions[11].Item2, Properties.Settings.Default.AgeReadingKeyAction11);
-                AgeReadingEditorViewModel.ShortcutActions[12] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[12].Item1, AgeReadingEditorViewModel.ShortcutActions[12].Item2, Properties.Settings.Default.AgeReadingKeyAction12);
-                AgeReadingEditorViewModel.ShortcutActions[13] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[13].Item1, AgeReadingEditorViewModel.ShortcutActions[13].Item2, Properties.Settings.Default.AgeReadingKeyAction13);
-                AgeReadingEditorViewModel.ShortcutActions[14] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[14].Item1, AgeReadingEditorViewModel.ShortcutActions[14].Item2, Properties.Settings.Default.AgeReadingKeyAction14);
-                AgeReadingEditorViewModel.ShortcutActions[15] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[15].Item1, AgeReadingEditorViewModel.ShortcutActions[15].Item2, Properties.Settings.Default.AgeReadingKeyAction15);
-                AgeReadingEditorViewModel.ShortcutActions[16] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[16].Item1, AgeReadingEditorViewModel.ShortcutActions[16].Item2, Properties.Settings.Default.AgeReadingKeyAction16);
-                AgeReadingEditorViewModel.ShortcutActions[17] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[17].Item1, AgeReadingEditorViewModel.ShortcutActions[17].Item2, Properties.Settings.Default.AgeReadingKeyAction17);
-                AgeReadingEditorViewModel.ShortcutActions[18] = new Tuple<Action, string, string>(AgeReadingEditorViewModel.ShortcutActions[18].Item1, AgeReadingEditorViewModel.ShortcutActions[18].Item2, Properties.Settings.Default.AgeReadingKeyAction18);
+                for (int i = 1; i <= 24; i++)
+                {
+                    AgeReadingEditorViewModel.ShortcutActions[i] = new Tuple<Action, string, string>(
+                        AgeReadingEditorViewModel.ShortcutActions[i].Item1,
+                        AgeReadingEditorViewModel.ShortcutActions[i].Item2,
+                        (string)Properties.Settings.Default[$"AgeReadingKeyAction{i}"]);
+                }
+
                 GrowthAllMode = Properties.Settings.Default.GrowthAllMode;
                 GrowthAllScale = Properties.Settings.Default.GrowthAllScale;
             }

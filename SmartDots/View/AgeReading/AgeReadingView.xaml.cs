@@ -43,6 +43,10 @@ namespace SmartDots.View
             AgeReadingViewModel.AgeReadingView = this;
 
             AgeReadingViewModel.LoadLayout("Layout.xml");
+
+            GrowthAllMode.EditValue = AgeReadingViewModel.GrowthAllMode;
+            GrowthAllScale.EditValue = AgeReadingViewModel.GrowthAllScale;
+
             AgeReadingViewModel.MakeGraph();
 
 

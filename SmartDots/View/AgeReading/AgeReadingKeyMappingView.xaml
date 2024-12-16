@@ -35,75 +35,78 @@
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
+                    <RowDefinition Height="30" Tag="QARow" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
+                    <RowDefinition Height="30" Tag="QARow" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
+                    <RowDefinition Height="30" Tag="QARow" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" Tag="QARow" />
                     <RowDefinition Height="30" Tag="EdgeRow" />
                     <RowDefinition Height="30" Tag="EdgeRow" />
                     <RowDefinition Height="30" Tag="EdgeRow" />
+                    <RowDefinition Height="30" Tag="EdgeRow QARow" />
                     <RowDefinition Height="30" Tag="EdgeRow" />
                     <RowDefinition Height="30" Tag="EdgeRow" />
                     <RowDefinition Height="30" Tag="EdgeRow" />
-                    <RowDefinition Height="30" Tag="EdgeRow" />
-                    <RowDefinition Height="30" Tag="EdgeRow" />
+                    <RowDefinition Height="30" Tag="EdgeRow QARow" />
                 </Grid.RowDefinitions>
-                <Label Name="Lb1" Grid.Column="0" Grid.Row="0" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb2" Grid.Column="0" Grid.Row="1" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb3" Grid.Column="0" Grid.Row="2" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb4" Grid.Column="0" Grid.Row="3" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb5" Grid.Column="0" Grid.Row="4" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb6" Grid.Column="0" Grid.Row="5" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb7" Grid.Column="0" Grid.Row="6" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb8" Grid.Column="0" Grid.Row="7" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb9" Grid.Column="0" Grid.Row="8" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb10" Grid.Column="0" Grid.Row="9" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb11" Grid.Column="0" Grid.Row="10" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb12" Grid.Column="0" Grid.Row="11" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb13" Grid.Column="0" Grid.Row="12" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb14" Grid.Column="0" Grid.Row="13" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb15" Grid.Column="0" Grid.Row="14" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb16" Grid.Column="0" Grid.Row="15" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb17" Grid.Column="0" Grid.Row="16" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb18" Grid.Column="0" Grid.Row="17" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb19" Grid.Column="0" Grid.Row="18" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb20" Grid.Column="0" Grid.Row="19" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb21" Grid.Column="0" Grid.Row="20" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb22" Grid.Column="0" Grid.Row="21" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb23" Grid.Column="0" Grid.Row="22" Padding="0" VerticalAlignment="Center"></Label>
-                <Label Name="Lb24" Grid.Column="0" Grid.Row="23" Padding="0" VerticalAlignment="Center"></Label>
-                <TextBox Name="Tb1" Grid.Column="1" Grid.Row="0" Height="20" IsReadOnly="True" Tag="1" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb2" Grid.Column="1" Grid.Row="1" Height="20" IsReadOnly="True" Tag="2" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb3" Grid.Column="1" Grid.Row="2" Height="20" IsReadOnly="True" Tag="3" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb4" Grid.Column="1" Grid.Row="3" Height="20" IsReadOnly="True" Tag="4" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb5" Grid.Column="1" Grid.Row="4" Height="20" IsReadOnly="True" Tag="5" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb6" Grid.Column="1" Grid.Row="5" Height="20" IsReadOnly="True" Tag="6" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb7" Grid.Column="1" Grid.Row="6" Height="20" IsReadOnly="True" Tag="7" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb8" Grid.Column="1" Grid.Row="7" Height="20" IsReadOnly="True" Tag="8" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb9" Grid.Column="1" Grid.Row="8" Height="20" IsReadOnly="True" Tag="9" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb10" Grid.Column="1" Grid.Row="9" Height="20" IsReadOnly="True" Tag="10" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb11" Grid.Column="1" Grid.Row="10" Height="20" IsReadOnly="True" Tag="11" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb12" Grid.Column="1" Grid.Row="11" Height="20" IsReadOnly="True" Tag="12" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb13" Grid.Column="1" Grid.Row="12" Height="20" IsReadOnly="True" Tag="13" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb14" Grid.Column="1" Grid.Row="13" Height="20" IsReadOnly="True" Tag="14" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb15" Grid.Column="1" Grid.Row="14" Height="20" IsReadOnly="True" Tag="15" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb16" Grid.Column="1" Grid.Row="15" Height="20" IsReadOnly="True" Tag="16" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb17" Grid.Column="1" Grid.Row="16" Height="20" IsReadOnly="True" Tag="17" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb18" Grid.Column="1" Grid.Row="17" Height="20" IsReadOnly="True" Tag="18" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb19" Grid.Column="1" Grid.Row="18" Height="20" IsReadOnly="True" Tag="19" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb20" Grid.Column="1" Grid.Row="19" Height="20" IsReadOnly="True" Tag="20" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb21" Grid.Column="1" Grid.Row="20" Height="20" IsReadOnly="True" Tag="21" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb22" Grid.Column="1" Grid.Row="21" Height="20" IsReadOnly="True" Tag="22" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb23" Grid.Column="1" Grid.Row="22" Height="20" IsReadOnly="True" Tag="23" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
-                <TextBox Name="Tb24" Grid.Column="1" Grid.Row="23" Height="20" IsReadOnly="True" Tag="24" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <Label Name="Lb0" Grid.Column="0" Grid.Row="0" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb1" Grid.Column="0" Grid.Row="1" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb2" Grid.Column="0" Grid.Row="2" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb3" Grid.Column="0" Grid.Row="3" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb4" Grid.Column="0" Grid.Row="4" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb5" Grid.Column="0" Grid.Row="5" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb6" Grid.Column="0" Grid.Row="6" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb7" Grid.Column="0" Grid.Row="7" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb8" Grid.Column="0" Grid.Row="8" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb9" Grid.Column="0" Grid.Row="9" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb10" Grid.Column="0" Grid.Row="10" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb11" Grid.Column="0" Grid.Row="11" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb12" Grid.Column="0" Grid.Row="12" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb13" Grid.Column="0" Grid.Row="13" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb14" Grid.Column="0" Grid.Row="14" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb15" Grid.Column="0" Grid.Row="15" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb16" Grid.Column="0" Grid.Row="16" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb17" Grid.Column="0" Grid.Row="17" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb18" Grid.Column="0" Grid.Row="18" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb19" Grid.Column="0" Grid.Row="19" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb20" Grid.Column="0" Grid.Row="20" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb21" Grid.Column="0" Grid.Row="21" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb22" Grid.Column="0" Grid.Row="22" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb23" Grid.Column="0" Grid.Row="23" Padding="0" VerticalAlignment="Center"></Label>
+                <Label Name="Lb24" Grid.Column="0" Grid.Row="24" Padding="0" VerticalAlignment="Center"></Label>
+                <TextBox Name="Tb0" Grid.Column="1" Grid.Row="0" Height="20" IsReadOnly="True" Tag="0" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb1" Grid.Column="1" Grid.Row="1" Height="20" IsReadOnly="True" Tag="1" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb2" Grid.Column="1" Grid.Row="2" Height="20" IsReadOnly="True" Tag="2" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb3" Grid.Column="1" Grid.Row="3" Height="20" IsReadOnly="True" Tag="3" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb4" Grid.Column="1" Grid.Row="4" Height="20" IsReadOnly="True" Tag="4" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb5" Grid.Column="1" Grid.Row="5" Height="20" IsReadOnly="True" Tag="5" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb6" Grid.Column="1" Grid.Row="6" Height="20" IsReadOnly="True" Tag="6" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb7" Grid.Column="1" Grid.Row="7" Height="20" IsReadOnly="True" Tag="7" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb8" Grid.Column="1" Grid.Row="8" Height="20" IsReadOnly="True" Tag="8" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb9" Grid.Column="1" Grid.Row="9" Height="20" IsReadOnly="True" Tag="9" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb10" Grid.Column="1" Grid.Row="10" Height="20" IsReadOnly="True" Tag="10" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb11" Grid.Column="1" Grid.Row="11" Height="20" IsReadOnly="True" Tag="11" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb12" Grid.Column="1" Grid.Row="12" Height="20" IsReadOnly="True" Tag="12" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb13" Grid.Column="1" Grid.Row="13" Height="20" IsReadOnly="True" Tag="13" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb14" Grid.Column="1" Grid.Row="14" Height="20" IsReadOnly="True" Tag="14" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb15" Grid.Column="1" Grid.Row="15" Height="20" IsReadOnly="True" Tag="15" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb16" Grid.Column="1" Grid.Row="16" Height="20" IsReadOnly="True" Tag="16" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb17" Grid.Column="1" Grid.Row="17" Height="20" IsReadOnly="True" Tag="17" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb18" Grid.Column="1" Grid.Row="18" Height="20" IsReadOnly="True" Tag="18" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb19" Grid.Column="1" Grid.Row="19" Height="20" IsReadOnly="True" Tag="19" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb20" Grid.Column="1" Grid.Row="20" Height="20" IsReadOnly="True" Tag="20" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb21" Grid.Column="1" Grid.Row="21" Height="20" IsReadOnly="True" Tag="21" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb22" Grid.Column="1" Grid.Row="22" Height="20" IsReadOnly="True" Tag="22" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb23" Grid.Column="1" Grid.Row="23" Height="20" IsReadOnly="True" Tag="23" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
+                <TextBox Name="Tb24" Grid.Column="1" Grid.Row="24" Height="20" IsReadOnly="True" Tag="24" PreviewKeyDown="TextBox_PreviewKeyDown" ></TextBox>
             </Grid>
 
         </ScrollViewer>

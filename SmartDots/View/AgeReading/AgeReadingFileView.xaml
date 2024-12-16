@@ -97,7 +97,7 @@
                             <i:EventTrigger EventName="FocusedRowChanged">
                                 <ei:CallMethodAction TargetObject="{Binding}" MethodName="FileList_FocusedRowChanged"/>
                             </i:EventTrigger>
-                            
+
                         </i:Interaction.Triggers>
                     </dxg:TableView>
                 </dxg:GridControl.View>
@@ -115,7 +115,7 @@
                             </DataTemplate>
                         </dxg:GridColumn.CellTemplate>
                     </dxg:GridColumn>
-                    <dxg:GridColumn FieldName="SampleNumber" Header="{Binding SampleNumberAlias}" ToolTip="{Binding SampleNumberAlias}" AllowEditing="False" Width="60"  />
+                    <dxg:GridColumn FieldName="SampleNumber" Header="{Binding SampleNumberAlias}" ToolTip="{Binding SampleNumberAlias}" AllowEditing="False" Width="60" SortMode="Custom"   />
                     <dxg:GridColumn FieldName="AnnotationCount" Header="#Annotations" ToolTip="Number of annotations" AllowEditing="False"  Width="60" />
                     <dxg:GridColumn FieldName="Scale" AllowEditing="False" Header="Scale (px/mm)" Width="80" >
                         <dxg:GridColumn.EditSettings>

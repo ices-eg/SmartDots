@@ -312,7 +312,7 @@ namespace SmartDots.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Own Annotations (all samples)")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Selected Annotations")]
         public string GrowthAllMode {
             get {
                 return ((string)(this["GrowthAllMode"]));
@@ -324,7 +324,7 @@ namespace SmartDots.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("mm (use scale)")]
+        [global::System.Configuration.DefaultSettingValueAttribute("pixels")]
         public string GrowthAllScale {
             get {
                 return ((string)(this["GrowthAllScale"]));
@@ -523,6 +523,18 @@ namespace SmartDots.Properties {
             }
             set {
                 this["AgeReadingKeyAction24"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgeReadingKeyAction0 {
+            get {
+                return ((string)(this["AgeReadingKeyAction0"]));
+            }
+            set {
+                this["AgeReadingKeyAction0"] = value;
             }
         }
     }

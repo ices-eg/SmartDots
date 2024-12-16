@@ -818,6 +818,7 @@ namespace SmartDots.ViewModel
                         AgeReadingViewModel.AgeReadingEditorView.ScaleButton.IsEnabled = false;
                         return;
                     }
+                    AgeReadingViewModel.UpdateGraphs(false, false, false, true);
                 }
             }
             catch (Exception e)
@@ -1939,6 +1940,7 @@ namespace SmartDots.ViewModel
             var deleteResult = Global.API.UpdateFile(dtofile);
             if (!deleteResult.Succeeded)
                 Helper.ShowWinUIMessageBox(deleteResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            AgeReadingViewModel.UpdateGraphs(false, false, false, true);
         }
 
         public void ClearScaleLine()
@@ -1990,6 +1992,7 @@ namespace SmartDots.ViewModel
             AgeReadingViewModel.AgeReadingEditorView.ScalePixels.Text = "0";
             HideMeasureScalePanel();
             RefreshShapes();
+            AgeReadingViewModel.UpdateGraphs(false, false, false, true);
             Mode = EditorModeEnum.None;
         }
 
@@ -2046,7 +2049,9 @@ namespace SmartDots.ViewModel
         public void KeyActions_Click(object sender, RoutedEventArgs e)
         {
             AgeReadingViewModel.AgeReadingKeyMappingView = new AgeReadingKeyMappingView(AgeReadingViewModel);
-            AgeReadingViewModel.AgeReadingKeyMappingViewModel.ToggleEdgeSettings(AgeReadingViewModel.Analysis.ShowEdgeColumn);
+            bool hasQa = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.Any(x => x.Code.ToUpper().Contains("QA"));
+
+            AgeReadingViewModel.AgeReadingKeyMappingViewModel.ToggleEdgeSettings(AgeReadingViewModel.Analysis.ShowEdgeColumn, hasQa);
             AgeReadingViewModel.AgeReadingKeyMappingView.ShowDialog();
         }
 
@@ -2066,6 +2071,7 @@ namespace SmartDots.ViewModel
             ShortcutActions = new Dictionary<int, Tuple<Action, string, string>>()
             {
 
+                //{ 0, new Tuple<Action, string, string>(Action0, "Set Approved + Select next file", "") },
                 { 1, new Tuple<Action, string, string>(Action1, "Set AQ1 + Select next file", "") },
                 { 2, new Tuple<Action, string, string>(Action2, "Set AQ2 + Select next file", "")},
                 { 3, new Tuple<Action, string, string>(Action3, "Set AQ3 + Select next file", "")},
@@ -2103,15 +2109,18 @@ namespace SmartDots.ViewModel
                 return false;
             }
 
-            var q1 = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.FirstOrDefault(x => new List<string>() { "AQ" + q, "QS" + q }.Contains(x.Code.ToUpper().Trim()));
+            var quality = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.FirstOrDefault(x => new List<string>() { "AQ" + q, "QS" + q }.Contains(x.Code.ToUpper().Trim()));
 
             if (q == 0){
-                q1 = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.FirstOrDefault(x => new List<string>() { "QA" }.Contains(x.Code.ToUpper().Trim()));
+                quality = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.FirstOrDefault(x => x.Code.Contains("QA"));
             }
 
-            
+            if (quality == null)
+            {
+                return false;
+            }
 
-            var result1 = AgeReadingViewModel.AgeReadingAnnotationViewModel.SetQuality(annotation, q1.ID, annotation.QualityID);
+            var result1 = AgeReadingViewModel.AgeReadingAnnotationViewModel.SetQuality(annotation, quality.ID, annotation.QualityID);
 
             if (result1 == false)
             {
@@ -2119,6 +2128,20 @@ namespace SmartDots.ViewModel
             }
 
             return true;
+        }
+
+        public void ActionGroup0(int action)
+        {
+            if (!AgeReadingViewModel.AgeReadingAnnotationViewModel.CanApprove)
+            {
+                Helper.ShowWinUIMessageBox(AgeReadingViewModel.AgeReadingAnnotationViewModel.ApproveAnnotationTooltip, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.Approve();
+
+            AgeReadingViewModel.AgeReadingFileView.FileList.MoveNextRow();
+            AgeReadingViewModel.AgeReadingView.MainWindowViewModel.ShowSuccessToast("Action complete", ShortcutActions[action].Item2);
         }
 
         public void ActionGroup1(int qualitycode, int action)
@@ -2192,7 +2215,10 @@ namespace SmartDots.ViewModel
         }
 
 
-
+        //public void Action0()
+        //{
+        //    ActionGroup0(0);
+        //}
         public void Action1()
         {
             ActionGroup1(1, 1);

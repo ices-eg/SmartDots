@@ -391,6 +391,8 @@ namespace SmartDots.View
             FieldPassword.Clear();
             Analyses.Visibility = Visibility.Collapsed;
             MainWindowViewModel.HeaderInfo = "";
+            MainWindowViewModel.HeaderModule = "";
+            MainWindowViewModel.MainWindow.ClearCacheEvent.IsVisible = false;
             AnalysesActions.Visibility = Visibility.Collapsed;
 
             RedrawLoginScreen(screenSize);
@@ -401,6 +403,7 @@ namespace SmartDots.View
             Analyses.Visibility = Visibility.Collapsed;
             MainWindowViewModel.HeaderInfo = "";
             MainWindowViewModel.HeaderModule = "";
+            MainWindowViewModel.MainWindow.ClearCacheEvent.IsVisible = false;
             AnalysesActions.Visibility = Visibility.Collapsed;
             Logo.Visibility = Visibility.Visible;
 

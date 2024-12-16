@@ -532,7 +532,11 @@ namespace SmartDots.ViewModel
                     ApproveAnnotationTooltip = "A parameter is needed to approve the Annotation";
                     return false;
                 };
-                
+                if (AgeReadingViewModel.AgeReadingEditorViewModel.Mode == EditorModeEnum.MakingLine)
+                {
+                    return false;
+                };
+
                 ApproveAnnotationTooltip = "Approve Annotation";
                 return true;
             }
@@ -578,6 +582,10 @@ namespace SmartDots.ViewModel
                     ApproveAnnotationTooltip = "The selected Annotation is not approved";
                     return false;
                 }
+                if (AgeReadingViewModel.AgeReadingEditorViewModel.Mode == EditorModeEnum.MakingLine)
+                {
+                    return false;
+                };
 
                 ApproveAnnotationTooltip = "Unapprove Annotation";
                 return true;

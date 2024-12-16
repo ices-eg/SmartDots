@@ -75,10 +75,10 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="GrowthAllMode" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Own Annotations (all samples)</Value>
+      <Value Profile="(Default)">Selected Annotations</Value>
     </Setting>
     <Setting Name="GrowthAllScale" Type="System.String" Scope="User">
-      <Value Profile="(Default)">mm (use scale)</Value>
+      <Value Profile="(Default)">pixels</Value>
     </Setting>
     <Setting Name="AgeReadingKeyAction9" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -126,6 +126,9 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="AgeReadingKeyAction24" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AgeReadingKeyAction0" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>
