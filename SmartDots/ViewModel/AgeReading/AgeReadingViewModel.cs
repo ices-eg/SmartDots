@@ -184,7 +184,7 @@ namespace SmartDots.ViewModel
                 {
 
                 }
-                
+
                 UpdateGraphs(false, false, false, true);
                 RaisePropertyChanged("GrowthAllMode");
             }
@@ -318,7 +318,7 @@ namespace SmartDots.ViewModel
             {
                 AgeReadingView.GrowthAllMode.SelectedItem = AgeReadingView.SelectedAnnotations;
             }
-            
+
         }
 
         public bool LoadAnalysis(Guid analysisid)
@@ -506,9 +506,9 @@ namespace SmartDots.ViewModel
             }
         }
 
-        private void MakeGrowthAllGraph()
+        private ChartControl MakeGrowthAllGraph(bool forCsv = false)
         {
-            if (AgeReadingFileViewModel.Files == null) return;
+            if (AgeReadingFileViewModel.Files == null) return null;
 
             var blueBrush = (SolidColorBrush)Application.Current.TryFindResource("BrushSmartFishDarkBlue");
             var orangeBrush = (SolidColorBrush)Application.Current.TryFindResource("BrushSmartFishOrange");
@@ -523,6 +523,7 @@ namespace SmartDots.ViewModel
             string legendText1 = "Own";
             string legendText2 = "Other";
             bool missingCurves = false;
+            bool tooMany = false;
 
             if (GrowthAllMode.Contains("Own Annotations (all samples)"))
             {
@@ -606,7 +607,7 @@ namespace SmartDots.ViewModel
             {
                 var annotations = allAnnotations.Where(x => x.FileID == file.ID).ToList();
 
-                
+
                 if (GrowthAllMode == "Selected Annotation(s)")
                 {
                     annotations = annotations.Where(x => AgeReadingAnnotationViewModel.SelectedAnnotations.Select(y => y.ID).Contains(x.ID)).ToList();
@@ -628,6 +629,12 @@ namespace SmartDots.ViewModel
                 drawnAnnotations.AddRange(annotations);
             }
 
+            if(drawnAnnotations.Count > 50 && !forCsv && !aggregate)
+            {
+                aggregate = true;
+                tooMany = true;
+            }
+
 
             if (aggregate)
             {
@@ -636,7 +643,7 @@ namespace SmartDots.ViewModel
                     Text = "Aggregated Other (min, avg, max)",
                     MarkerBrush = blueBrush
                 });
-                
+
             }
             else
             {
@@ -673,11 +680,11 @@ namespace SmartDots.ViewModel
                 }
                 else if (aggregate)
                 {
-                    if(GrowthAllMode.Contains("Own Annotations (all samples) - Aggregated") && AgeReadingFileViewModel.SelectedFile.ID == annotation.FileID)
+                    if (GrowthAllMode.Contains("Own Annotations (all samples) - Aggregated") && AgeReadingFileViewModel.SelectedFile.ID == annotation.FileID)
                     {
                         series.Brush = orangeBrush;
                     }
-                    else if(GrowthAllMode.Contains("All Annotations (all samples) - Aggregated") && annotation.LabTechnician == Global.API.CurrentUser.AccountName)
+                    else if (GrowthAllMode.Contains("All Annotations (all samples) - Aggregated") && annotation.LabTechnician == Global.API.CurrentUser.AccountName)
                     {
                         series.Brush = orangeBrush;
                     }
@@ -804,7 +811,7 @@ namespace SmartDots.ViewModel
                     diagram.Series.Add(avgSeries);
                     diagram.Series.Add(minSeries);
                 }
-                
+
             }
 
 
@@ -818,21 +825,41 @@ namespace SmartDots.ViewModel
 
             chartControl = chart;
 
-            AgeReadingView.GrowthGraphPanel.Children.Clear();
-
-            if (missingCurves)
+            if (!forCsv)
             {
-                StackPanel panel = new StackPanel();
-                panel.Height = 30;
-                panel.Children.Add(new TextBlock() { Text = "WARNING: Some curves cannot be displayed due to a missing scale", FontSize = 14, TextAlignment = TextAlignment.Center, Margin = new Thickness(6), FontWeight = FontWeights.Bold });
-                DockPanel.SetDock(panel, Dock.Top);
-                panel.Background = new SolidColorBrush(Colors.Yellow);
-                AgeReadingView.GrowthGraphPanel.Children.Add(panel);
+                AgeReadingView.GrowthGraphPanel.Children.Clear();
+
+                if (tooMany)
+                {
+                    StackPanel panel = new StackPanel();
+                    panel.Height = 30;
+                    panel.Children.Add(new TextBlock() { Text = "WARNING: More than 50 annotations to display. Defaulting to Aggregated view", FontSize = 14, TextAlignment = TextAlignment.Center, Margin = new Thickness(6), FontWeight = FontWeights.Bold });
+                    DockPanel.SetDock(panel, Dock.Top);
+                    panel.Background = new SolidColorBrush(Colors.Yellow);
+                    AgeReadingView.GrowthGraphPanel.Children.Add(panel);
+                }
+
+                if (missingCurves)
+                {
+                    StackPanel panel = new StackPanel();
+                    panel.Height = 30;
+                    panel.Children.Add(new TextBlock() { Text = "WARNING: Some curves cannot be displayed due to a missing scale", FontSize = 14, TextAlignment = TextAlignment.Center, Margin = new Thickness(6), FontWeight = FontWeights.Bold });
+                    DockPanel.SetDock(panel, Dock.Top);
+                    panel.Background = new SolidColorBrush(Colors.Yellow);
+                    AgeReadingView.GrowthGraphPanel.Children.Add(panel);
+                }
+
+
+                DockPanel.SetDock(chart, Dock.Bottom);
+
+                AgeReadingView.GrowthGraphPanel.Children.Add(chart);
             }
 
-            DockPanel.SetDock(chart, Dock.Bottom);
-            AgeReadingView.GrowthGraphPanel.Children.Add(chart);
+            return chart;
+
         }
+
+        
 
         private void Chart_CustomDrawCrosshair(object sender, CustomDrawCrosshairEventArgs e)
         {
@@ -1131,12 +1158,11 @@ namespace SmartDots.ViewModel
 
         public void GrowthCsvDownload()
         {
-         
-
-            var series = chartControl.Diagram.Series;
+            var chart = MakeGrowthAllGraph(true);
+            var series = chart.Diagram.Series;
 
             if (series.Count == 0) return;
-
+            
             StringBuilder csv = new StringBuilder();
 
             string unit = GrowthAllScale.Contains("mm") ? "(mm)" : "(px)";
@@ -1183,7 +1209,7 @@ namespace SmartDots.ViewModel
             }
 
             //save to disk
-            
+
 
         }
 

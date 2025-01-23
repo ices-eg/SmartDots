@@ -8,6 +8,7 @@ using DevExpress.Xpf.Docking.Base;
 using SmartDots.Helpers;
 using SmartDots.ViewModel;
 using System.Windows.Input;
+using DevExpress.Xpf.Editors;
 
 namespace SmartDots.View
 {
@@ -109,6 +110,11 @@ namespace SmartDots.View
 
         private void GrowthPanel_GotFocus(object sender, RoutedEventArgs e)
         {
+            if (e.OriginalSource is ComboBoxEdit || e.OriginalSource is TextBlock)
+            {
+                return;
+            }
+
             AgeReadingViewModel.UpdateGraphs(false, false, false, true);
         }
 

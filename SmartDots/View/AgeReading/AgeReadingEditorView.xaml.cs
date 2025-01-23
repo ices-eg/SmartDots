@@ -84,6 +84,9 @@ namespace SmartDots.View
         {
             try
             {
+                if (ageReadingEditorViewModel.AgeReadingViewModel.AgeReadingEditorView.MeasureScalePanel.Visibility == Visibility.Visible) return;
+                if (!ageReadingEditorViewModel.AgeReadingViewModel.AgeReadingEditorView.EditorStackPanel.IsEnabled) return; // user is drawing a line
+
                 string message = "";
 
                 // Here I'm assuming every requested action modifies the annotation, so I'm checking if the user can edit the annotation
