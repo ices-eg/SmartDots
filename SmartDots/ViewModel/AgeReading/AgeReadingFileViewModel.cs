@@ -337,7 +337,7 @@ namespace SmartDots.ViewModel
                         path = CurrentFolder.Path + "/" + filename;
                     }
                 }
-                var localFileLocation = $@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\" + filename;
+                var localFileLocation = $@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\" + filename.Split('/').Last().Split('\\').Last();
                 if (!System.IO.File.Exists(localFileLocation)) CopyFileAsync(path, localFileLocation);
             }
             catch (Exception e)
@@ -373,9 +373,9 @@ namespace SmartDots.ViewModel
                     {
                         client.DownloadFile(sourceFile, destinationFile);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        //
+                        // ignored
                     }
 
                 }
@@ -865,7 +865,7 @@ namespace SmartDots.ViewModel
                             path = CurrentFolder.Path + "/" + filename;
                         }
                     }
-                    var localFileLocation = $@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\" + filename;
+                    var localFileLocation = $@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\" + filename.Split('/').Last().Split('\\').Last();
                     if (!System.IO.File.Exists(localFileLocation))
                     {
                         CopyFileAsync(path, localFileLocation);
@@ -890,8 +890,6 @@ namespace SmartDots.ViewModel
                 }
 
                 AgeReadingViewModel.AgeReadingView.MainWindowViewModel.ShowSuccessToast("Image Download", message);
-
-
             }
             catch (Exception e)
             {
@@ -913,7 +911,7 @@ namespace SmartDots.ViewModel
             foreach (var f in files)
             {
                 // check if the file exists on disk
-                var exists = allFiles.Any(x => x.Contains(f.Filename));
+                var exists = allFiles.Any(x => x.Contains(f.Filename.Split('/').Last().Split('\\').Last()));
 
                 if (exists)
                 {

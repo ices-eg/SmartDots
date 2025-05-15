@@ -49,7 +49,7 @@ namespace SmartDots.Helpers
                 if (!connStr.EndsWith("/")) connStr += "/";
 
                 Reset();
-                client = new HttpClient { BaseAddress = new Uri(connStr) };
+                client = new HttpClient { BaseAddress = new Uri(connStr), Timeout = TimeSpan.FromSeconds(TimeOutAfter) };
                 Connection = connStr;
 
                 return new WebApiResult<LoginToken>();
@@ -93,17 +93,17 @@ namespace SmartDots.Helpers
 
                 if (Settings?.MaturityAPI != null && Global.CurrentEventType.ToLower().Contains("maturity"))
                 {
-                    var maturityClient = new HttpClient { BaseAddress = new Uri(Settings.MaturityAPI) };
+                    var maturityClient = new HttpClient { BaseAddress = new Uri(Settings.MaturityAPI), Timeout = TimeSpan.FromSeconds(TimeOutAfter) };
                     task = maturityClient.GetAsync(path, cancelToken.Token);
                 }
                 else if (Settings?.LarvaeAPI != null && Global.CurrentEventType.ToLower().Contains("larvae"))
                 {
-                    var larvaeClient = new HttpClient { BaseAddress = new Uri(Settings.LarvaeAPI) };
+                    var larvaeClient = new HttpClient { BaseAddress = new Uri(Settings.LarvaeAPI), Timeout = TimeSpan.FromSeconds(TimeOutAfter) };
                     task = larvaeClient.GetAsync(path, cancelToken.Token);
                 }
                 else if (Settings != null && Settings.EggAPI != null && Global.CurrentEventType.ToLower().Contains("egg"))
                 {
-                    var eggClient = new HttpClient { BaseAddress = new Uri(Settings.EggAPI) };
+                    var eggClient = new HttpClient { BaseAddress = new Uri(Settings.EggAPI), Timeout = TimeSpan.FromSeconds(TimeOutAfter) };
                     task = eggClient.GetAsync(path, cancelToken.Token);
                 }
                 else
@@ -181,17 +181,17 @@ namespace SmartDots.Helpers
 
                 if (Settings != null && Settings.MaturityAPI != null && path.ToLower().Contains("maturity"))
                 {
-                    var maturityClient = new HttpClient { BaseAddress = new Uri(Settings.MaturityAPI) };
+                    var maturityClient = new HttpClient { BaseAddress = new Uri(Settings.MaturityAPI), Timeout = TimeSpan.FromSeconds(TimeOutAfter) };
                     task = maturityClient.PostAsJsonAsync(path, obj);
                 }
                 else if (Settings != null && Settings.LarvaeAPI != null && path.ToLower().Contains("type=larvae"))
                 {
-                    var larvaeClient = new HttpClient { BaseAddress = new Uri(Settings.LarvaeAPI) };
+                    var larvaeClient = new HttpClient { BaseAddress = new Uri(Settings.LarvaeAPI), Timeout = TimeSpan.FromSeconds(TimeOutAfter) };
                     task = larvaeClient.PostAsJsonAsync(path, obj);
                 }
                 else if (Settings != null && Settings.EggAPI != null && path.ToLower().Contains("type=egg"))
                 {
-                    var eggClient = new HttpClient { BaseAddress = new Uri(Settings.EggAPI) };
+                    var eggClient = new HttpClient { BaseAddress = new Uri(Settings.EggAPI), Timeout = TimeSpan.FromSeconds(TimeOutAfter) };
                     task = eggClient.PostAsJsonAsync(path, obj);
                 }
                 else
