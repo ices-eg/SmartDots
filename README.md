@@ -1,5 +1,34 @@
 # SmartDots
-SmartDots is the otolith reading software developed by ILVO that ICES is collaborating on
+SmartDots is the otolith reading software developed by ILVO in collaboration with ICES, used for annotating biological parameters such as fish age in workshops and exchanges.
+
+## Metadata
+
+### Maintainers & Contributors
+- Developed by: ILVO (Flanders Research Institute for Agriculture, Fisheries and Food)
+- Collaborator: International Council for the Exploration of the Sea (ICES)
+
+### Versioning & release info
+- Version:  4.1.0.3
+- First deployment date: 2017-11-07
+- Last update date: 2025-05-15
+
+### Functionality & dependencies
+- Platform: Windows
+- Release artifacts:
+    - Installer: setup.exe
+    - Portable version: SmartDots4.1.zip (zip containing batch-run executable)
+- Dependencies:
+    - Requires .NET framework
+    - Connection to a Web API
+    - Development: DevExpress WPF UI Library
+
+### File & Directory Overview
+- .gitattributes, .gitignore, LICENSE, README.md, SmartDots.sln, changelog.md
+- SmartDots/publish/setup.exe (installer)
+- SmartDots/Portable/SmartDots4.1.zip (portable release)
+
+### Security
+- Code signing certificate: Certum EV Code Signing
 
 ## Getting started
 There are two ways to get started with SmartDots:
