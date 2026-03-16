@@ -66,7 +66,8 @@ namespace SmartDots.Model
                     SexID = annotation.SexID,
                     UserID = annotation.UserID,
                     User = annotation.User,
-                    IsApproved = annotation.IsApproved
+                    IsApproved = annotation.IsApproved,
+                    ExpertiseLevel= annotation.ExpertiseLevel
                 };
 
                 result.Add(temp);

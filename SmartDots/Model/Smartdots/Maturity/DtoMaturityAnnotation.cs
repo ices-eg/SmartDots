@@ -15,6 +15,7 @@ namespace SmartDots.Model
         public Guid? MaturityQualityID { get; set; }
         public bool IsApproved { get; set; }
         public string Comments { get; set; }
+        public string ExpertiseLevel { get; set; }
 
     }
 }

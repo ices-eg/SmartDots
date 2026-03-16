@@ -20,6 +20,8 @@ namespace SmartDots.Model
         public bool RequiresSaving { get; set; }
         public string Comments { get; set; }
 
+        public string ExpertiseLevel { get; set; }
+
         public string ApprovedPicture
         {
             get

@@ -30,6 +30,7 @@ namespace SmartDots.Model
         public bool IsApproved { get; set; }
         public bool IsReadOnly { get; set; }
         public bool IsFixed { get; set; }
+        public string ExpertiseLevel { get; set; }
         //public Image FixedIcon
         //{
         //    get
