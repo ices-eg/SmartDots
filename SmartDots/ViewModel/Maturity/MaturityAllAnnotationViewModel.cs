@@ -34,7 +34,11 @@ namespace SmartDots.ViewModel
         public bool ShowExpertiseColumn
         {
             get { return annotations != null ? annotations.Any(x => string.IsNullOrEmpty(x.ExpertiseLevel)) : false; }
-
+            set
+            {
+                //showNucleusColumn = value;
+                RaisePropertyChanged("ShowExpertiseColumn");
+            }
         }
     }
 }
