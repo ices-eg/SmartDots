@@ -253,7 +253,7 @@
 
                 <dxb:BarEditItem x:Name="BrightnessSlider" EditWidth="191" Focusable="True" Alignment="Near" EditValue="{Binding Brightness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
                     <dxb:BarEditItem.EditSettings>
-                        <dxe:TrackBarEditSettings Minimum="-255" LargeStep="25.5" SmallStep="25.5" Maximum="255" TickFrequency="51">
+                        <dxe:TrackBarEditSettings Minimum="-255" LargeStep="12.75" SmallStep="12.75" Maximum="255" TickFrequency="51">
                             <dxe:TrackBarEditSettings.StyleSettings>
                                 <dxe:TrackBarZoomStyleSettings/>
                             </dxe:TrackBarEditSettings.StyleSettings>
@@ -279,7 +279,7 @@
 
                 <dxb:BarEditItem x:Name="ContrastSlider" Alignment="Far" EditWidth="191" Focusable="True" EditValue="{Binding Contrast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
                     <dxb:BarEditItem.EditSettings>
-                        <dxe:TrackBarEditSettings SmallStep="10" LargeStep="10" Minimum="-100" TickFrequency="20" Maximum="100">
+                        <dxe:TrackBarEditSettings SmallStep="5" LargeStep="5" Minimum="-100" TickFrequency="20" Maximum="100">
                             <dxe:TrackBarEditSettings.StyleSettings>
                                 <dxe:TrackBarZoomStyleSettings/>
                             </dxe:TrackBarEditSettings.StyleSettings>
