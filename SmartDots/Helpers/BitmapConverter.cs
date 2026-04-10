@@ -2,10 +2,8 @@
 using Accord.Imaging.Filters;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
 
@@ -13,78 +11,113 @@ namespace SmartDots.Helpers
 {
     public static class BitmapConverter
     {
-        public static Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
+        public static Bitmap BitmapImage2Bitmap(BitmapSource bitmapSource)
         {
+            if (bitmapSource == null) return null;
+
             try
             {
-                //todo memoryexception
-                // BitmapImage bitmapImage = new BitmapImage(new Uri("../Images/test.png", UriKind.Relative));
+                BitmapSource source = bitmapSource;
+                System.Drawing.Imaging.PixelFormat gdiFormat;
 
-                using (MemoryStream outStream = new MemoryStream())
+                // Map WPF pixel formats to GDI+ equivalents, or convert to a compatible one
+                if (bitmapSource.Format == System.Windows.Media.PixelFormats.Bgr24)
+                    gdiFormat = PixelFormat.Format24bppRgb;
+                else if (bitmapSource.Format == System.Windows.Media.PixelFormats.Bgra32)
+                    gdiFormat = PixelFormat.Format32bppArgb;
+                else if (bitmapSource.Format == System.Windows.Media.PixelFormats.Bgr32)
+                    gdiFormat = PixelFormat.Format32bppRgb;
+                else
                 {
-                    Stopwatch stopwatch = new Stopwatch();
-
-                    // Begin timing.
-                    stopwatch.Start();
-
-                    BitmapEncoder enc = new BmpBitmapEncoder();
-                    if (bitmapImage == null) return null;
-                    
-                    enc.Frames.Add(BitmapFrame.Create(bitmapImage));
-                    enc.Save(outStream);
-                    Bitmap bitmap = new Bitmap(outStream);
-
-                    // Stop timing.
-                    stopwatch.Stop();
-
-                    // Write result.
-                    Console.WriteLine("Time elapsed for BitmapImage2Bitmap: {0}", stopwatch.Elapsed);
-
-                    return new Bitmap(bitmap);
+                    // Normalize any other format (e.g. Pbgra32, Gray8, Cmyk32) to Bgra32
+                    source = new FormatConvertedBitmap(bitmapSource, System.Windows.Media.PixelFormats.Bgra32, null, 0);
+                    gdiFormat = PixelFormat.Format32bppArgb;
                 }
+
+                int width  = source.PixelWidth;
+                int height = source.PixelHeight;
+
+                Bitmap bitmap = new Bitmap(width, height, gdiFormat);
+                BitmapData bitmapData = bitmap.LockBits(
+                    new Rectangle(0, 0, width, height),
+                    ImageLockMode.WriteOnly,
+                    gdiFormat);
+
+                // Copy pixels directly into the Bitmap's unmanaged buffer — no MemoryStream required
+                source.CopyPixels(
+                    new System.Windows.Int32Rect(0, 0, width, height),
+                    bitmapData.Scan0,
+                    bitmapData.Stride * height,
+                    bitmapData.Stride);
+
+                bitmap.UnlockBits(bitmapData);
+
+                return bitmap;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //32 bit memory exception, best to ignore instead of crashing the application
+                return null;
             }
-            return null;
         }
 
-        public static BitmapImage Bitmap2BitmapImage(Bitmap bitmap)
+        public static BitmapSource Bitmap2BitmapImage(Bitmap bitmap)
         {
+            if (bitmap == null) return null;
+
             try
             {
-                using (var memory = new MemoryStream())
+                System.Windows.Media.PixelFormat wpfFormat;
+                PixelFormat lockFormat;
+
+                // Map GDI+ pixel formats to WPF equivalents, or fall back to Bgra32
+                switch (bitmap.PixelFormat)
                 {
-                    // Create new stopwatch.
-                    Stopwatch stopwatch = new Stopwatch();
-
-                    // Begin timing.
-                    stopwatch.Start();
-
-                    bitmap.Save(memory, ImageFormat.Png);
-                    memory.Position = 0;
-
-                    var bitmapImage = new BitmapImage();
-                    bitmapImage.BeginInit();
-                    bitmapImage.StreamSource = memory;
-                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmapImage.EndInit();
-
-                    // Stop timing.
-                    stopwatch.Stop();
-
-                    // Write result.
-                    Console.WriteLine("Time elapsed for Bitmap2BitmapImage: {0}", stopwatch.Elapsed);
-
-                    return bitmapImage;
+                    case PixelFormat.Format24bppRgb:
+                        wpfFormat = System.Windows.Media.PixelFormats.Bgr24;
+                        lockFormat = PixelFormat.Format24bppRgb;
+                        break;
+                    case PixelFormat.Format32bppRgb:
+                        wpfFormat = System.Windows.Media.PixelFormats.Bgr32;
+                        lockFormat = PixelFormat.Format32bppRgb;
+                        break;
+                    case PixelFormat.Format8bppIndexed:
+                        wpfFormat = System.Windows.Media.PixelFormats.Gray8;
+                        lockFormat = PixelFormat.Format8bppIndexed;
+                        break;
+                    default:
+                        wpfFormat = System.Windows.Media.PixelFormats.Bgra32;
+                        lockFormat = PixelFormat.Format32bppArgb;
+                        break;
                 }
+
+                BitmapData bitmapData = bitmap.LockBits(
+                    new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                    ImageLockMode.ReadOnly,
+                    lockFormat);
+
+                // Copy pixels directly from the Bitmap's unmanaged buffer — no MemoryStream required
+                BitmapSource bitmapSource = BitmapSource.Create(
+                    bitmap.Width,
+                    bitmap.Height,
+                    bitmap.HorizontalResolution,
+                    bitmap.VerticalResolution,
+                    wpfFormat,
+                    null,
+                    bitmapData.Scan0,
+                    bitmapData.Stride * bitmap.Height,
+                    bitmapData.Stride);
+
+                bitmap.UnlockBits(bitmapData);
+                bitmapSource.Freeze();
+
+                return bitmapSource;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //32 bit memory exception, best to ignore instead of crashing the application
+                return null;
             }
-            return null;
         }
 
         public static Bitmap ColorToGrayscale(Bitmap bmp)

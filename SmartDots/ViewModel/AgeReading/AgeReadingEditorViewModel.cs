@@ -58,7 +58,7 @@ namespace SmartDots.ViewModel
         private Image tracker;
         private Bitmap originalImage;
         private bool shapeChangeFlag;
-        private BitmapImage otolithImage;
+        private BitmapSource otolithImage;
         private int originalWidth;
         private int originalHeight;
         private int width;
@@ -305,7 +305,7 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public BitmapImage OtolithImage
+        public BitmapSource OtolithImage
         {
             get { return otolithImage; }
             set

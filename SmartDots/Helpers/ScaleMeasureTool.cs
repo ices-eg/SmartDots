@@ -214,7 +214,7 @@ namespace SmartDots.Helpers
             return 0;
         }
 
-        private static Rectangle? ExtractScaleRectangleOld(BitmapImage image)
+        private static Rectangle? ExtractScaleRectangleOld(BitmapSource image)
         {
             var pixels = GetPixels(image);
             decimal milimeterPixels = 0;

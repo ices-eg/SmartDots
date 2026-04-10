@@ -49,7 +49,7 @@ namespace SmartDots.ViewModel
         private EditorModeEnum mode;
         private Bitmap originalImage;
         private bool shapeChangeFlag;
-        private BitmapImage _maturityImage;
+        private BitmapSource _maturityImage;
         private int originalWidth;
         private int originalHeight;
         private int width;
@@ -178,7 +178,7 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public BitmapImage MaturityImage
+        public BitmapSource MaturityImage
         {
             get { return _maturityImage; }
             set
