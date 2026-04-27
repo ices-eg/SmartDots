@@ -56,7 +56,7 @@ namespace SmartDots.ViewModel
         private EditorModeEnum mode;
         private Bitmap originalImage;
         private bool shapeChangeFlag;
-        private BitmapImage _larvaeImage;
+        private BitmapSource _larvaeImage;
         private int originalWidth;
         private int originalHeight;
         private int width;
@@ -355,7 +355,7 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public BitmapImage LarvaeImage
+        public BitmapSource LarvaeImage
         {
             get { return _larvaeImage; }
             set
