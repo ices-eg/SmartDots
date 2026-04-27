@@ -24,5 +24,6 @@ namespace SmartDots.Model
         public virtual ICollection<DtoDot> Dots { get; set; }
         public virtual ICollection<DtoLine> Lines { get; set; }
         public List<DtoAnnotationProperty> DynamicProperties { get; set; }
+        public string ExpertiseLevel { get; set; }
     }
 }

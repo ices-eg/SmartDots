@@ -23,6 +23,5 @@ namespace SmartDots.View
             ageReadingAnnotationViewModel.AgeReadingViewModel = ageReadingViewModel;
         }
 
-        
     }
 }

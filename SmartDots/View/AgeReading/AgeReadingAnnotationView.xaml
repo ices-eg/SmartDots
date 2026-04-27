@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:local="clr-namespace:SmartDots.Controls"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:viewModel="clr-namespace:SmartDots.ViewModel"
@@ -44,11 +45,11 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <dxg:GridControl Grid.Row="0" x:Name="AnnotationGrid" ItemsSource="{Binding Outcomes, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectionMode="Row" SelectedItems="{Binding SelectedAnnotations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="None" FontSize="11" AllowLiveDataShaping="False" >
+        <local:SmartDotsGrid Grid.Row="0" x:Name="AnnotationGrid" ItemsSource="{Binding Outcomes, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectionMode="Row" SelectedItems="{Binding SelectedAnnotations, Mode=TwoWay}" AutoGenerateColumns="None" FontSize="11" AllowLiveDataShaping="False" >
             <dxg:GridControl.View>
-                <dxg:TableView FormatConditionsSource="{Binding ConditionalRowStyles}" NavigationStyle="Cell" AllowConditionalFormattingMenu="True" ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" x:Name="AnnotationList" EditorShowMode="MouseDown" ShowCheckBoxSelectorColumn="True" CheckBoxSelectorColumnWidth="30"  RowMinHeight="22" CellStyle="{x:Null}" EnableImmediatePosting="True" AllowEditing="{Binding AllowEditing}" >
+                <dxg:TableView FormatConditionsSource="{Binding ConditionalRowStyles}" NavigationStyle="Cell" AllowConditionalFormattingMenu="True" ShowGroupPanel="False" VerticalScrollbarVisibility="Auto" AutoWidth="True" x:Name="AnnotationList" EditorShowMode="MouseDown" ShowCheckBoxSelectorColumn="True" CheckBoxSelectorColumnWidth="30"  RowMinHeight="22" CellStyle="{x:Null}" EnableImmediatePosting="True" AllowEditing="{Binding AllowEditing}"  AllowSorting="false">
                     <dxmvvm:Interaction.Behaviors>
-                        <helpers:DisableSelectorColumnBehavior />
+                        <!--<helpers:DisableSelectorColumnBehavior />-->
                     </dxmvvm:Interaction.Behaviors>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="CellValueChanging">
@@ -56,6 +57,9 @@
                         </i:EventTrigger>
                         <i:EventTrigger EventName="CellValueChanged">
                             <ei:CallMethodAction TargetObject="{Binding}" MethodName="AnnotationList_CellValueChanged"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="AnnotationList_SelectionChanged"/>
                         </i:EventTrigger>
                         <!--<i:EventTrigger EventName="CellValueChanged">
                             <ei:CallMethodAction TargetObject="{Binding}" MethodName="AnnotationList_CellValueChanged"/>
@@ -71,6 +75,7 @@
                 
             </dxg:GridControl.View>
             <dxg:GridControl.Columns>
+                <!--<dxg:GridColumn FieldName="DX$CheckboxSelectorColumn" VisibleIndex="1"  Width="30*" />-->
                 <dxg:GridColumn FieldName="ParameterID" Width="60*" Header="Parameter" ToolTip="Parameter" VisibleIndex="1">
                     <dxg:GridColumn.EditSettings>
                         <dxg:LookUpEditSettings Name="Parameter" DisplayMember="Code" ValueMember="ID" ItemsSource="{Binding Parameters}" PopupMinWidth="100" PopupMinHeight="180" AutoPopulateColumns="False">
@@ -90,18 +95,19 @@
                     </dxg:GridColumn.EditSettings>
                 </dxg:GridColumn>
                 <dxg:GridColumn x:Name="CreatorColumn" FieldName="LabTechnician" Header="Creator" ToolTip="Creator" Width="150*" AllowEditing="False" VisibleIndex="2"/>
-                <dxg:GridColumn x:Name="CreatorColorColumn" CellTemplate="{StaticResource CreatorColumn}" FieldName="LabTechnician" Header="Creator" ToolTip="Creator" Width="150*" AllowEditing="False" VisibleIndex="2" Visible="False"/>
-                <dxg:GridColumn FieldName="DateCreation" Header="Created" ToolTip="Date created" AllowEditing="False" Width="90*" VisibleIndex="4" >
+                <dxg:GridColumn FieldName="ExpertiseLevel" Header="Expertise"  ToolTip="Expertise Level" AllowEditing="False" AllowSorting="True" VisibleIndex="3" Width="20*" Visible="{Binding ShowExpertiseColumn}"/>
+                <dxg:GridColumn x:Name="CreatorColorColumn" CellTemplate="{StaticResource CreatorColumn}" FieldName="LabTechnician" Header="Creator" ToolTip="Creator" Width="150*" AllowEditing="False" VisibleIndex="4" Visible="False"/>
+                <dxg:GridColumn FieldName="DateCreation" Header="Created" ToolTip="Date created" AllowEditing="False" Width="90*" VisibleIndex="5" >
                     <dxg:GridColumn.EditSettings>
                         <dxe:DateEditSettings DisplayFormat="dd-MM-yy"/>
                     </dxg:GridColumn.EditSettings>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="Result" Header="Age" ToolTip="Age" AllowEditing="False" Width="30*" VisibleIndex="5">
+                <dxg:GridColumn FieldName="Result" Header="Age" ToolTip="Age" AllowEditing="False" Width="30*" VisibleIndex="6">
                     <dxg:GridColumn.EditSettings>
                         <dxe:TextEditSettings MaskUseAsDisplayFormat="True" MaskType="Numeric" Mask="d"/>
                     </dxg:GridColumn.EditSettings>
                 </dxg:GridColumn>
-                <dxg:GridColumn FieldName="QualityID" Width="60*" Header="Quality" ToolTip="Annotation quality" VisibleIndex="6">
+                <dxg:GridColumn FieldName="QualityID" Width="60*" Header="Quality" ToolTip="Annotation quality" VisibleIndex="7">
                     <dxg:GridColumn.EditSettings>
                         <dxg:LookUpEditSettings Name="Quality" DisplayMember="Code" ValueMember="ID" ItemsSource="{Binding Qualities}" PopupMinWidth="100" PopupMinHeight="180" AutoPopulateColumns="False">
                             <dxg:LookUpEditSettings.PopupContentTemplate>
@@ -190,7 +196,7 @@
                     <ei:CallMethodAction TargetObject="{Binding}" MethodName="GridControl_OnSelectionChanged"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-        </dxg:GridControl>
+        </local:SmartDotsGrid>
         <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Background="#ccc" Height="33">
             <StackPanel x:Name="FilesOperations" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Background="#ccc" Margin="1">
                 <Button Style="{StaticResource SDButtonBase}" x:Name="btnNewAnnotation" Height="27" Width="28" Padding="2" Margin="2" ToolTip="{Binding NewAnnotationTooltip}" HorizontalAlignment="Center" IsEnabled="{Binding CanCreate}" ToolTipService.ShowOnDisabled="True">

@@ -17,7 +17,7 @@ namespace SmartDots
         public App()
         {
             typeof(DXSplashScreen).GetProperty("MainThreadDelay", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, -1, null);
-            ApplicationThemeHelper.UseLegacyDefaultTheme = true;
+            ApplicationThemeHelper.UseLegacyDefaultTheme = false;
             ApplicationThemeHelper.UpdateApplicationThemeName();
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }

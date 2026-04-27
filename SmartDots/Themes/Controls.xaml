@@ -249,7 +249,7 @@
             <Path x:Name="Filter"
                   
                   Margin="3,0,0,0"
-                  Style="{StaticResource UIShape.Filter}"
+
                   />
         </Grid>
         

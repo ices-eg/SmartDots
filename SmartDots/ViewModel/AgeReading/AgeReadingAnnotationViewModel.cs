@@ -1,4 +1,16 @@
-﻿using System;
+﻿using DevExpress.CodeParser;
+using DevExpress.Data.Helpers;
+using DevExpress.Mvvm;
+using DevExpress.Mvvm.Native;
+using DevExpress.Office.Utils;
+using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Core.ConditionalFormatting;
+using DevExpress.Xpf.Grid;
+using DevExpress.Xpf.WindowsUI;
+using SmartDots.Helpers;
+using SmartDots.Model;
+using SmartDots.View;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,16 +21,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using DevExpress.CodeParser;
-using DevExpress.Data.Helpers;
-using DevExpress.Mvvm;
-using DevExpress.Xpf.Core;
-using DevExpress.Xpf.Core.ConditionalFormatting;
-using DevExpress.Xpf.Grid;
-using DevExpress.Xpf.WindowsUI;
-using SmartDots.Helpers;
-using SmartDots.Model;
-using SmartDots.View;
 
 namespace SmartDots.ViewModel
 {
@@ -135,6 +137,16 @@ namespace SmartDots.ViewModel
                 showNucleusColumn = value;
                 RaisePropertyChanged("ShowNucleusColumn");
             }
+        }
+
+        public bool ShowExpertiseColumn {
+            get { return annotations != null ? annotations.Any(x => string.IsNullOrEmpty(x.ExpertiseLevel)) : false; }
+            set
+            {
+                //showNucleusColumn = value;
+                RaisePropertyChanged("ShowExpertiseColumn");
+            }
+
         }
 
         public bool ShowEdgeColumn
@@ -607,6 +619,8 @@ namespace SmartDots.ViewModel
         //        return CanDisApprove ? Visibility.Visible : Visibility.Collapsed;
         //    }
         //}
+
+        
         public bool CanApproveAnnotation
         {
             get { return canApproveAnnotation; }
@@ -806,17 +820,21 @@ namespace SmartDots.ViewModel
         {
             try
             {
+                //Use AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.MySelectedItems for correct selected rows
+                //SelectedAnnotations sometimes keeps old selected rows
+                IList<Annotation> annotationsToDelete = new List<Annotation>();
+                ((List<object>)AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.MySelectedItems).ForEach(x => annotationsToDelete.Add((Annotation)x));
                 //get selected annotations from the grid and remove them (set gc-record = true)
-                if (SelectedAnnotations.Any())
+                if (annotationsToDelete.Any())
                 {
-                    if (SelectedAnnotations.Any(x => x.IsFixed))
+                    if (annotationsToDelete.Any(x => x.IsFixed))
                     {
                         string action = "Please deselect the Pinned Annotation or ask an Administrator to unpin it.";
                         if (AgeReadingViewModel.Analysis.UserCanPin) action = "Please deselect the Pinned Annotation or unpin it.";
                         Helper.ShowWinUIMessageBox("Can not delete a fixed Annotation! " + action, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
-                    var deleteAnnotationsResult = Global.API.DeleteAnnotations(SelectedAnnotations.Select(x => x.ID).ToList());
+                    var deleteAnnotationsResult = Global.API.DeleteAnnotations(annotationsToDelete.Select(x => x.ID).ToList());
                     if (!deleteAnnotationsResult.Succeeded)
                     {
                         Helper.ShowWinUIMessageBox("Error deleting Annotations\n" + deleteAnnotationsResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -825,7 +843,7 @@ namespace SmartDots.ViewModel
                 }
                 WorkingAnnotation = null;
 
-                foreach (var outcome in SelectedAnnotations.ToList())
+                foreach (var outcome in annotationsToDelete.ToList())
                 {
                     Outcomes.Remove(outcome);
                 }
@@ -1035,6 +1053,11 @@ namespace SmartDots.ViewModel
             e.Handled = true;
         }
 
+        public void AnnotationList_SelectionChanged(object sender, GridSelectionChangedEventArgs e)
+        {
+            RefreshActions();
+            e.Handled = true;
+        }
         public void OnKeyDown(object sender, KeyEventArgs e)
         {
             //disable selecting all through keyboard

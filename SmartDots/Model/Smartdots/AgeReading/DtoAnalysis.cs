@@ -15,5 +15,6 @@ namespace SmartDots.Model
         public bool ShowEdgeColumn { get; set; }
         public bool UseGrowthGraphAllSamples { get; set; } = true;
 
+        public bool AllowSetScale { get; set; } = true;
     }
 }

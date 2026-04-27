@@ -178,7 +178,10 @@ namespace SmartDots.ViewModel
                 growthAllMode = value;
                 try
                 {
-                    AgeReadingView.GrowthAllMode.EditValue = value;
+                    if (AgeReadingView != null)
+                    {
+                        AgeReadingView.GrowthAllMode.EditValue = value;
+                    }
                 }
                 catch (Exception)
                 {
@@ -198,7 +201,10 @@ namespace SmartDots.ViewModel
                 growthAllScale = value;
                 try
                 {
-                    AgeReadingView.GrowthAllScale.EditValue = value;
+                    if (AgeReadingView != null)
+                    {
+                        AgeReadingView.GrowthAllScale.EditValue = value;
+                    }
                 }
                 catch (Exception)
                 {

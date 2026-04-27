@@ -24,7 +24,7 @@
         <dxdo:DockLayoutManager EnableWin32Compatibility="True" FloatingMode="Desktop">
             <dxdo:DockLayoutManager.FloatGroups>
                 <dxdo:FloatGroup FloatSize="300,225" MinWidth="300" MinHeight="225" FloatLocation="100,100" AllowDock="False" AllowDrop="False" AllowClose="False" AllowContextMenu="False" AllowDockToCurrentItem="False" AllowExpand="False" AllowHide="False" AllowSizing="False" AllowMaximize="False" AllowMinimize="False" >
-                    <dxdo:LayoutPanel x:Name="MeasureScalePanel" Caption="Measure Scale" AllowClose="False" AllowMaximize="False" AllowMinimize="False" Visibility="Collapsed" >
+                    <dxdo:LayoutPanel x:Name="MeasureScalePanel" Caption="Measure Scale" AllowClose="False" AllowMaximize="False" AllowMinimize="False" Visibility="Collapsed"  IsEnabled="{Binding CanSetScale}">
                         <Grid Margin="5">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="45" />

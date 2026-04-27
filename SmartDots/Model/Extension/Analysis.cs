@@ -14,5 +14,6 @@
         public bool ShowNucleusColumn { get; set; }
         public bool ShowEdgeColumn { get; set; }
         public bool UseGrowthGraphAllSamples { get; set; }
+        public bool AllowSetScale { get; set; } 
     }
 }

@@ -9,6 +9,6 @@ namespace SmartDots.Model
         public string HeaderInfo { get; set; }
         public List<MaturitySample> MaturitySamples { get; set; }
 
-
+        public bool AllowSetScale { get; set; } 
     }
 }

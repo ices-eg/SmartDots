@@ -520,6 +520,17 @@ namespace SmartDots.ViewModel
             get { return OtolithImage != null; }
         }
 
+        public bool CanSetScale
+        {
+            get
+            {
+                return OtolithImage != null
+                && AgeReadingViewModel?.Analysis.AllowSetScale != null
+                && (bool)(AgeReadingViewModel?.Analysis.AllowSetScale);
+
+            }
+        }
+
         public UndoRedo UndoRedo
         {
             get { return undoRedo; }

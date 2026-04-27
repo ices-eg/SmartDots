@@ -316,7 +316,18 @@ namespace SmartDots.ViewModel
 
         public bool CanMeasure
         {
-            get { return MaturityImage != null; }
+            get { return MaturityImage != null;  }
+        }
+
+        public bool CanSetScale
+        {
+            get
+            {
+                return MaturityImage != null
+                && MaturityViewModel?.MaturityAnalysis.AllowSetScale != null
+                && (bool)(MaturityViewModel?.MaturityAnalysis.AllowSetScale);
+
+            }
         }
 
 

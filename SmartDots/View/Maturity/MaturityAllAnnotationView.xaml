@@ -28,12 +28,13 @@
                 </dxg:GridControl.View>
                 <dxg:GridControl.Columns>
                     <dxg:GridColumn FieldName="User" Header="Reader" AllowEditing="False" AllowSorting="True" VisibleIndex="0" MinWidth="65"/>
-                    <dxg:GridColumn FieldName="Date" AllowEditing="False" AllowSorting="True" VisibleIndex="1" MinWidth="65" />
-                    <dxg:GridColumn FieldName="Sex" AllowEditing="False" AllowSorting="True" VisibleIndex="2" MinWidth="60" />
-                    <dxg:GridColumn FieldName="Maturity" AllowEditing="False" AllowSorting="True" VisibleIndex="3" MinWidth="60" />
-                    <dxg:GridColumn FieldName="MaturityQuality" Header="Quality" AllowEditing="False" AllowSorting="True" VisibleIndex="4" MinWidth="60" />
-                    <dxg:GridColumn FieldName="Comments" Header="Comment" AllowEditing="False" AllowSorting="True" VisibleIndex="5" />
-                    <dxg:GridColumn Header="Approved" Width="30*" FieldName="IsApproved" ToolTip="Approved Annotation" AllowEditing="False" AllowSorting="True" VisibleIndex="6" MinWidth="50">
+                    <dxg:GridColumn FieldName="ExpertiseLevel" Header="Expertise" AllowEditing="False" AllowSorting="True" VisibleIndex="1" MinWidth="60" Visible="{Binding ShowExpertiseColumn}"/>
+                    <dxg:GridColumn FieldName="Date" AllowEditing="False" AllowSorting="True" VisibleIndex="2" MinWidth="65" />
+                    <dxg:GridColumn FieldName="Sex" AllowEditing="False" AllowSorting="True" VisibleIndex="3" MinWidth="60" />
+                    <dxg:GridColumn FieldName="Maturity" AllowEditing="False" AllowSorting="True" VisibleIndex="4" MinWidth="60" />
+                    <dxg:GridColumn FieldName="MaturityQuality" Header="Quality" AllowEditing="False" AllowSorting="True" VisibleIndex="5" MinWidth="60" />
+                    <dxg:GridColumn FieldName="Comments" Header="Comment" AllowEditing="False" AllowSorting="True" VisibleIndex="6" />
+                    <dxg:GridColumn Header="Approved" Width="30*" FieldName="IsApproved" ToolTip="Approved Annotation" AllowEditing="False" AllowSorting="True" VisibleIndex="7" MinWidth="50">
                         <dxg:GridColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
