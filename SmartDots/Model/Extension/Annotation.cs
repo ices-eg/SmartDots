@@ -7,8 +7,10 @@ using System.Windows;
 
 namespace SmartDots.Model
 {
+    
     public class Annotation : INotifyPropertyChanged
     {
+        public static readonly string DiscussionMark = "Discussion mark";
         private List<CombinedLine> combinedLines = new List<CombinedLine>();
         private User labTechnician;
 
@@ -153,7 +155,7 @@ namespace SmartDots.Model
             {
                 if (combinedLine.Dots.Count > age)
                 {
-                    age = combinedLine.Dots.Count(x => x.DotType != "Non-counting mark");
+                    age = combinedLine.Dots.Count(x => x.DotType != "Non-counting mark" && x.DotType != Annotation.DiscussionMark);
                 }
             }
             SetAge(age);
