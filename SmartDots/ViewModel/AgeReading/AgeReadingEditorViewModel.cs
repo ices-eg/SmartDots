@@ -35,6 +35,8 @@ using Rect = System.Windows.Rect;
 
 namespace SmartDots.ViewModel
 {
+
+    
     public class AgeReadingEditorViewModel : AgeReadingBaseViewModel
     {
         private object lineColor;
@@ -77,6 +79,8 @@ namespace SmartDots.ViewModel
         private string dotShape = "Dot";
         private Tuple<Dot, double> closestDot;
         private Dictionary<int, Tuple<Action, string, string>> shortcutActions = new Dictionary<int, Tuple<Action, string, string>>();
+
+        private bool needSnapping = true;
 
         public object LineColor
         {
@@ -148,7 +152,8 @@ namespace SmartDots.ViewModel
             }
         }
 
-        public List<Tuple<string, string>> DotTypes { get; set; } = new List<Tuple<string, string>>() { new Tuple<string, string>("Seawater", "Seawater"), new Tuple<string, string>("Freshwater", "Freshwater/Absorbed"), new Tuple<string, string>("Non-counting mark", "Non-counting mark") };
+        public List<Tuple<string, string>> DotTypes { get; set; } = new List<Tuple<string, string>>() { new Tuple<string, string>("Seawater", "Seawater"), 
+            new Tuple<string, string>("Freshwater", "Freshwater/Absorbed"), new Tuple<string, string>("Non-counting mark", "Non-counting mark") ,new Tuple<string, string>(Annotation.DiscussionMark, Annotation.DiscussionMark ) };    
 
         public string DotType
         {
@@ -156,6 +161,16 @@ namespace SmartDots.ViewModel
             set
             {
                 dotType = value;
+
+                if (dotType.Equals(Annotation.DiscussionMark))
+                {
+                    needSnapping = false;
+                }
+                else
+                {
+                    needSnapping = true;
+                }
+
                 RaisePropertyChanged("DotType");
             }
         }
@@ -785,7 +800,7 @@ namespace SmartDots.ViewModel
             {
                 if (combinedLine.Dots.Count > age)
                 {
-                    age = combinedLine.Dots.Count(x => x.DotType != "Non-counting mark");
+                    age = combinedLine.Dots.Count(x => x.DotType != "Non-counting mark" && x.DotType != Annotation.DiscussionMark);
                 }
             }
             AgeReadingViewModel.AgeReadingAnnotationViewModel.SetAge(age);
@@ -946,6 +961,30 @@ namespace SmartDots.ViewModel
 
                                     topLevelLines.Add(line);
                                     topLevelLines.Add(line2);
+
+                                }
+                                else if (d.DotType == Annotation.DiscussionMark)
+                                {
+                                    var radius = (float)d.Width;
+                                    var dotWidth = ((radius) * zoomfactor);
+                                    Shape l = new Ellipse()
+                                    {
+                                        Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FA8900")),
+                                        Width = dotWidth,
+                                        Height = dotWidth, // not an error, they are the same
+
+                                    };
+                                    var left = (float)d.X * zoomfactor - (radius) / 2 * zoomfactor;
+                                    var top = (float)d.Y * zoomfactor - (radius) / 2 * zoomfactor;
+                                    Canvas.SetLeft(l, left);
+                                    Canvas.SetTop(l, top);
+                                    dots.Add(l);
+
+
+                                    var exclamationPath = BuildExclamationPath((SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF")), dotWidth);
+                                    Canvas.SetLeft(exclamationPath.Item1, left + (dotWidth/2) - exclamationPath.Item2/2 );
+                                    Canvas.SetTop(exclamationPath.Item1,( top + (dotWidth - exclamationPath.Item3)/2));
+                                    dots.Add(exclamationPath.Item1);
 
                                 }
                                 else
@@ -1599,32 +1638,58 @@ namespace SmartDots.ViewModel
             if (AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.HasAq3()) return;
             if (!CanDrawDot) return;
             if (!AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Any()) return;
+
             Tuple<LinePoint, double> closestPoint =
-                GetClosestLinePointWithDistance(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
+                   GetClosestLinePointWithDistance(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
+
             if (closestPoint != null)
             {
-                if (closestPoint.Item2 <= 50)
+                if (needSnapping)
                 {
-                    if (
-                        !closestPoint.Item1.ParentCombinedLine.ContainsDotAt(new Point(closestPoint.Item1.X,
-                            closestPoint.Item1.Y)))
+                    if (closestPoint.Item2 <= 50)
                     {
-                        Dot d = new Dot()
+                        if (
+                            !closestPoint.Item1.ParentCombinedLine.ContainsDotAt(new Point(closestPoint.Item1.X,
+                                closestPoint.Item1.Y)))
                         {
-                            ID = Guid.NewGuid(),
-                            X = closestPoint.Item1.X,
-                            Y = closestPoint.Item1.Y,
-                            Width = (int)DotWidth,
-                            Color = DotColor.ToString(),
-                            ParentCombinedLine = closestPoint.Item1.ParentCombinedLine,
-                            AnnotationID = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ID,
-                            DotShape = DotShape,
-                            DotType = DotType
-                        };
-                        AddDot(closestPoint.Item1.ParentCombinedLine, d);
-                        UndoRedo.InsertInUnDoRedoForAddDot(d, d.ParentCombinedLine, this);
-                        //ParentControl.UpdateAnnotations();
+                            Dot d = new Dot()
+                            {
+                                ID = Guid.NewGuid(),
+                                X = closestPoint.Item1.X,
+                                Y = closestPoint.Item1.Y,
+                                Width = (int)DotWidth,
+                                Color = DotColor.ToString(),
+                                ParentCombinedLine = closestPoint.Item1.ParentCombinedLine,
+                                AnnotationID = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ID,
+                                DotShape = DotShape,
+                                DotType = DotType
+                            };
+                            AddDot(closestPoint.Item1.ParentCombinedLine, d);
+                            UndoRedo.InsertInUnDoRedoForAddDot(d, d.ParentCombinedLine, this);
+                            //ParentControl.UpdateAnnotations();
+                        }
                     }
+                }
+                else
+                {
+                    float zoomfactor = AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
+                    Dot d = new Dot()
+                    {
+
+                        ID = Guid.NewGuid(),
+                        X = (int)(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).X / zoomfactor),
+                        Y = (int)(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).Y / zoomfactor),
+                        Width = (int)DotWidth,
+                        Color = DotColor.ToString(),
+                        ParentCombinedLine = closestPoint.Item1.ParentCombinedLine,
+                        AnnotationID = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.ID,
+                        DotShape = DotShape,
+                        DotType = DotType
+                    };
+
+                    AddDot(closestPoint.Item1.ParentCombinedLine, d);
+                    UndoRedo.InsertInUnDoRedoForAddDot(d, closestPoint.Item1.ParentCombinedLine, this);
+
                 }
             }
             AgeReadingViewModel.AgeReadingAnnotationViewModel.RefreshActions();
@@ -1744,7 +1809,7 @@ namespace SmartDots.ViewModel
                 if (allDots.Count > 0 && closestDot.Item2 <= 20)
                 {
                     AgeReadingViewModel.AgeReadingStatusbarViewModel.Info =
-                        closestDot.Item1.DotType == "Non-counting mark" ? "Non-counting mark" : $"Age {closestDot.Item1.DotIndex} ({closestDot.Item1.DotType})";
+                        closestDot.Item1.DotType == "Non-counting mark" ? "Non-counting mark" : closestDot.Item1.DotType == Annotation.DiscussionMark ? Annotation.DiscussionMark : $"Age {closestDot.Item1.DotIndex} ({closestDot.Item1.DotType})";
                     var annotation = AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations.FirstOrDefault(x => x.ID == closestDot.Item1.AnnotationID);
                     AgeReadingViewModel.AgeReadingStatusbarViewModel.Info += $" - {annotation.LabTechnician}";
                 }
@@ -1771,44 +1836,50 @@ namespace SmartDots.ViewModel
                     AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Arrow;
 
 
-
-
-
-                    Tuple<LinePoint, double> closestPoint =
-                        GetClosestLinePointWithDistance(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
-                    if (closestPoint != null)
+                    if (needSnapping)
                     {
-                        AgeReadingViewModel.AgeReadingEditorView.Tracker.SetLeft(closestPoint.Item1.X *
-                                                                                 AgeReadingViewModel
-                                                                                     .AgeReadingStatusbarViewModel
-                                                                                     .ZoomFactor - 16);
-                        AgeReadingViewModel.AgeReadingEditorView.Tracker.SetTop(closestPoint.Item1.Y *
-                                                                                AgeReadingViewModel
-                                                                                    .AgeReadingStatusbarViewModel.ZoomFactor -
-                                                                                16);
 
-                        if (closestPoint.Item2 <= 50)
+
+                        Tuple<LinePoint, double> closestPoint =
+                            GetClosestLinePointWithDistance(e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas));
+                        if (closestPoint != null)
                         {
-                            AgeReadingViewModel.AgeReadingEditorView.Tracker.Visibility = Visibility.Visible;
-                            if (!ActiveCombinedLine.Equals(closestPoint.Item1.ParentCombinedLine))
+                            AgeReadingViewModel.AgeReadingEditorView.Tracker.SetLeft(closestPoint.Item1.X *
+                                                                                     AgeReadingViewModel
+                                                                                         .AgeReadingStatusbarViewModel
+                                                                                         .ZoomFactor - 16);
+                            AgeReadingViewModel.AgeReadingEditorView.Tracker.SetTop(closestPoint.Item1.Y *
+                                                                                    AgeReadingViewModel
+                                                                                        .AgeReadingStatusbarViewModel.ZoomFactor -
+                                                                                    16);
+
+                            if (closestPoint.Item2 <= 50)
                             {
-                                ActiveCombinedLine = closestPoint.Item1.ParentCombinedLine;
-                                AgeReadingViewModel.UpdateGraphs(true, true, false, false);
+                                AgeReadingViewModel.AgeReadingEditorView.Tracker.Visibility = Visibility.Visible;
+                                if (!ActiveCombinedLine.Equals(closestPoint.Item1.ParentCombinedLine))
+                                {
+                                    ActiveCombinedLine = closestPoint.Item1.ParentCombinedLine;
+                                    AgeReadingViewModel.UpdateGraphs(true, true, false, false);
+                                }
+
+                                AgeReadingViewModel.AgeReadingView.BrightnessGraph.m_MouseLocationTracker.X =
+                                    closestPoint.Item1.Index;
+                                AgeReadingViewModel.AgeReadingView.BrightnessGraph.m_MouseLocationTracker.Hidden = false;
+
+                                AgeReadingViewModel.AgeReadingView.RednessGraph.m_MouseLocationTracker.X =
+                                    closestPoint.Item1.Index;
+                                AgeReadingViewModel.AgeReadingView.RednessGraph.m_MouseLocationTracker.Hidden = false;
+
                             }
-
-                            AgeReadingViewModel.AgeReadingView.BrightnessGraph.m_MouseLocationTracker.X =
-                                closestPoint.Item1.Index;
-                            AgeReadingViewModel.AgeReadingView.BrightnessGraph.m_MouseLocationTracker.Hidden = false;
-
-                            AgeReadingViewModel.AgeReadingView.RednessGraph.m_MouseLocationTracker.X =
-                                closestPoint.Item1.Index;
-                            AgeReadingViewModel.AgeReadingView.RednessGraph.m_MouseLocationTracker.Hidden = false;
-
+                            else
+                            {
+                                AgeReadingViewModel.AgeReadingEditorView.Tracker.Visibility = Visibility.Hidden;
+                                AgeReadingViewModel.AgeReadingView.BrightnessGraph.m_MouseLocationTracker.Hidden = true;
+                            }
                         }
                         else
                         {
-                            AgeReadingViewModel.AgeReadingEditorView.Tracker.Visibility = Visibility.Hidden;
-                            AgeReadingViewModel.AgeReadingView.BrightnessGraph.m_MouseLocationTracker.Hidden = true;
+                            AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Pen;
                         }
                     }
                 }
@@ -1824,7 +1895,26 @@ namespace SmartDots.ViewModel
                     else if (measure != null) AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Hand;
                     else
                     {
-                        AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Arrow;
+
+                        var pos = e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas);
+                        zoomfactor = AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
+
+                        // Convert canvas position back to image-space
+                        double imageX = pos.X / AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
+                        double imageY = pos.Y / AgeReadingViewModel.AgeReadingStatusbarViewModel.ZoomFactor;
+
+                        Dot clickedDot = AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation
+                        .CombinedLines
+                        .SelectMany(cl => cl.Dots)
+                        .FirstOrDefault(d =>
+                            Math.Pow(imageX - d.X, 2) + Math.Pow(imageY - d.Y, 2)
+                            <= Math.Pow(d.Width / 2.0, 2));
+
+                        if (clickedDot != null) { AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Hand; }
+                        else
+                        {
+                            AgeReadingViewModel.AgeReadingEditorView.Cursor = Cursors.Arrow;
+                        }
                     }
                 }
                 else if (Mode == EditorModeEnum.DrawScale && ScaleShapes.Any())
@@ -2339,5 +2429,32 @@ namespace SmartDots.ViewModel
             ActionGroup5(0, 24, "Translucent");
         }
         #endregion
+
+        /// <summary>
+        /// Builds a Path that renders a "!" glyph, scaled to the given dot size, using the given brush.
+        /// The geometry consists of a thin rectangle (body) and a small ellipse (dot) below it.
+        /// </summary>
+        private static (Path, double, double) BuildExclamationPath(System.Windows.Media.Brush brush, double dotSize)
+        {
+            double width  = Math.Max(2, dotSize * 0.15);
+            double height = Math.Max(4, dotSize * 0.65);
+
+            // Body: tall narrow rectangle
+            var body = new RectangleGeometry(new Rect(0, 0, width, height * 0.65));
+
+            // Dot: small circle at the bottom
+            double dotRadius = width / 2;
+            var dot = new EllipseGeometry(new System.Windows.Point(width / 2, height * 0.65 + dotRadius * 2), dotRadius, dotRadius);
+
+            var group = new GeometryGroup();
+            group.Children.Add(body);
+            group.Children.Add(dot);
+
+            return ((new Path
+            {
+                Data = group,
+                Fill = brush,
+            }),width, height);
+        }
     }
 }
