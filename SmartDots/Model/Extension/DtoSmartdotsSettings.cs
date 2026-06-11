@@ -21,6 +21,7 @@
         public string MaturityAPI { get; set; }
         public string LarvaeAPI { get; set; }
         public string EggAPI { get; set; }
+        public bool IsDiscussionMarkerEnabled { get; set; }
 
         public float MinRequiredVersion { get; set; }
     }

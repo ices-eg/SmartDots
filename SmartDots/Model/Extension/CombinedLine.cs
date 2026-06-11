@@ -235,22 +235,22 @@ namespace SmartDots.Model
             List<LinePoint> linepoints = new List<LinePoint>();
             try
             {
-                linepoints = Dots.Where(d => d.DotType != "Non-counting mark").Select(d => Points.Find(x => x.Location == d.Location)).OrderBy(x => x.Index).ToList();
-                if (linepoints.Count != Dots.Count(d => d.DotType != "Non-counting mark"))
+                linepoints = Dots.Where(d => d.DotType != "Non-counting mark" && d.DotType != Annotation.DiscussionMark).Select(d => Points.Find(x => x.Location == d.Location)).OrderBy(x => x.Index).ToList();
+                if (linepoints.Count != Dots.Count(d => d.DotType != "Non-counting mark" && d.DotType != Annotation.DiscussionMark))
                 {
                     //snap dots to the closest location on the line
-                    foreach (var dot in Dots.Where(d => d.DotType != "Non-counting mark"))
+                    foreach (var dot in Dots.Where(d => d.DotType != "Non-counting mark" && d.DotType != Annotation.DiscussionMark))
                     {
                         dot.Location = GetClosestPoint(dot.Location).Location;
                     }
-                    linepoints = Dots.Where(d => d.DotType != "Non-counting mark").Select(d => Points.Find(x => x.Location == d.Location)).OrderBy(x => x.Index).ToList();
+                    linepoints = Dots.Where(d => d.DotType != "Non-counting mark" && d.DotType != Annotation.DiscussionMark).Select(d => Points.Find(x => x.Location == d.Location)).OrderBy(x => x.Index).ToList();
                 }
                 for (int i = 0; i < linepoints.Count; i++)
                 {
-                    var dot = Dots.FirstOrDefault(x => x.Location == linepoints[i].Location && x.DotType != "Non-counting mark");
+                    var dot = Dots.FirstOrDefault(x => x.Location == linepoints[i].Location && x.DotType != "Non-counting mark" && x.DotType != Annotation.DiscussionMark);
                     if (dot != null) dot.DotIndex = i + 1;
                 }
-                List<int> indices = Dots.Where(d => d.DotType != "Non-counting mark").Select(d => Points.Find(x => x.Location == d.Location)).ToList().Select(lp => Points.FindIndex(x => x.Location == lp.Location)).ToList();
+                List<int> indices = Dots.Where(d => d.DotType != "Non-counting mark" && d.DotType != Annotation.DiscussionMark).Select(d => Points.Find(x => x.Location == d.Location)).ToList().Select(lp => Points.FindIndex(x => x.Location == lp.Location)).ToList();
                 indices.Sort();
                 DotIndex = indices;
                 Dots = Dots.OrderBy(x => x.DotIndex).ToList();

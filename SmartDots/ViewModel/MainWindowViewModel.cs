@@ -216,6 +216,7 @@ namespace SmartDots.ViewModel
             AgeReadingControl.AgeReadingViewModel.AgeReadingFileViewModel.UseSampleStatus = Global.API.Settings.UseSampleStatus;
             AgeReadingControl.AgeReadingViewModel.AgeReadingAnnotationViewModel.CanApproveAnnotation = Global.API.Settings.CanApproveAnnotation;
             AgeReadingControl.AgeReadingViewModel.EditAnnotationDialogViewModel.CanApproveAnnotation = Global.API.Settings.CanApproveAnnotation ? Visibility.Visible : Visibility.Collapsed;
+            AgeReadingControl.AgeReadingViewModel.AgeReadingEditorViewModel.RefreshDotTypes();
 
             var newWindow = !Global.API.Settings.OpenSocket;
             if (!_isListening && !newWindow)

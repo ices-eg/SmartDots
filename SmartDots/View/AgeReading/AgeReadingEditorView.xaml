@@ -139,6 +139,7 @@
                         <!-- TODO: find proper way to give all labels the same width; is now charlength-based... -->
                         <dxb:BarEditItem.EditSettings>
                             <dxe:ComboBoxEditSettings IsTextEditable="False" ItemsSource="{Binding DotTypes}" DisplayMember="Item2" ValueMember="Item1">
+
                                 <!--<dxe:ComboBoxEditSettings.Items>
                                     <dxe:ComboBoxEditItem Content="Seawater"   />
                                     <dxe:ComboBoxEditItem Content="Freshwater" />
@@ -351,12 +352,13 @@
                                                             <dxe:ComboBoxEditItem Content="Seawater" />
                                                             <dxe:ComboBoxEditItem Content="Freshwater" />
                                                             <dxe:ComboBoxEditItem Content="Non-counting mark" />
+                                                            <dxe:ComboBoxEditItem Content="Discussion mark" />
                                                         </dxe:ComboBoxEditSettings.Items>
                                                     </dxe:ComboBoxEditSettings>
                                                 </dxb:BarEditItem.EditSettings>
                                             </dxb:BarEditItem>
                                             <dxb:BarItemSeparator />
-                                            <dxb:BarButtonItem Content="Delete" IsEnabled="{Binding CanDelete}" >
+                                            <dxb:BarButtonItem Content="Delete" IsEnabled="{Binding CanDelete}" >   
                                                 <i:Interaction.Triggers>
                                                     <i:EventTrigger EventName="ItemClick">
                                                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="DeleteClosestDot"/>
