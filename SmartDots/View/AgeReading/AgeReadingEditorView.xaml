@@ -347,13 +347,13 @@
                                             <dxb:BarEditItem Style="{StaticResource BarItem}" Content="  Type" Name="EditDotType" EditValue="{Binding ClosestDotDotType, Mode=TwoWay}" IsEnabled="{Binding CanDrawDot}">
                                                 <!-- TODO: find proper way to give all labels the same width; is now charlength-based... -->
                                                 <dxb:BarEditItem.EditSettings>
-                                                    <dxe:ComboBoxEditSettings IsTextEditable="False">
-                                                        <dxe:ComboBoxEditSettings.Items>
-                                                            <dxe:ComboBoxEditItem Content="Seawater" />
-                                                            <dxe:ComboBoxEditItem Content="Freshwater" />
-                                                            <dxe:ComboBoxEditItem Content="Non-counting mark" />
-                                                            <dxe:ComboBoxEditItem Content="Discussion mark" />
-                                                        </dxe:ComboBoxEditSettings.Items>
+                                                    <dxe:ComboBoxEditSettings IsTextEditable="False" ItemsSource="{Binding DotTypes}" DisplayMember="Item2" ValueMember="Item1">
+
+                                                        <!--<dxe:ComboBoxEditSettings.Items>
+            <dxe:ComboBoxEditItem Content="Seawater"   />
+            <dxe:ComboBoxEditItem Content="Freshwater" />
+            <dxe:ComboBoxEditItem Content="Non-counting mark" />
+        </dxe:ComboBoxEditSettings.Items>-->
                                                     </dxe:ComboBoxEditSettings>
                                                 </dxb:BarEditItem.EditSettings>
                                             </dxb:BarEditItem>
