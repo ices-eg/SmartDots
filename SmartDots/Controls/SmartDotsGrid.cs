@@ -14,7 +14,7 @@ namespace SmartDots.Controls
     public class SmartDotsGrid : DevExpress.Xpf.Grid.GridControl
     {
         ObservableCollectionCore<object> mySelectedItems;
-        public IList MySelectedItems { get { return mySelectedItems.ToList(); } }
+        public IList MySelectedItems { get { return mySelectedItems?.Where(x=>x!=null).ToList(); } }
         public SmartDotsGrid()
         {
             SelectionChanged += MyGridControl_SelectionChanged;

@@ -72,8 +72,8 @@ namespace SmartDots.ViewModel
         public List<Annotation> SelectedAnnotations
         {
             get {
-                
-                
+
+                return AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.MySelectedItems.Cast<Annotation>().ToList();
                 return selectedAnnotations; }
             set
             {
@@ -927,9 +927,11 @@ namespace SmartDots.ViewModel
             AgeReadingViewModel.AgeReadingAnnotationView.CreatorColorColumn.Visible = false;
             AgeReadingViewModel.AgeReadingAnnotationView.CreatorColorColumn.VisibleIndex = 2;
 
-            if (SelectedAnnotations.Count == 1)
+            var selected =AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.MySelectedItems.Cast<Annotation>().ToList();
+
+            if (selected.Count == 1)
             {
-                WorkingAnnotation = SelectedAnnotations[0];
+                WorkingAnnotation = selected[0];
 
                 foreach (var combinedline in WorkingAnnotation.CombinedLines)
                 {
@@ -949,7 +951,7 @@ namespace SmartDots.ViewModel
             {
                 WorkingAnnotation = null;
 
-                if (SelectedAnnotations.Count > 1)
+                if (selected.Count > 1)
                 {
 
                     if (Global.API.Settings != null && !Global.API.Settings.IgnoreMultiUserColor)
