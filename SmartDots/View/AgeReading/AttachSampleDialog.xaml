@@ -8,7 +8,7 @@
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dialog="clr-namespace:SmartDots.ViewModel"
-             dx:ThemeManager.ThemeName="HybridApp"
+             dx:ThemeManager.ThemeName="Office2016White"
              xmlns:viewModel="clr-namespace:SmartDots.ViewModel"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"

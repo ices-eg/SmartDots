@@ -184,7 +184,7 @@
     </Style>
 
     <!--<Style TargetType="dxwui:WinUIDialogWindow">
-        <Setter Property="dx:ThemeManager.Theme" Value="HybridApp" />
+        <Setter Property="dx:ThemeManager.Theme" Value="Office2016White" />
     </Style>-->
 
         <Style TargetType="dxdo:LayoutPanel">

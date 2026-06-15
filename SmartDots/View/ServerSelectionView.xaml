@@ -79,7 +79,7 @@
             
 </dxg:GridControl>
 
-        <dxwui:AppBar Name="AnalysesActions" common:VisibilityAnimation.AnimationType="Fade" Alignment="Bottom" Background="#293C45" dx:ThemeManager.Theme="HybridApp">
+        <dxwui:AppBar Name="AnalysesActions" common:VisibilityAnimation.AnimationType="Fade" Alignment="Bottom" Background="#293C45" dx:ThemeManager.Theme="Office2016White">
             <dxwui:AppBarButton Glyph="/Resources/SmartLabIcon2-bw.png" Label="Analyze" x:Name="ButtonWorkOnline" Click="WorkOnline_Click" />
             <dxwui:AppBarButton Glyph="/Resources/folder-3-32.png" Label="Edit Folder" x:Name="ButtonFolder" Click="Folder_Click" />
             <dxwui:AppBarButton Glyph="/Resources/refresh-2-32.png" Label="Reload" x:Name="ButtonReload" Click="ButtonReload_Click"/>

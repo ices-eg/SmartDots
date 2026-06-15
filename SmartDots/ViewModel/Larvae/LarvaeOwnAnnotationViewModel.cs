@@ -444,7 +444,7 @@ namespace SmartDots.ViewModel
 
                     foreach (LarvaeAnnotationProperty prop in LarvaeViewModel.LarvaeAnalysis.LarvaeEggAnnotationProperties)
                     {
-                        LarvaeViewModel.LarvaeOwnAnnotationView.Grid.RowDefinitions.Add(new RowDefinition()
+                        LarvaeViewModel.LarvaeOwnAnnotationView.Grid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition()
                         {
                             Height = new GridLength(rowHeight)
                         });
@@ -516,7 +516,7 @@ namespace SmartDots.ViewModel
                     }
                     //<dxe:TextEdit Grid.Row="7" Grid.Column="1" x:Name="LarvaeComments" EditValue="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Background="{StaticResource BrushSmartFishYellow}" Height="68" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" IsEnabled="{Binding CanEdit, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
-                    LarvaeViewModel.LarvaeOwnAnnotationView.Grid.RowDefinitions.Add(new RowDefinition()
+                    LarvaeViewModel.LarvaeOwnAnnotationView.Grid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition()
                     {
                         Height = new GridLength(72)
                     });

@@ -168,7 +168,7 @@
             </dxdo:LayoutGroup>
 
         </dxdo:DockLayoutManager>
-        <!--<dxwui:AppBar x:Name="CollectionAppBar" Grid.Row="1" DockPanel.Dock="Bottom" dx:ThemeManager.Theme="HybridApp">
+        <!--<dxwui:AppBar x:Name="CollectionAppBar" Grid.Row="1" DockPanel.Dock="Bottom" dx:ThemeManager.Theme="Office2016White">
             <dxwui:AppBarButton x:Name="ReturnBtn" Label="Back" Glyph="../../Resources/arrow-94-32.png" ToolTip="Back to Analysis list" >
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
