@@ -36,6 +36,7 @@ namespace SmartDots.Helpers
         WebApiResult<List<AnalysisSample>> GetAnalysisSamples(Guid id);
         WebApiResult<bool> UpdateAnalysisFolder(Guid analysisid, string folderpath);
         WebApiResult<bool> ToggleAnalysisUserProgress(Guid analysisid);
+        WebApiResult<bool> DeleteSample(Guid id);
         WebApiResult<LoginToken> EstablishConnection(string connStr);
         WebApiResult<DtoMaturityAnalysis> GetMaturityAnalysis(Guid id);
         WebApiResult<DtoMaturitySample> GetMaturitySample(Guid id);
@@ -43,6 +44,7 @@ namespace SmartDots.Helpers
         WebApiResult<DtoMaturitySample> SaveMaturityAnnotation(DtoMaturityAnnotation annotation);
         WebApiResult<bool> UpdateMaturityFile(DtoMaturityFile file);
         WebApiResult<bool> ToggleMaturityAnalysisUserProgress(Guid analysisid);
+        WebApiResult<bool> DeleteMaturitySample(Guid id);
 
         WebApiResult<DtoLarvaeEggAnalysis> GetLarvaeAnalysis(Guid id, string type);
         WebApiResult<DtoLarvaeEggSample> GetLarvaeSample(Guid id, string type);

@@ -77,6 +77,8 @@ namespace SmartDots.ViewModel
                 {
                     AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes = selectedFile.BoundOutcomes ??
                                                                                  new ObservableCollection<Annotation>();
+                    // clear myselectedfiles
+                    AgeReadingViewModel?.AgeReadingAnnotationView?.AnnotationGrid ?.ClearSelectedItems();
                     AgeReadingViewModel.AgeReadingEditorViewModel.OriginalMeasureShapes = new ObservableCollection<Line>();
                     AgeReadingViewModel.AgeReadingEditorViewModel.TextShapes = new ObservableCollection<TextBlock>();
                     AgeReadingViewModel.AgeReadingEditorView.BrightnessSlider.EditValue = 0;

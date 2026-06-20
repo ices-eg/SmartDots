@@ -126,6 +126,14 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public bool IsDeleteEnabled
+        {
+            get
+            {
+                return AgeReadingFileViewModel.SelectedFile != null;
+            }
+        }
+
         public Analysis Analysis
         {
             get { return analysis; }
@@ -363,6 +371,7 @@ namespace SmartDots.ViewModel
                 AgeReadingFileViewModel.CurrentFolder = Analysis.Folder;
                 AgeReadingView.GrowthAllMode.EditValue = GrowthAllMode;
                 AgeReadingView.GrowthAllScale.EditValue = GrowthAllScale;
+                AgeReadingView.DeleteSample.Visibility = dtoAnalysis.Result.AllowDeleteSample ? Visibility.Visible : Visibility.Collapsed;
                 return true;
             }
             catch (Exception e)
@@ -1219,7 +1228,25 @@ namespace SmartDots.ViewModel
 
         }
 
+        public void DeleteSample()
+        {
+            if (AgeReadingFileViewModel.SelectedFile.Sample != null)
+            {
+                var file = AgeReadingFileViewModel.SelectedFile;
 
+                if (file.SampleID.HasValue)
+                {
+                    var result = Helper.ShowWinUIDialog($"Are you sure you want to delete the sample '{file.SampleNumber}'?", "Delete Sample", MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        //delete sample from database
+                        Global.API.DeleteSample(file.SampleID.Value);
+                        //refresh file list
+                        this.LoadAnalysis(Analysis.ID);
+                    }
+                }
+            }
+        }
 
         //todo future key combinations
         public void Window_KeyDown(object sender, KeyEventArgs e)

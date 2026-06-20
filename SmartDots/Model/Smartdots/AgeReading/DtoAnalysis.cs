@@ -16,5 +16,6 @@ namespace SmartDots.Model
         public bool UseGrowthGraphAllSamples { get; set; } = true;
 
         public bool AllowSetScale { get; set; } = true;
+        public bool AllowDeleteSample { get; set; }
     }
 }

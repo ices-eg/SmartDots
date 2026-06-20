@@ -40,7 +40,7 @@ namespace SmartDots.View
 
             this.mainWindowViewModel = mainWindowViewModel;
 
-            ageReadingViewModel = (AgeReadingViewModel) base.DataContext;
+            ageReadingViewModel = (AgeReadingViewModel)base.DataContext;
             AgeReadingViewModel.AgeReadingView = this;
 
             AgeReadingViewModel.LoadLayout("Layout.xml");
@@ -123,6 +123,11 @@ namespace SmartDots.View
             AgeReadingViewModel.GrowthCsvDownload();
 
 
+        }
+
+        private void DeleteSample_Click(object sender, RoutedEventArgs e)
+        {
+            AgeReadingViewModel.DeleteSample();
         }
     }
 }

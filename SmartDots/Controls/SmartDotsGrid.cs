@@ -35,6 +35,11 @@ namespace SmartDots.Controls
                 selection[i++] = false;
         }
 
+        public void ClearSelectedItems()
+        {
+            mySelectedItems.Clear();
+        }
+
 
         Locker updateLocker = new Locker();
         void MyGridControl_SelectionChanged(object sender, GridSelectionChangedEventArgs e)
