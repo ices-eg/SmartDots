@@ -90,7 +90,7 @@ namespace SmartDots.ViewModel
                 return "UNAPPROVE";
             }
         }
-
+       
         public void Refresh()
         {
             MaturityView.btnApprove.Content = ApproveButtonText;
@@ -296,7 +296,7 @@ namespace SmartDots.ViewModel
                     Helper.ShowWinUIMessageBox(dtoMaturityAnalysis.WarningMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 }
-
+                MaturityView.DeleteSample.Visibility = dtoMaturityAnalysis.Result.AllowDeleteSample ? Visibility.Visible : Visibility.Collapsed;
                 return true;
 
             }
@@ -308,6 +308,13 @@ namespace SmartDots.ViewModel
             }
         }
 
+        public bool IsDeleteEnabled
+        {
+            get
+            {
+                return MaturitySampleViewModel?.SelectedSample != null;
+            }
+        }
 
         public bool ValidateAnnotation()
         {
@@ -596,6 +603,21 @@ namespace SmartDots.ViewModel
             //dialog.ShowDialog();
         }
 
-
+        public void DeleteSample()
+        {
+            var sample = MaturitySampleViewModel.SelectedSample;
+            if (sample != null)
+            {
+               
+                var result = Helper.ShowWinUIDialog($"Are you sure you want to delete the sample?", "Delete Sample", MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    //delete sample from database
+                    Global.API.DeleteSample(sample.ID);
+                    //refresh file list
+                    this.LoadMaturityAnalysis(maturityAnalysis.ID);
+                }
+            }
+        }
     }
 }

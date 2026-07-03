@@ -61,7 +61,7 @@
                     <dxdo:LayoutPanel x:Name="OtolithPanel" Caption="Sample list" ItemWidth="Auto" ItemHeight="1*" AllowClose="False" AllowHide="False" AllowMove="True" MinWidth="100">
                         <dxdo:LayoutPanel.ControlBoxContent>
                             <DockPanel>
-                                <Button Style="{StaticResource SDButtonBase}" x:Name="DeleteSample" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Delete sample" Click="DeleteSample_Click" RenderTransformOrigin="136.612,285.847" IsEnabled="{Binding (IsDeleteEnabled)}">
+                                <Button Style="{StaticResource SDButtonBase}" x:Name="DeleteSample" Height="21" Width="22" Padding="2" Margin="2" HorizontalAlignment="Right" ToolTip="Delete sample" Click="DeleteSample_Click" RenderTransformOrigin="136.612,285.847" IsEnabled="{Binding IsDeleteEnabled}">
                                     <Image Source="../../Resources/Delete.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5">
 
                                     </Image>
