@@ -312,7 +312,7 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                return MaturitySampleViewModel?.SelectedSample != null;
+                return MaturitySampleViewModel?.SelectedSample != null && !MaturitySampleViewModel.SelectedSample.IsReadOnly;
             }
         }
 

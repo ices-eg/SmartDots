@@ -130,7 +130,7 @@ namespace SmartDots.ViewModel
         {
             get
             {
-                return AgeReadingFileViewModel.SelectedFile != null;
+                return AgeReadingFileViewModel.SelectedFile != null && !AgeReadingFileViewModel.SelectedFile.IsReadOnly;
             }
         }
 
