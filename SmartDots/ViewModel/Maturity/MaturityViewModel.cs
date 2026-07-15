@@ -584,7 +584,7 @@ namespace SmartDots.ViewModel
             MaturityView.MainWindowViewModel.SetActiveControl(MaturityView.MainWindowViewModel.ServerSelectionView);
             MaturityView.MainWindowViewModel.HeaderInfo = $"  {Global.API.Settings.EventAlias.ToUpper()} OVERVIEW";
             MaturityView.MainWindowViewModel.HeaderModule = "";
-            MaturityView.MainWindowViewModel.ServerSelectionView.LoadGrid();
+            //MaturityView.MainWindowViewModel.ServerSelectionView.LoadGrid();
             //AgeReadingView.MainWindowViewModel.ServerSelectionView.LoadGrid();
             //AgeReadingView.MainWindowViewModel.HeaderInfo = Global.API.Settings.EventAlias + " overview";
             //AgeReadingView.Opacity = 0;

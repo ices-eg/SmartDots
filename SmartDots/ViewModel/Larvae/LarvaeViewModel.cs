@@ -435,7 +435,7 @@ namespace SmartDots.ViewModel
             LarvaeView.MainWindowViewModel.SetActiveControl(LarvaeView.MainWindowViewModel.ServerSelectionView);
             LarvaeView.MainWindowViewModel.HeaderInfo = $"  {Global.API.Settings.EventAlias.ToUpper()} OVERVIEW";
             LarvaeView.MainWindowViewModel.HeaderModule = "";
-            LarvaeView.MainWindowViewModel.ServerSelectionView.LoadGrid();
+            //LarvaeView.MainWindowViewModel.ServerSelectionView.LoadGrid();
         }
 
         public void LarvaeAnnotationOwn_GotFocus(object sender, RoutedEventArgs e)

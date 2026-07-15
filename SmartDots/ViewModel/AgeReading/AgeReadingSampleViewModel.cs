@@ -40,7 +40,7 @@ namespace SmartDots.ViewModel.AgeReading
         public void SetSample()
         {
             EmptyValues();
-            if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Sample != null)
+            if (AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile?.Sample != null)
             {
                 Sample = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Sample;
                 
