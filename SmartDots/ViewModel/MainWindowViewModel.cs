@@ -175,31 +175,31 @@ namespace SmartDots.ViewModel
 
         private void AnalysisSelected(object sender, AnalysisEventArgs e)
         {
-            if (e.Analysis.Purpose != null && e.Analysis.Purpose.ToString().ToLower().Substring(0, 3).Equals("mat"))
+            if (e.Analysis["Purpose"] != null && e.Analysis["Purpose"].ToString().ToLower().Substring(0, 3).Equals("mat"))
             {
-                if (MaturityControl.MaturityViewModel.LoadMaturityAnalysis(Guid.Parse(e.Analysis.ID.ToString())))
+                if (MaturityControl.MaturityViewModel.LoadMaturityAnalysis(Guid.Parse(e.Analysis["ID"].ToString())))
                 {
                     SetActiveControl(MaturityControl);
                 }
 
             }
-            else if (e.Analysis.Purpose != null && e.Analysis.Purpose.ToString().ToLower().Substring(0, 3).Equals("lar"))
+            else if (e.Analysis["Purpose"] != null && e.Analysis["Purpose"].ToString().ToLower().Substring(0, 3).Equals("lar"))
             {
-                if (LarvaeControl.LarvaeViewModel.LoadLarvaeAnalysis(Guid.Parse(e.Analysis.ID.ToString()), "Larvae"))
+                if (LarvaeControl.LarvaeViewModel.LoadLarvaeAnalysis(Guid.Parse(e.Analysis["ID"].ToString()), "Larvae"))
                 {
                     SetActiveControl(LarvaeControl);
                 }
 
             }
-            else if (e.Analysis.Purpose != null && e.Analysis.Purpose.ToString().ToLower().Substring(0, 3).Equals("egg"))
+            else if (e.Analysis["Purpose"] != null && e.Analysis["Purpose"].ToString().ToLower().Substring(0, 3).Equals("egg"))
             {
-                if (LarvaeControl.LarvaeViewModel.LoadLarvaeAnalysis(Guid.Parse(e.Analysis.ID.ToString()), "Egg"))
+                if (LarvaeControl.LarvaeViewModel.LoadLarvaeAnalysis(Guid.Parse(e.Analysis["ID"].ToString()), "Egg"))
                 {
                     SetActiveControl(LarvaeControl);
                 }
 
             }
-            else if (AgeReadingControl.AgeReadingViewModel.LoadAnalysis(Guid.Parse(e.Analysis.ID.ToString()))) SetActiveControl(AgeReadingControl);
+            else if (AgeReadingControl.AgeReadingViewModel.LoadAnalysis(Guid.Parse(e.Analysis["ID"].ToString()))) SetActiveControl(AgeReadingControl);
 
         }
 

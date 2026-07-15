@@ -85,8 +85,10 @@ namespace SmartDots.View
         {
             MaturityViewModel.MaturitySampleViewModel.DownloadImages();
         }
-
-
+        private void DeleteSample_Click(object sender, RoutedEventArgs e)
+        {
+            MaturityViewModel.DeleteSample();
+        }
         //private void DockLayoutManager_OnDockOperationCompleted(object sender, DockOperationCompletedEventArgs e)
         //{
         //    try

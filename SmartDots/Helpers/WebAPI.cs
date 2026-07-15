@@ -1,14 +1,15 @@
-﻿using System;
+﻿using DevExpress.CodeParser;
+using Newtonsoft.Json;
+using SmartDots.Model;
+using SmartDots.Model.Security;
+using SmartDots.Model.Smartdots;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using SmartDots.Model;
-using SmartDots.Model.Security;
-using SmartDots.Model.Smartdots;
 
 namespace SmartDots.Helpers
 {
@@ -330,6 +331,11 @@ namespace SmartDots.Helpers
             return PerformPost<bool, Guid>("toggleanalysisuserprogress?token=" + CurrentUser.Token, analysisid);
         }
 
+        WebApiResult<bool> ISmartDotsAPI.DeleteSample(Guid id)
+        {
+            return PerformPost<bool,Guid>("deletesample?token=" + CurrentUser.Token, id);
+        }
+
         //WebApiResult<DtoSmartdotsSettings> ISmartDotsAPI.GetSettings() //server dependent
         //{
         //    return WebAPI.GetSettings();
@@ -357,6 +363,11 @@ namespace SmartDots.Helpers
         public WebApiResult<bool> ToggleMaturityAnalysisUserProgress(Guid analysisid)
         {
             return PerformPost<bool, Guid>("togglematurityanalysisuserprogress?token=" + CurrentUser.Token, analysisid);
+        }
+
+        WebApiResult<bool> ISmartDotsAPI.DeleteMaturitySample(Guid id)
+        {
+            return PerformPost<bool, Guid>("deletematuritysample?token=" + CurrentUser.Token, id);
         }
 
         public WebApiResult<List<DtoLookupItem>> GetVocab(Guid analysisid, string code)

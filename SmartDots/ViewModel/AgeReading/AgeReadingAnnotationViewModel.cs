@@ -73,8 +73,8 @@ namespace SmartDots.ViewModel
         {
             get {
 
-                return AgeReadingViewModel.AgeReadingAnnotationView.AnnotationGrid.MySelectedItems.Cast<Annotation>().ToList();
-                return selectedAnnotations; }
+                return AgeReadingViewModel?.AgeReadingAnnotationView?.AnnotationGrid?.MySelectedItems?.Cast<Annotation>().ToList();
+               }
             set
             {
                 selectedAnnotations = value;

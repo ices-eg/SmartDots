@@ -36,7 +36,7 @@ using Rect = System.Windows.Rect;
 namespace SmartDots.ViewModel
 {
 
-    
+
     public class AgeReadingEditorViewModel : AgeReadingBaseViewModel
     {
         private object lineColor;
@@ -164,7 +164,7 @@ namespace SmartDots.ViewModel
             }
             RaisePropertyChanged("DotTypes");
         }
-        public List<Tuple<string, string>> DotTypes { get => dotTypes;  set => dotTypes = value; }
+        public List<Tuple<string, string>> DotTypes { get => dotTypes; set => dotTypes = value; }
         public string DotType
         {
             get { return dotType; }
@@ -336,9 +336,18 @@ namespace SmartDots.ViewModel
             set
             {
                 otolithImage = value;
-                OriginalWidth = otolithImage.PixelWidth;
-                OriginalHeight = otolithImage.PixelHeight;
-                AgeReadingViewModel.AgeReadingStatusbarView.lblImgSize.Content = $"{OriginalWidth} x {OriginalHeight}";
+                if (otolithImage != null)
+                {
+                    OriginalWidth = otolithImage.PixelWidth;
+                    OriginalHeight = otolithImage.PixelHeight;
+                    AgeReadingViewModel.AgeReadingStatusbarView.lblImgSize.Content = $"{OriginalWidth} x {OriginalHeight}";
+                }
+                else
+                {
+                    OriginalWidth = 0;
+                    OriginalHeight = 0;
+                    AgeReadingViewModel.AgeReadingStatusbarView.lblImgSize.Content = $"";
+                }
 
                 RaisePropertyChanged("OtolithImage");
                 RaisePropertyChanged("CanMeasure");
@@ -992,8 +1001,8 @@ namespace SmartDots.ViewModel
 
 
                                     var exclamationPath = BuildExclamationPath((SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF")), dotWidth);
-                                    Canvas.SetLeft(exclamationPath.Item1, left + (dotWidth/2) - exclamationPath.Item2/2 );
-                                    Canvas.SetTop(exclamationPath.Item1,( top + (dotWidth - exclamationPath.Item3)/2));
+                                    Canvas.SetLeft(exclamationPath.Item1, left + (dotWidth / 2) - exclamationPath.Item2 / 2);
+                                    Canvas.SetTop(exclamationPath.Item1, (top + (dotWidth - exclamationPath.Item3) / 2));
                                     dots.Add(exclamationPath.Item1);
 
                                 }
@@ -2222,7 +2231,8 @@ namespace SmartDots.ViewModel
 
             var quality = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.FirstOrDefault(x => new List<string>() { "AQ" + q, "QS" + q }.Contains(x.Code.ToUpper().Trim()));
 
-            if (q == 0){
+            if (q == 0)
+            {
                 quality = AgeReadingViewModel.AgeReadingAnnotationViewModel.Qualities.FirstOrDefault(x => x.Code.Contains("QA"));
             }
 
@@ -2446,7 +2456,7 @@ namespace SmartDots.ViewModel
         /// </summary>
         private static (Path, double, double) BuildExclamationPath(System.Windows.Media.Brush brush, double dotSize)
         {
-            double width  = Math.Max(2, dotSize * 0.15);
+            double width = Math.Max(2, dotSize * 0.15);
             double height = Math.Max(4, dotSize * 0.65);
 
             // Body: tall narrow rectangle
@@ -2464,7 +2474,7 @@ namespace SmartDots.ViewModel
             {
                 Data = group,
                 Fill = brush,
-            }),width, height);
+            }), width, height);
         }
     }
 }

@@ -10,5 +10,6 @@ namespace SmartDots.Model
         public List<DtoMaturitySample> MaturitySamples { get; set; }
 
         public bool AllowSetScale { get; set; } = true;
+        public bool AllowDeleteSample { get; set; }
     }
 }

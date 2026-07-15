@@ -130,6 +130,47 @@ namespace SmartDots.Helpers
                 try
                 {
                     var value = propMatch.GetValue(sourceObject);
+
+                    if (value != null && prop.PropertyType.IsGenericType && 
+                        prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
+                    {
+                        var sourceListType = propMatch.PropertyType;
+                        if (sourceListType.IsGenericType && sourceListType.GetGenericTypeDefinition() == typeof(List<>))
+                        {
+                            var sourceElementType = sourceListType.GetGenericArguments()[0];
+                            var targetElementType = prop.PropertyType.GetGenericArguments()[0];
+
+                            if (sourceElementType != targetElementType)
+                            {
+                                var targetListType = typeof(List<>).MakeGenericType(targetElementType);
+                                var targetList = Activator.CreateInstance(targetListType);
+                                var addMethod = targetListType.GetMethod("Add");
+
+                                foreach (var item in (System.Collections.IEnumerable)value)
+                                {
+                                    var convertedItem = ConvertType(item, targetElementType);
+                                    addMethod.Invoke(targetList, new[] { convertedItem });
+                                }
+
+                                prop.SetValue(obj, targetList);
+                                continue;
+                            }
+                        }
+                    }
+
+                    // Skip complex types that don't match to avoid conversion exceptions
+                    if (value != null && value.GetType() != prop.PropertyType && 
+                        !prop.PropertyType.IsAssignableFrom(value.GetType()) &&
+                        !prop.PropertyType.IsPrimitive && 
+                        prop.PropertyType != typeof(string) &&
+                        prop.PropertyType != typeof(decimal) &&
+                        prop.PropertyType != typeof(decimal?) &&
+                        !prop.PropertyType.IsEnum &&
+                        value.GetType().IsClass)
+                    {
+                        continue;
+                    }
+
                     prop.SetValue(obj, value);
                 }
                 catch { }

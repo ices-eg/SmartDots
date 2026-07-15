@@ -289,13 +289,13 @@ namespace SmartDots.View
                     MessageBoxImage.Error);
                         return;
                     }
-                    item.ID = id;
+                    item["ID"] = id;
                 }
                 catch (Exception e)
                 {
                     return;
                 }
-                item.IsAvailableOffline = false;
+                item["IsAvailableOffline"] = false;
             }
 
             List<GridColumn> columns = new List<GridColumn>();
@@ -488,7 +488,7 @@ namespace SmartDots.View
             ButtonWorkOnline.IsEnabled = true;
             //}
 
-            if (item.UserProgress != null)
+            if (item["UserProgress"] != null)
             {
                 var finishedAliases = new List<string>();
                 finishedAliases.Add("complete");
@@ -497,7 +497,7 @@ namespace SmartDots.View
                 finishedAliases.Add("done");
                 finishedAliases.Add("ready");
                 ButtonFinished.IsEnabled = true;
-                if (finishedAliases.Contains(((string)(item.UserProgress.ToString())).ToLower()))
+                if (finishedAliases.Contains(((string)(item["UserProgress"].ToString())).ToLower()))
                 {
                     ButtonFinished.Label = "Reopen";
                 }

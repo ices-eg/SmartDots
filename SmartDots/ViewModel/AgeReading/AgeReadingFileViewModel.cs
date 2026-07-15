@@ -61,6 +61,10 @@ namespace SmartDots.ViewModel
                         LoadNewFile();
                     }
                 }
+                else
+                {
+                    SelectedFile = null;
+                }
                 RaisePropertyChanged("DynamicFiles");
             }
         }
@@ -75,35 +79,51 @@ namespace SmartDots.ViewModel
                 RaisePropertyChanged("SelectedFile");
                 if (AgeReadingViewModel.AgeReadingView != null)
                 {
-                    AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes = selectedFile.BoundOutcomes ??
-                                                                                 new ObservableCollection<Annotation>();
+                    AgeReadingViewModel.AgeReadingAnnotationViewModel.Outcomes = selectedFile != null && selectedFile.BoundOutcomes != null ? selectedFile.BoundOutcomes : new ObservableCollection<Annotation>();
+                    // clear myselectedfiles
+                    AgeReadingViewModel?.AgeReadingAnnotationView?.AnnotationGrid?.ClearSelectedItems();
                     AgeReadingViewModel.AgeReadingEditorViewModel.OriginalMeasureShapes = new ObservableCollection<Line>();
                     AgeReadingViewModel.AgeReadingEditorViewModel.TextShapes = new ObservableCollection<TextBlock>();
-                    AgeReadingViewModel.AgeReadingEditorView.BrightnessSlider.EditValue = 0;
-                    AgeReadingViewModel.AgeReadingEditorViewModel.Brightness = 0;
-                    AgeReadingViewModel.AgeReadingEditorView.ContrastSlider.EditValue = 0;
-                    AgeReadingViewModel.AgeReadingEditorViewModel.Contrast = 0;
+                    AgeReadingViewModel.AgeReadingEditorView.BrightnessSlider.EditValue = 0.0;
+                    AgeReadingViewModel.AgeReadingEditorViewModel.Brightness = 0.0;
+                    AgeReadingViewModel.AgeReadingEditorView.ContrastSlider.EditValue = 0.0;
+                    AgeReadingViewModel.AgeReadingEditorViewModel.Contrast = 0.0;
                     AgeReadingViewModel.AgeReadingEditorViewModel.ActiveCombinedLine = null;
                 }
-                DownloadPicture(selectedFile);
-                //experimental
-                if (System.IO.File.Exists($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\{SelectedFile.Filename}"))
+                if(selectedFile != null)
                 {
-                    while (loadingNextPicture)
+                    DownloadPicture(selectedFile);
+                    //experimental
+                    if (System.IO.File.Exists($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\{SelectedFile.Filename}"))
                     {
-                        //wait until download is finished, this empty while loop results in a massive performance boost
+                        while (loadingNextPicture)
+                        {
+                            //wait until download is finished, this empty while loop results in a massive performance boost
+                        }
+                        try
+                        {
+                            LoadImage($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\{SelectedFile.Filename}");
+                        }
+                        catch (Exception e)
+                        {
+                            try
+                            {
+                                LoadImage(SelectedFileLocation);
+                            }
+                            catch (Exception ex)
+                            {
+                                changingFile = false;
+                                return;
+                            }
+                        }
                     }
-                    try
-                    {
-                        LoadImage($@"temp\{AgeReadingViewModel.Analysis.ID.ToString()}\{SelectedFile.Filename}");
-                    }
-                    catch (Exception e)
+                    else
                     {
                         try
                         {
                             LoadImage(SelectedFileLocation);
                         }
-                        catch (Exception ex)
+                        catch (Exception e) //ComException, this happens when network connection is lost while reading
                         {
                             changingFile = false;
                             return;
@@ -112,18 +132,11 @@ namespace SmartDots.ViewModel
                 }
                 else
                 {
-                    try
-                    {
-                        LoadImage(SelectedFileLocation);
-                    }
-                    catch (Exception e) //ComException, this happens when network connection is lost while reading
-                    {
-                        changingFile = false;
-                        return;
-                    }
+                    AgeReadingViewModel.AgeReadingEditorViewModel.OtolithImage = null;
                 }
 
-                ChangingFile = false;
+
+                    ChangingFile = false;
                 Task.Run(() => RefreshFileLoadedList());
 
                 AgeReadingViewModel.AgeReadingEditorViewModel.Mode = EditorModeEnum.DrawLine;
@@ -343,7 +356,7 @@ namespace SmartDots.ViewModel
             catch (Exception e)
             {
                 throw;
-                
+
             }
         }
 
@@ -360,7 +373,7 @@ namespace SmartDots.ViewModel
             {
                 loadingNextPicture = false;
             }
-            
+
         }
 
         public async Task CopyFileAsync(string sourceFile, string destinationFile)
@@ -735,8 +748,10 @@ namespace SmartDots.ViewModel
                 columnNames = values.Keys.ToList();
                 foreach (var column in columnNames)
                 {
-                    ((IDictionary<String, Object>)dynFile)[column] = values[column];
-
+                    if (column != "Sample") // Skip Sample to avoid overwriting
+                    {
+                        ((IDictionary<String, Object>)dynFile)[column] = values[column];
+                    }
                 }
             }
 
