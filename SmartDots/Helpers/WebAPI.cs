@@ -221,8 +221,10 @@ namespace SmartDots.Helpers
                         throw new Exception(apiPost.ErrorMessage);
                     }
                 }
-                //Helper.Log("api-log.txt", JsonConvert.SerializeObject(response));
-                throw new Exception($"Error posting {typeof(t).Name} to WebAPI");
+#if DEBUG
+                Helper.Log("api-log.txt", JsonConvert.SerializeObject(response));
+#endif
+                throw new Exception($"Error posting {path} to WebAPI: {response.ToString()}");
             }
             catch (Exception e)
             {

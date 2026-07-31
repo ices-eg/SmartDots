@@ -613,7 +613,12 @@ namespace SmartDots.ViewModel
                 if (result == MessageBoxResult.Yes)
                 {
                     //delete sample from database
-                    Global.API.DeleteSample(sample.ID);
+                    var deleteSampleResult= Global.API.DeleteSample(sample.ID);
+                    if (!deleteSampleResult.Succeeded)
+                    {
+                        Helper.ShowWinUIMessageBox("Error deleting sample\n" + deleteSampleResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
                     //refresh file list
                     this.LoadMaturityAnalysis(maturityAnalysis.ID);
                 }
