@@ -478,6 +478,7 @@ namespace SmartDots.ViewModel
         public void UpdateButtons()
         {
             RaisePropertyChanged("CanDrawLine");
+            RaisePropertyChanged("CanSetScale");
             RaisePropertyChanged("ContextmenuVisibility");
         }
 

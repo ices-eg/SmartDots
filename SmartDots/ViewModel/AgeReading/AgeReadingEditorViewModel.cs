@@ -887,6 +887,7 @@ namespace SmartDots.ViewModel
             RaisePropertyChanged("CanDrawLine");
             RaisePropertyChanged("CanDrawDot");
             RaisePropertyChanged("CanDelete");
+            RaisePropertyChanged("CanSetScale");
             RaisePropertyChanged("ContextmenuVisibility");
             AgeReadingViewModel.AgeReadingEditorView.LineButton.UpdateButtonBackground(
                 AgeReadingViewModel.AgeReadingEditorView.LineButton);
