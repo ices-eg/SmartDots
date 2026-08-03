@@ -834,6 +834,10 @@ namespace SmartDots.ViewModel
                         Helper.ShowWinUIMessageBox("Can not delete a fixed Annotation! " + action, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
+                    if (Helper.ShowWinUIDialog($"Are you sure to delete the selected {annotationsToDelete.Count} annotation(s)?", "Confirmation", MessageBoxImage.Question) == MessageBoxResult.No)
+                    {
+                        return;
+                    }
                     var deleteAnnotationsResult = Global.API.DeleteAnnotations(annotationsToDelete.Select(x => x.ID).ToList());
                     if (!deleteAnnotationsResult.Succeeded)
                     {
