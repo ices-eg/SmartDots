@@ -335,7 +335,7 @@ namespace SmartDots.Helpers
 
         WebApiResult<bool> ISmartDotsAPI.DeleteSample(Guid id)
         {
-            return PerformPost<bool,Guid>("deletesample?token=" + CurrentUser.Token, id);
+            return PerformPost<bool,Object>("deletesample?token=" + CurrentUser.Token, new  { ID = id });
         }
 
         //WebApiResult<DtoSmartdotsSettings> ISmartDotsAPI.GetSettings() //server dependent
