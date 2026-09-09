@@ -119,7 +119,7 @@
                     <dxg:GridColumn FieldName="AnnotationCount" Header="#Annotations" ToolTip="Number of annotations" AllowEditing="False"  Width="60" />
                     <dxg:GridColumn FieldName="Scale" AllowEditing="False" Header="Scale (px/mm)" Width="80" >
                         <dxg:GridColumn.EditSettings>
-                            <dxe:TextEditSettings MaskType="Numeric" Mask="d1"/>
+                            <dxe:TextEditSettings MaskType="Numeric" Mask="n1" MaskUseAsDisplayFormat="True"/>
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                     <!--<dxg:GridColumn FieldName="Otolith2Condition" SortIndex="0" AllowEditing="True">

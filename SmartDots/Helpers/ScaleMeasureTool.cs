@@ -17,9 +17,9 @@ namespace SmartDots.Helpers
 {
     public static class ScaleMeasureTool
     {
-        public static int Measure(Bitmap bitmap, int thresholdValue)
+        public static decimal Measure(Bitmap bitmap, int thresholdValue)
         {
-            int result = 0;
+            decimal result = 0;
             decimal extractedScale = 0;
 
             var preProcessedImage = PreProcess(bitmap, thresholdValue);
@@ -41,13 +41,13 @@ namespace SmartDots.Helpers
 
             if (rect != null && extractedScale != 0)
             {
-                result = (int)(rect?.Width / extractedScale);
+                result = Math.Round((decimal)(rect?.Width / extractedScale), 2);
             }
 
             return result;
         }
 
-        public static int Measure(BitmapImage bitmap, int thresholdValue)
+        public static decimal Measure(BitmapImage bitmap, int thresholdValue)
         {
             return Measure(BitmapConverter.BitmapImage2Bitmap(bitmap), thresholdValue);
         }
