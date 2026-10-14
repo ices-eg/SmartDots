@@ -75,7 +75,8 @@ namespace SmartDots.Model
                     Dots = dots,
                     Comment = annotation.Comment,
                     IsFixed = annotation.IsFixed,
-                    ExpertiseLevel=annotation.ExpertiseLevel
+                    ExpertiseLevel=annotation.ExpertiseLevel,
+                    IsReadOnly=annotation.IsReadOnly
                     //DynamicProperties = annotation.DynamicProperties
                 };
                 if (annotation.Nucleus == "Opaque" || annotation.Nucleus == "Translucent") temp.Nucleus = annotation.Nucleus;
