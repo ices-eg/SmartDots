@@ -588,13 +588,34 @@ namespace SmartDots.ViewModel
                     dtoLapr.ParameterID = lapr.ParameterID;
                     foreach (var dot in lapr.Dots)
                     {
-                        DtoLarvaeEggDot dtoLarvaeEggDot = (DtoLarvaeEggDot)Helper.ConvertType(dot, typeof(DtoLarvaeEggDot));
-                        dtoLapr.Dots.Add(dtoLarvaeEggDot);
+                        DtoLarvaeEggDot dtoLarvaeEggDot = dtoLapr.Dots.FirstOrDefault(x => x.ID == dot.ID);
+                        if (dtoLarvaeEggDot == null)
+                        {
+                            dtoLarvaeEggDot = (DtoLarvaeEggDot)Helper.ConvertType(dot, typeof(DtoLarvaeEggDot));
+                            dtoLapr.Dots.Add(dtoLarvaeEggDot);
+                        }
+                        else
+                        {
+                            dtoLarvaeEggDot.X = dot.X;
+                            dtoLarvaeEggDot.Y = dot.Y;
+                        }
                     }
                     foreach (var line in lapr.Lines)
                     {
-                        DtoLarvaeEggLine dtoLarvaeEggLine = (DtoLarvaeEggLine)Helper.ConvertType(line, typeof(DtoLarvaeEggLine));
-                        dtoLapr.Lines.Add(dtoLarvaeEggLine);
+                        DtoLarvaeEggLine dtoLarvaeEggLine = dtoLapr.Lines.FirstOrDefault(x => x.ID == line.ID);
+                            if (dtoLarvaeEggLine == null)
+                        {
+                            dtoLarvaeEggLine = (DtoLarvaeEggLine)Helper.ConvertType(line, typeof(DtoLarvaeEggLine));
+                            dtoLapr.Lines.Add(dtoLarvaeEggLine);
+                        }
+                        else
+                        {
+                            dtoLarvaeEggLine.X1 = line.X1;
+                            dtoLarvaeEggLine.Y1 = line.Y1;
+                            dtoLarvaeEggLine.X2 = line.X2;
+                            dtoLarvaeEggLine.Y2 = line.Y2;
+                            dtoLarvaeEggLine.Width = line.Width;
+                        }
                     }
 
                     if (lapr.Circle != null)
