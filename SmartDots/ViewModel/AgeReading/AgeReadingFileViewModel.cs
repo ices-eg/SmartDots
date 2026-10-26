@@ -1,25 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media.Imaging;
+﻿using DevExpress.Utils;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using SmartDots.Helpers;
 using SmartDots.Model;
 using SmartDots.Model.Extension;
 using SmartDots.View;
-using File = SmartDots.Model.File;
-using MessageBox = System.Windows.MessageBox;
-using System.Net;
-using System.Windows.Controls;
-using Line = System.Windows.Shapes.Line;
-using DevExpress.Utils;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Dynamic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using File = SmartDots.Model.File;
+using Line = System.Windows.Shapes.Line;
+using MessageBox = System.Windows.MessageBox;
 
 namespace SmartDots.ViewModel
 {
@@ -158,7 +159,7 @@ namespace SmartDots.ViewModel
                     return SelectedFile.Path;
                 }
                 else if (currentFolder.Path.StartsWith("\\"))
-                    return Path.Combine(CurrentFolder.Path, SelectedFile.FullFileName);
+                    return System.IO.Path.Combine(CurrentFolder.Path, SelectedFile.FullFileName);
                 else
                 {
                     if (CurrentFolder.Path.EndsWith("/")) return CurrentFolder.Path + SelectedFile.FullFileName;
@@ -299,22 +300,34 @@ namespace SmartDots.ViewModel
 
             if (imagepath.StartsWith("http"))
             {
-                var buffer = new WebClient().DownloadData(imagepath);
+                //var buffer = new WebClient().DownloadData(imagepath);
 
-                using (var stream = new MemoryStream(buffer))
-                {
-                    bitmap.BeginInit();
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.StreamSource = stream;
-                    bitmap.EndInit();
-                }
+                //using (var stream = new MemoryStream(buffer))
+                //{
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.CreateOptions |= BitmapCreateOptions.IgnoreColorProfile;
+                bitmap.UriSource = new Uri(imagepath, UriKind.Absolute);
+                bitmap.EndInit();
+                bitmap.Freeze();
+                //}
             }
             else
             {
-                bitmap = new BitmapImage(new Uri(imagepath, UriKind.RelativeOrAbsolute))
+                using (var fs = new FileStream(imagepath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    CacheOption = BitmapCacheOption.OnLoad
-                };
+                    bitmap.BeginInit();
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.CreateOptions |= BitmapCreateOptions.IgnoreColorProfile;
+                    bitmap.StreamSource = fs;
+                    bitmap.EndInit();
+                }
+                bitmap.Freeze();
+
+                //bitmap = new BitmapImage(new Uri(imagepath, UriKind.RelativeOrAbsolute))
+                //{
+                //    CacheOption = BitmapCacheOption.OnLoad
+                //};
             }
             AgeReadingViewModel.AgeReadingEditorViewModel.OtolithImage = bitmap;
             AgeReadingViewModel.AgeReadingEditorViewModel.OriginalImage = BitmapConverter.BitmapImage2Bitmap(bitmap);
@@ -341,7 +354,7 @@ namespace SmartDots.ViewModel
                 {
                     path = f.Path;
                 }
-                else if (currentFolder.Path.StartsWith("\\")) path = Path.Combine(CurrentFolder.Path, filename);
+                else if (currentFolder.Path.StartsWith("\\")) path = System.IO.Path.Combine(CurrentFolder.Path, filename);
                 else
                 {
                     if (CurrentFolder.Path.EndsWith("/")) path = CurrentFolder.Path + filename;
@@ -864,14 +877,14 @@ namespace SmartDots.ViewModel
                 foreach (var f in Files)
                 {
                     var filename = f?.Filename;
-                    var extension = Path.GetExtension(f?.FullFileName);
+                    var extension = System.IO.Path.GetExtension(f?.FullFileName);
                     var path = "";
 
                     if (f.Path != null)
                     {
                         path = f.Path;
                     }
-                    else if (isUncPath) path = Path.Combine(CurrentFolder.Path, filename);
+                    else if (isUncPath) path = System.IO.Path.Combine(CurrentFolder.Path, filename);
                     else
                     {
                         if (currentFolderPath.EndsWith("/")) path = CurrentFolder.Path + filename;

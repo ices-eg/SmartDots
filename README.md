@@ -8,15 +8,15 @@ SmartDots is the otolith reading software developed by ILVO in collaboration wit
 - Collaborator: International Council for the Exploration of the Sea (ICES)
 
 ### Versioning & release info
-- Version:  4.1.0.3
+- Version:  5.0.0.1
 - First deployment date: 2017-11-07
-- Last update date: 2025-05-15
+- Last update date: 2026-09-15
 
 ### Functionality & dependencies
 - Platform: Windows
 - Release artifacts:
     - Installer: setup.exe
-    - Portable version: SmartDots4.1.zip (zip containing batch-run executable)
+    - Portable version: SmartDots5.0.zip (zip containing batch-run executable)
 - Dependencies:
     - Requires .NET framework
     - Connection to a Web API
@@ -25,7 +25,7 @@ SmartDots is the otolith reading software developed by ILVO in collaboration wit
 ### File & Directory Overview
 - .gitattributes, .gitignore, LICENSE, README.md, SmartDots.sln, changelog.md
 - SmartDots/publish/setup.exe (installer)
-- SmartDots/Portable/SmartDots4.1.zip (portable release)
+- SmartDots/Portable/SmartDots5.0.zip (portable release)
 
 ### Security
 - Code signing certificate: Certum EV Code Signing
@@ -46,7 +46,7 @@ https://github.com/ices-eg/SmartDots/raw/master/SmartDots/publish/setup.exe
 Use this option when you are experiencing firewall/antivirus issues. This version will not have these issues, however it will also not check for updates. When you want to update to the latest version, you will have to download it again.
 
 You can download the portable version here:
-https://github.com/ices-eg/SmartDots/raw/master/SmartDots/Portable/SmartDots4.1.zip
+https://github.com/ices-eg/SmartDots/raw/master/SmartDots/Portable/SmartDots5.0.zip
 
 1) Download the .zip-file
 2) Unzip to a location of choice
