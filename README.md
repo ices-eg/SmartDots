@@ -8,7 +8,7 @@ SmartDots is the otolith reading software developed by ILVO in collaboration wit
 - Collaborator: International Council for the Exploration of the Sea (ICES)
 
 ### Versioning & release info
-- Version:  5.0.0.1
+- Version:  5.0.1.0
 - First deployment date: 2017-11-07
 - Last update date: 2026-09-15
 
