@@ -40,6 +40,12 @@ namespace SmartDots.ViewModel
     public class AgeReadingEditorViewModel : AgeReadingBaseViewModel
     {
         private object lineColor;
+        private object secondLineColor;
+        private bool isBicolorLineEnabled;
+        private double bicolorLineDistance = 1.0;
+        private bool backupIsBicolorEnabled;
+        private double backupBicolorDistance = 1.0;
+        private object backupSecondLineColor;
         private object measureColor;
         private object dotColor;
         private int lineWidth;
@@ -90,7 +96,67 @@ namespace SmartDots.ViewModel
             {
                 lineColor = value;
                 RaisePropertyChanged("LineColor");
+                if (AgeReadingViewModel != null) RefreshShapes(false);
             }
+        }
+
+        public object SecondLineColor
+        {
+            get { return secondLineColor; }
+            set
+            {
+                secondLineColor = value;
+                RaisePropertyChanged("SecondLineColor");
+                if (AgeReadingViewModel != null)
+                {
+                    RefreshShapes(false);
+                    AgeReadingViewModel.UpdateGraphs(true, true, false, false);
+                }
+            }
+        }
+
+        public bool IsBicolorLineEnabled
+        {
+            get { return isBicolorLineEnabled; }
+            set
+            {
+                isBicolorLineEnabled = value;
+                RaisePropertyChanged("IsBicolorLineEnabled");
+                if (AgeReadingViewModel != null)
+                {
+                    RefreshShapes(false);
+                    AgeReadingViewModel.UpdateGraphs(true, true, false, false);
+                }
+            }
+        }
+
+        public object BicolorLineDistance
+        {
+            get { return bicolorLineDistance; }
+            set
+            {
+                if (value != null)
+                {
+                    double parsed;
+                    if (double.TryParse(value.ToString().Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out parsed) && parsed > 0)
+                    {
+                        bicolorLineDistance = parsed;
+                    }
+                }
+                RaisePropertyChanged("BicolorLineDistance");
+                if (AgeReadingViewModel != null)
+                {
+                    RefreshShapes(false);
+                    AgeReadingViewModel.UpdateGraphs(true, true, false, false);
+                }
+            }
+        }
+
+        public double GetBicolorTransitionPixels()
+        {
+            decimal? scale = AgeReadingViewModel?.AgeReadingFileViewModel?.SelectedFile?.Scale;
+            double scalePxPerMm = (scale.HasValue && scale.Value > 0) ? (double)scale.Value : 100.0;
+            return bicolorLineDistance * scalePxPerMm;
         }
 
         public object MeasureColor
@@ -793,6 +859,9 @@ namespace SmartDots.ViewModel
             Brightness = 0;
             Contrast = 0;
             LineColor = (Color)ColorConverter.ConvertFromString("#FFFF00FF");
+            SecondLineColor = (Color)ColorConverter.ConvertFromString("#FF0000FF");
+            IsBicolorLineEnabled = false;
+            BicolorLineDistance = 1.0;
             MeasureColor = (Color)ColorConverter.ConvertFromString("#FFFF00FF");
             LineWidth = 2;
             MeasureLineWidth = 1;
@@ -864,6 +933,7 @@ namespace SmartDots.ViewModel
                         return;
                     }
                     AgeReadingViewModel.UpdateGraphs(false, false, false, true);
+                    RefreshShapes(false);
                 }
             }
             catch (Exception e)
@@ -911,25 +981,88 @@ namespace SmartDots.ViewModel
                 ObservableCollection<Line> topLevelLines = new ObservableCollection<Line>();
                 ObservableCollection<Shape> dots = new ObservableCollection<Shape>();
 
+                double transitionDistPx = GetBicolorTransitionPixels();
+                bool useBicolor = IsBicolorLineEnabled && transitionDistPx > 0 && SecondLineColor != null;
+
                 foreach (var annotation in AgeReadingViewModel.AgeReadingAnnotationViewModel.SelectedAnnotations)
                 {
                     foreach (CombinedLine cl in annotation.CombinedLines)
                     {
-                        foreach (Model.Line l in cl.Lines)
+                        double cumulativeLength = 0.0;
+                        foreach (Model.Line l in cl.Lines.OrderBy(x => x.LineIndex))
                         {
-                            Line line = new Line()
-                            {
-                                X1 = (float)l.X1 * zoomfactor,
-                                Y1 = (float)l.Y1 * zoomfactor,
-                                X2 = (float)l.X2 * zoomfactor,
-                                Y2 = (float)l.Y2 * zoomfactor,
-                                Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(l.Color)),
-                                StrokeThickness = (float)l.Width * zoomfactor,
-                                StrokeStartLineCap = PenLineCap.Round,
-                                StrokeEndLineCap = PenLineCap.Round
+                            double dx = l.X2 - l.X1;
+                            double dy = l.Y2 - l.Y1;
+                            double segLength = Math.Sqrt(dx * dx + dy * dy);
+                            var primaryBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom(l.Color));
 
-                            };
-                            lines.Add(line);
+                            if (!useBicolor || cumulativeLength + segLength <= transitionDistPx)
+                            {
+                                Line line = new Line()
+                                {
+                                    X1 = (float)l.X1 * zoomfactor,
+                                    Y1 = (float)l.Y1 * zoomfactor,
+                                    X2 = (float)l.X2 * zoomfactor,
+                                    Y2 = (float)l.Y2 * zoomfactor,
+                                    Stroke = primaryBrush,
+                                    StrokeThickness = (float)l.Width * zoomfactor,
+                                    StrokeStartLineCap = PenLineCap.Round,
+                                    StrokeEndLineCap = PenLineCap.Round
+
+                                };
+                                lines.Add(line);
+                            }
+                            else if (cumulativeLength >= transitionDistPx)
+                            {
+                                var secondaryBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom(SecondLineColor.ToString()));
+                                Line line = new Line()
+                                {
+                                    X1 = (float)l.X1 * zoomfactor,
+                                    Y1 = (float)l.Y1 * zoomfactor,
+                                    X2 = (float)l.X2 * zoomfactor,
+                                    Y2 = (float)l.Y2 * zoomfactor,
+                                    Stroke = secondaryBrush,
+                                    StrokeThickness = (float)l.Width * zoomfactor,
+                                    StrokeStartLineCap = PenLineCap.Round,
+                                    StrokeEndLineCap = PenLineCap.Round
+
+                                };
+                                lines.Add(line);
+                            }
+                            else
+                            {
+                                double ratio = (transitionDistPx - cumulativeLength) / segLength;
+                                double splitX = l.X1 + dx * ratio;
+                                double splitY = l.Y1 + dy * ratio;
+                                var secondaryBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom(SecondLineColor.ToString()));
+
+                                Line proximalLine = new Line()
+                                {
+                                    X1 = (float)l.X1 * zoomfactor,
+                                    Y1 = (float)l.Y1 * zoomfactor,
+                                    X2 = splitX * zoomfactor,
+                                    Y2 = splitY * zoomfactor,
+                                    Stroke = primaryBrush,
+                                    StrokeThickness = (float)l.Width * zoomfactor,
+                                    StrokeStartLineCap = PenLineCap.Round,
+                                    StrokeEndLineCap = PenLineCap.Flat
+                                };
+                                Line distalLine = new Line()
+                                {
+                                    X1 = splitX * zoomfactor,
+                                    Y1 = splitY * zoomfactor,
+                                    X2 = (float)l.X2 * zoomfactor,
+                                    Y2 = (float)l.Y2 * zoomfactor,
+                                    Stroke = secondaryBrush,
+                                    StrokeThickness = (float)l.Width * zoomfactor,
+                                    StrokeStartLineCap = PenLineCap.Flat,
+                                    StrokeEndLineCap = PenLineCap.Round
+                                };
+                                lines.Add(proximalLine);
+                                lines.Add(distalLine);
+                            }
+
+                            cumulativeLength += segLength;
                         }
 
                         if (!annotation.HasAq3())
@@ -1078,6 +1211,10 @@ namespace SmartDots.ViewModel
                         if (Mode != EditorModeEnum.MakingLine && cl.Lines.Any())
                         {
                             var lastLine = cl.Lines.OrderBy(x => x.LineIndex).Last();
+                            var arrowColor = (useBicolor && cumulativeLength > transitionDistPx)
+                                ? SecondLineColor.ToString()
+                                : lastLine.Color;
+                            var arrowBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom(arrowColor));
                             var n = Math.Atan2(lastLine.Y1 - lastLine.Y2, lastLine.X2 - lastLine.X1) * 180 / Math.PI;
                             Point point1 = new Point(lastLine.X2, lastLine.Y2);
                             var cos = Math.Cos((n + 30) * (Math.PI / 180.0)) * 10;
@@ -1092,7 +1229,7 @@ namespace SmartDots.ViewModel
                                 Y1 = (float)point1.Y * zoomfactor,
                                 X2 = (float)point2.X * zoomfactor,
                                 Y2 = (float)point2.Y * zoomfactor,
-                                Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(lastLine.Color)),
+                                Stroke = arrowBrush,
                                 StrokeThickness = (lastLine.Width * zoomfactor),
                                 StrokeStartLineCap = PenLineCap.Round,
                                 StrokeEndLineCap = PenLineCap.Round
@@ -1103,7 +1240,7 @@ namespace SmartDots.ViewModel
                                 Y1 = (float)point1.Y * zoomfactor,
                                 X2 = (float)point3.X * zoomfactor,
                                 Y2 = (float)point3.Y * zoomfactor,
-                                Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(lastLine.Color)),
+                                Stroke = arrowBrush,
                                 StrokeThickness = (lastLine.Width * zoomfactor),
                                 StrokeStartLineCap = PenLineCap.Round,
                                 StrokeEndLineCap = PenLineCap.Round
@@ -1846,8 +1983,15 @@ namespace SmartDots.ViewModel
                         = (int)((int)e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).X / zoomfactor);
                     AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.CombinedLines.Last().Lines.Last().Y2
                         = (int)((int)e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).Y / zoomfactor);
-                    LineShapes.Last().X2 = (int)e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).X;
-                    LineShapes.Last().Y2 = (int)e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).Y;
+                    if (IsBicolorLineEnabled)
+                    {
+                        RefreshShapes(false);
+                    }
+                    else
+                    {
+                        LineShapes.Last().X2 = (int)e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).X;
+                        LineShapes.Last().Y2 = (int)e.GetPosition(AgeReadingViewModel.AgeReadingEditorView.ParentCanvas).Y;
+                    }
                 }
                 else if (Mode == EditorModeEnum.DrawDot &&
                          AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation != null &&
@@ -2061,7 +2205,34 @@ namespace SmartDots.ViewModel
             var deleteResult = Global.API.UpdateFile(dtofile);
             if (!deleteResult.Succeeded)
                 Helper.ShowWinUIMessageBox(deleteResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            AgeReadingViewModel.UpdateGraphs(false, false, false, true);
+            AgeReadingViewModel.UpdateGraphs(true, true, false, true);
+            RefreshShapes(false);
+        }
+
+        public void OpenBicolorLineConfig()
+        {
+            backupIsBicolorEnabled = isBicolorLineEnabled;
+            backupBicolorDistance = bicolorLineDistance;
+            backupSecondLineColor = secondLineColor;
+            AgeReadingViewModel.AgeReadingEditorView.BicolorLinePanel.Visibility = Visibility.Visible;
+        }
+
+        public void AcceptBicolorLineConfig()
+        {
+            AgeReadingViewModel.AgeReadingEditorView.BicolorLinePanel.Visibility = Visibility.Collapsed;
+            RefreshShapes(false);
+            AgeReadingViewModel.UpdateGraphs(true, true, false, false);
+            AgeReadingViewModel.SaveUserPreferences();
+        }
+
+        public void CancelBicolorLineConfig()
+        {
+            IsBicolorLineEnabled = backupIsBicolorEnabled;
+            BicolorLineDistance = backupBicolorDistance;
+            SecondLineColor = backupSecondLineColor;
+            AgeReadingViewModel.AgeReadingEditorView.BicolorLinePanel.Visibility = Visibility.Collapsed;
+            RefreshShapes(false);
+            AgeReadingViewModel.UpdateGraphs(true, true, false, false);
         }
 
         public void ClearScaleLine()
@@ -2113,7 +2284,7 @@ namespace SmartDots.ViewModel
             AgeReadingViewModel.AgeReadingEditorView.ScalePixels.Text = "0";
             HideMeasureScalePanel();
             RefreshShapes();
-            AgeReadingViewModel.UpdateGraphs(false, false, false, true);
+            AgeReadingViewModel.UpdateGraphs(true, true, false, true);
             Mode = EditorModeEnum.None;
         }
 

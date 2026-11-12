@@ -28,6 +28,7 @@ namespace SmartDots.View
 
             LineButton.ToggleStateChanged += LineButton_ToggleStateChanged;
             LineButton.ContextButtonClick += (sender, args) => LineMenu.ShowPopup(LineButton);
+            ContextConfigureBicolorLine.ItemClick += (sender, args) => ageReadingEditorViewModel.OpenBicolorLineConfig();
 
             DotButton.ToggleStateChanged += DotButton_ToggleStateChanged;
             DotButton.ContextButtonClick += (sender, args) => DotMenu.ShowPopup(DotButton);
@@ -85,6 +86,7 @@ namespace SmartDots.View
             try
             {
                 if (ageReadingEditorViewModel.AgeReadingViewModel.AgeReadingEditorView.MeasureScalePanel.Visibility == Visibility.Visible) return;
+                if (ageReadingEditorViewModel.AgeReadingViewModel.AgeReadingEditorView.BicolorLinePanel.Visibility == Visibility.Visible) return;
                 if (!ageReadingEditorViewModel.AgeReadingViewModel.AgeReadingEditorView.EditorStackPanel.IsEnabled) return; // user is drawing a line
 
                 string message = "";
