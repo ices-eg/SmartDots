@@ -1101,6 +1101,12 @@ namespace SmartDots.ViewModel
                 Properties.Settings.Default.DotType = AgeReadingEditorViewModel.DotType;
                 Properties.Settings.Default.LineColor = AgeReadingEditorViewModel.LineColor.ToString();
                 Properties.Settings.Default.LineWidth = (int)AgeReadingEditorViewModel.LineWidth;
+                Properties.Settings.Default.IsBicolorLineEnabled = AgeReadingEditorViewModel.IsBicolorLineEnabled;
+                Properties.Settings.Default.BicolorLineDistance = Convert.ToDouble(AgeReadingEditorViewModel.BicolorLineDistance, System.Globalization.CultureInfo.InvariantCulture);
+                if (AgeReadingEditorViewModel.SecondLineColor != null)
+                {
+                    Properties.Settings.Default.SecondLineColor = AgeReadingEditorViewModel.SecondLineColor.ToString();
+                }
                 Properties.Settings.Default.MeasureColor = AgeReadingEditorViewModel.MeasureColor.ToString();
                 Properties.Settings.Default.MeasureLineWidth = (int)AgeReadingEditorViewModel.MeasureLineWidth;
                 Properties.Settings.Default.MeasureFontSize = (int)AgeReadingEditorViewModel.MeasureFontSize;
@@ -1130,6 +1136,12 @@ namespace SmartDots.ViewModel
                 AgeReadingEditorViewModel.DotType = Properties.Settings.Default.DotType;
                 AgeReadingEditorViewModel.LineColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.LineColor);
                 AgeReadingEditorViewModel.LineWidth = Properties.Settings.Default.LineWidth;
+                AgeReadingEditorViewModel.IsBicolorLineEnabled = Properties.Settings.Default.IsBicolorLineEnabled;
+                AgeReadingEditorViewModel.BicolorLineDistance = Properties.Settings.Default.BicolorLineDistance;
+                if (!string.IsNullOrEmpty(Properties.Settings.Default.SecondLineColor))
+                {
+                    AgeReadingEditorViewModel.SecondLineColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.SecondLineColor);
+                }
                 AgeReadingEditorViewModel.MeasureColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.MeasureColor);
                 AgeReadingEditorViewModel.MeasureLineWidth = Properties.Settings.Default.MeasureLineWidth;
                 AgeReadingEditorViewModel.MeasureFontSize = Properties.Settings.Default.MeasureFontSize;
@@ -1160,6 +1172,9 @@ namespace SmartDots.ViewModel
                 AgeReadingEditorViewModel.DotType = "Seawater";
                 AgeReadingEditorViewModel.LineColor = (Color)ColorConverter.ConvertFromString("#FFFF00FF");
                 AgeReadingEditorViewModel.LineWidth = 2;
+                AgeReadingEditorViewModel.IsBicolorLineEnabled = false;
+                AgeReadingEditorViewModel.BicolorLineDistance = 1.0;
+                AgeReadingEditorViewModel.SecondLineColor = (Color)ColorConverter.ConvertFromString("#FF0000FF");
                 AgeReadingEditorViewModel.MeasureColor = (Color)ColorConverter.ConvertFromString("#FFFF00FF");
                 AgeReadingEditorViewModel.MeasureLineWidth = 1;
                 AgeReadingEditorViewModel.MeasureFontSize = 12;

@@ -83,6 +83,49 @@
 
                     </dxdo:LayoutPanel>
                 </dxdo:FloatGroup>
+                <dxdo:FloatGroup FloatSize="390,300" MinWidth="390" MinHeight="300" FloatLocation="140,120" AllowDock="False" AllowDrop="False" AllowClose="False" AllowContextMenu="False" AllowDockToCurrentItem="False" AllowExpand="False" AllowHide="False" AllowSizing="False" AllowMaximize="False" AllowMinimize="False" >
+                    <dxdo:LayoutPanel x:Name="BicolorLinePanel" Caption="Bicolor Radial Line Settings" AllowClose="False" AllowMaximize="False" AllowMinimize="False" Visibility="Collapsed">
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="28" />
+                                <RowDefinition Height="42" />
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="34" />
+                                <RowDefinition Height="36" />
+                                <RowDefinition Height="34" />
+                                <RowDefinition Height="44" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Bicolor Radial Line" FontWeight="Bold" FontSize="15" Foreground="{StaticResource BrushSmartFishDarkBlue}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Configure a distance from the center at which the reading line changes color. This provides a visual reference for key growth zones." TextWrapping="Wrap" FontSize="11" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Margin="0,2,0,4"/>
+                            <dxe:CheckEdit x:Name="BicolorEnabledCheck" Content="Enable Bicolor Line" FontWeight="SemiBold" IsChecked="{Binding IsBicolorLineEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" VerticalAlignment="Center"/>
+                            <TextBlock Text="Transition Distance (mm):" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center"/>
+                            <dxe:SpinEdit x:Name="BicolorDistanceSpin" EditValue="{Binding BicolorLineDistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsFloatValue="True" Increment="0.1" MinValue="0.01" MaxValue="100" Mask="f3" MaskUseAsDisplayFormat="True" Grid.Column="1" Grid.Row="3" Margin="0,3,0,3" Height="26"/>
+                            <TextBlock Text="Note: If the image scale is not defined, the distance is calculated in pixels (1 mm = 100 px)." TextWrapping="Wrap" FontStyle="Italic" FontSize="10.5" Foreground="DimGray" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4" VerticalAlignment="Center"/>
+                            <TextBlock Text="2nd Segment Color (Distal):" Grid.Column="0" Grid.Row="5" VerticalAlignment="Center"/>
+                            <dxe:PopupColorEdit x:Name="BicolorSecondColorEdit" EditValue="{Binding SecondLineColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="5" Margin="0,3,0,3" Height="26"/>
+                            <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                                <Button Content="Cancel" Width="90" Height="30" Margin="0,0,8,0" Padding="0">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="CancelBicolorLineConfig"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <Button Content="Save" Width="90" Height="30" Padding="0">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="AcceptBicolorLineConfig"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </dxdo:LayoutPanel>
+                </dxdo:FloatGroup>
             </dxdo:DockLayoutManager.FloatGroups>
         </dxdo:DockLayoutManager>
 
@@ -102,6 +145,20 @@
                             <dxe:SpinEditSettings MaxValue="18" MinValue="1" ShowTooltipForTrimmedText="False" IsFloatValue="False"/>
                         </dxb:BarEditItem.EditSettings>
                     </dxb:BarEditItem>
+                    <dxb:BarItemSeparator/>
+                    <dxb:BarItemMenuHeader Content="Bicolor Line"/>
+                    <dxb:BarCheckItem x:Name="BicolorLineCheckItem" Content="Enable Bicolor Line" IsChecked="{Binding IsBicolorLineEnabled, Mode=TwoWay}"/>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="2nd Color" EditValue="{Binding SecondLineColor, Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:PopupColorEditSettings ChipSize="Large" />
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                    <dxb:BarEditItem Style="{StaticResource BarItem}" Content="Transition Distance (mm)" EditValue="{Binding BicolorLineDistance, Mode=TwoWay}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:SpinEditSettings MaxValue="100" MinValue="0.01" Increment="0.1" Mask="f3" MaskUseAsDisplayFormat="True" ShowTooltipForTrimmedText="False" IsFloatValue="True"/>
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+                    <dxb:BarButtonItem x:Name="ContextConfigureBicolorLine" Content="Configure Bicolor Line..."/>
                 </dxb:PopupMenu.Items>
             </dxb:PopupMenu>
 
