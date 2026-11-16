@@ -91,6 +91,27 @@ namespace AgeReading.Graph
 
             }
 
+            var editorVm = control?.AgeReadingViewModel?.AgeReadingEditorViewModel;
+            bool isBicolor = editorVm != null && editorVm.IsBicolorLineEnabled && (plan == 1 || plan == 2) && annotationsWithValues.Count == 1;
+            double transitionPixels = isBicolor ? editorVm.GetBicolorTransitionPixels() : 0;
+            Color? secondColor = null;
+            string bicolorLabel = null;
+            if (isBicolor && editorVm.SecondLineColor != null)
+            {
+                try
+                {
+                    var wpfColor = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(editorVm.SecondLineColor.ToString());
+                    secondColor = Color.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
+                }
+                catch
+                {
+                    secondColor = Color.Blue;
+                }
+                double distMm = 1.0;
+                double.TryParse(editorVm.BicolorLineDistance?.ToString()?.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out distMm);
+                bicolorLabel = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.##} mm", distMm);
+            }
+
             foreach (var keyvaluepair in annotationsWithValues)
             {
                 if (keyvaluepair.Item1.CombinedLines.Any() &&
@@ -100,6 +121,12 @@ namespace AgeReading.Graph
                     g.Annotation = keyvaluepair.Item1;
                     var displayedGraph = graphViewer.AddGraph(g, keyvaluepair.Item1.CombinedLines[0].Lines[0].SystemColor, 2);
                     displayedGraph.DefaultPointMarkingStyle = GraphViewer.DisplayedGraph.PointMarkingStyle.Circle;
+                    if (isBicolor && secondColor.HasValue)
+                    {
+                        displayedGraph.BicolorTransitionX = GetTransitionPointIndex(keyvaluepair.Item1.CombinedLines[0], transitionPixels);
+                        displayedGraph.SecondColor = secondColor;
+                        displayedGraph.BicolorLabel = bicolorLabel;
+                    }
                 }
                 
             }
@@ -399,6 +426,53 @@ namespace AgeReading.Graph
         private List<Tuple<Annotation, List<decimal>>> CalculateLineGrowth()
         {
             return control.AgeReadingViewModel.AgeReadingEditorViewModel.LineGrowth;
+        }
+
+        private double? GetTransitionPointIndex(CombinedLine cl, double transitionPixels)
+        {
+            if (cl == null || cl.Lines == null || !cl.Lines.Any() || transitionPixels <= 0)
+                return null;
+            if (cl.Points == null)
+                cl.RecalculatePoints();
+            if (cl.Points == null || cl.Points.Count < 2)
+                return null;
+
+            double cumulativeDist = 0.0;
+            var orderedLines = cl.Lines.OrderBy(x => x.LineIndex).ToList();
+            foreach (var seg in orderedLines)
+            {
+                double dx = seg.X2 - seg.X1;
+                double dy = seg.Y2 - seg.Y1;
+                double segLen = Math.Sqrt(dx * dx + dy * dy);
+                if (segLen <= 0) continue;
+
+                if (cumulativeDist + segLen >= transitionPixels)
+                {
+                    double ratio = (transitionPixels - cumulativeDist) / segLen;
+                    if (orderedLines.Count == 1)
+                    {
+                        return ratio * (cl.Points.Count - 1);
+                    }
+                    double tx = seg.X1 + ratio * dx;
+                    double ty = seg.Y1 + ratio * dy;
+                    int bestIdx = 0;
+                    double bestDistSq = double.MaxValue;
+                    for (int i = 0; i < cl.Points.Count; i++)
+                    {
+                        double pdx = cl.Points[i].X - tx;
+                        double pdy = cl.Points[i].Y - ty;
+                        double dSq = pdx * pdx + pdy * pdy;
+                        if (dSq < bestDistSq)
+                        {
+                            bestDistSq = dSq;
+                            bestIdx = i;
+                        }
+                    }
+                    return bestIdx;
+                }
+                cumulativeDist += segLen;
+            }
+            return null;
         }
     }
 }

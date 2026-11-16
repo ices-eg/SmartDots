@@ -271,6 +271,10 @@ namespace AgeReading.Graph
                 get { return _Graph; }
             }
 
+            public double? BicolorTransitionX { get; set; }
+            public Color? SecondColor { get; set; }
+            public string BicolorLabel { get; set; }
+
             #endregion
 
 
@@ -523,8 +527,56 @@ namespace AgeReading.Graph
                 int lineWidth = gr.LineWidth;
                 if (_HighlightedGraph == gr)
                     lineWidth += 2;
-                System.Drawing.Pen pen = new System.Drawing.Pen(gr.Color, lineWidth);
-                e.Graphics.DrawPath(pen, gr.RebuildPath());
+                var fullPath = gr.RebuildPath();
+                if (gr.BicolorTransitionX.HasValue && gr.SecondColor.HasValue && _Graphs.Count == 1 && (plan == 1 || plan == 2))
+                {
+                    int splitX = MapX(gr.BicolorTransitionX.Value, true);
+                    if (splitX > DataRectangle.Left && splitX < DataRectangle.Right)
+                    {
+                        e.Graphics.SetClip(Rectangle.FromLTRB(DataRectangle.Left, DataRectangle.Top, splitX, DataRectangle.Bottom));
+                        using (var pen1 = new System.Drawing.Pen(gr.Color, lineWidth))
+                        {
+                            e.Graphics.DrawPath(pen1, fullPath);
+                        }
+                        e.Graphics.SetClip(Rectangle.FromLTRB(splitX, DataRectangle.Top, DataRectangle.Right, DataRectangle.Bottom));
+                        using (var pen2 = new System.Drawing.Pen(gr.SecondColor.Value, lineWidth))
+                        {
+                            e.Graphics.DrawPath(pen2, fullPath);
+                        }
+                        e.Graphics.SetClip(DataRectangle);
+
+                        using (var dashPen = new System.Drawing.Pen(gr.SecondColor.Value, 2))
+                        {
+                            dashPen.DashStyle = DashStyle.Dash;
+                            e.Graphics.DrawLine(dashPen, splitX, DataRectangle.Top, splitX, DataRectangle.Bottom);
+                        }
+                        if (!string.IsNullOrEmpty(gr.BicolorLabel))
+                        {
+                            using (var font = new Font("Segoe UI", 8.5f, System.Drawing.FontStyle.Bold))
+                            using (var textBrush = new SolidBrush(gr.SecondColor.Value))
+                            using (var bgBrush = new SolidBrush(Color.FromArgb(210, BackColor)))
+                            {
+                                var sz = e.Graphics.MeasureString(gr.BicolorLabel, font);
+                                float labelX = splitX + 4;
+                                if (labelX + sz.Width > DataRectangle.Right)
+                                    labelX = splitX - sz.Width - 4;
+                                float labelY = DataRectangle.Top + 4;
+                                e.Graphics.FillRectangle(bgBrush, labelX - 1, labelY - 1, sz.Width + 2, sz.Height + 2);
+                                e.Graphics.DrawString(gr.BicolorLabel, font, textBrush, labelX, labelY);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        System.Drawing.Pen pen = new System.Drawing.Pen(gr.Color, lineWidth);
+                        e.Graphics.DrawPath(pen, fullPath);
+                    }
+                }
+                else
+                {
+                    System.Drawing.Pen pen = new System.Drawing.Pen(gr.Color, lineWidth);
+                    e.Graphics.DrawPath(pen, fullPath);
+                }
 
                 if (gr.Graph.Annotation != null)
                 {

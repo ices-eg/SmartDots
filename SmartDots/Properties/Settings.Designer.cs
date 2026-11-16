@@ -537,5 +537,41 @@ namespace SmartDots.Properties {
                 this["AgeReadingKeyAction0"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsBicolorLineEnabled {
+            get {
+                return ((bool)(this["IsBicolorLineEnabled"]));
+            }
+            set {
+                this["IsBicolorLineEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public double BicolorLineDistance {
+            get {
+                return ((double)(this["BicolorLineDistance"]));
+            }
+            set {
+                this["BicolorLineDistance"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF0000FF")]
+        public string SecondLineColor {
+            get {
+                return ((string)(this["SecondLineColor"]));
+            }
+            set {
+                this["SecondLineColor"] = value;
+            }
+        }
     }
 }
