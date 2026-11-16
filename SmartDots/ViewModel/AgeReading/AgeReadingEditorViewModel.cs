@@ -2322,7 +2322,7 @@ namespace SmartDots.ViewModel
         {
             if (!SetQualitySubAction(qualitycode)) return;
 
-            AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.Edge = "Opaque";
+            AgeReadingViewModel.AgeReadingAnnotationViewModel.WorkingAnnotation.Edge = edge;
 
             if (!AgeReadingViewModel.AgeReadingAnnotationViewModel.CanApprove)
             {
