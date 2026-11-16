@@ -300,17 +300,15 @@ namespace SmartDots.ViewModel
 
             if (imagepath.StartsWith("http"))
             {
-                //var buffer = new WebClient().DownloadData(imagepath);
+                var buffer = new WebClient().DownloadData(imagepath);
 
-                //using (var stream = new MemoryStream(buffer))
-                //{
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.CreateOptions |= BitmapCreateOptions.IgnoreColorProfile;
-                bitmap.UriSource = new Uri(imagepath, UriKind.Absolute);
-                bitmap.EndInit();
-                bitmap.Freeze();
-                //}
+                using (var stream = new MemoryStream(buffer))
+                {
+                    bitmap.BeginInit();
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.StreamSource = stream;
+                    bitmap.EndInit();
+                }
             }
             else
             {
