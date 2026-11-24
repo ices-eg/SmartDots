@@ -80,7 +80,7 @@ namespace SmartDots.View
             FieldAuth.SelectionChanged += Auth_SelectionChanged;
             SizeChanged += ServerSelectionView_SizeChanged;
 
-            VersionLabel.Content = $"v{Helper.Version.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)}";
+            VersionLabel.Content = $"v{Helper.Version.ToString("0.0.0", System.Globalization.CultureInfo.InvariantCulture)}";
 
             LoadChoices();
         }

@@ -23,7 +23,7 @@ namespace SmartDots.Helpers
     public static class Helper
     {
 
-        public static float Version { get; } = 5.0f;
+        public static float Version { get; } =Assembly.GetExecutingAssembly().GetName().Version.Major + (float)Assembly.GetExecutingAssembly().GetName().Version.Minor / 10 + (float)Assembly.GetExecutingAssembly().GetName().Version.Build / 100;
 
         public static void ShowWinUIMessageBox(string message, string caption, MessageBoxButton msgBoxButton, MessageBoxImage img, Exception e = null)
         {
