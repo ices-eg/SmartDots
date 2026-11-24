@@ -2075,22 +2075,52 @@ namespace SmartDots.ViewModel
 
         public void AcceptScale()
         {
-            double pixels;
-            double.TryParse(AgeReadingViewModel.AgeReadingEditorView.ScalePixels.Text.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out pixels);
-            double unitLength;
-            double.TryParse(AgeReadingViewModel.AgeReadingEditorView.ScaleMilimeters.Text.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out unitLength);
-
-            double milimeters = unitLength;
-            if (MeasureUnit == "cm")
+            decimal pixels;
+            if (!decimal.TryParse(AgeReadingViewModel.AgeReadingEditorView.ScalePixels.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out pixels) || pixels <= 0)
             {
-                milimeters *= 10;
-            }
-            else if (MeasureUnit == "µm")
-            {
-                milimeters /= 1000;
+                Helper.ShowWinUIMessageBox("Draw a scale line with a positive length in pixels.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
 
-            PixelLength = (decimal)(pixels / milimeters);
+            decimal unitLength = AgeReadingViewModel.AgeReadingEditorView.ScaleMilimeters.Value;
+            if (unitLength <= 0)
+            {
+                Helper.ShowWinUIMessageBox("Enter a scale length greater than zero.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            try
+            {
+                decimal milimeters = unitLength;
+                if (MeasureUnit == "cm")
+                {
+                    milimeters *= 10;
+                }
+                else if (MeasureUnit == "µm")
+                {
+                    milimeters /= 1000;
+                }
+
+                if (milimeters == 0)
+                {
+                    Helper.ShowWinUIMessageBox("The scale length is too small to calculate.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                decimal scale = pixels / milimeters;
+                if (scale == 0)
+                {
+                    Helper.ShowWinUIMessageBox("The resulting scale is too small to calculate.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                PixelLength = scale;
+            }
+            catch (OverflowException)
+            {
+                Helper.ShowWinUIMessageBox("The scale length is outside the supported range.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             var oldvalue = AgeReadingViewModel.AgeReadingFileViewModel.SelectedFile.Scale;
             var newvalue = PixelLength;
             if (oldvalue != newvalue)

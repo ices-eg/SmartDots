@@ -921,6 +921,7 @@ namespace SmartDots.ViewModel
             //RaisePropertyChanged("ApproveVisibility");
             //RaisePropertyChanged("DisApproveVisibility");
             RaisePropertyChanged("CanToggleApprove");
+            RaisePropertyChanged("CanSetScale");
             RaisePropertyChanged("AllowEditing");
         }
 
